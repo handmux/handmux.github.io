@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>handmux docs — CLI reference</title>
+<meta name="description" content="Complete CLI reference for handmux: commands, flags, tunnels, config file, Claude Code integration.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0b09; --bg-1: #111310; --bg-2: #181b15;
+  --ink: #ece6d4; --dim: #8f8b76; --faint: #5c5a4d;
+  --amber: #ffb454; --amber-deep: #d98a2b;
+  --green: #74e6a0; --green-deep: #46d6a2;
+  --pink: #e879a6; --blue: #6ea8ff; --line: #2a2b22;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --display: "Martian Mono", ui-monospace, monospace;
+  --sidebar-w: 224px; --topbar-h: 53px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--mono); font-size: 14px; line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+/* topbar */
+.topbar { position: sticky; top: 0; z-index: 50; background: var(--bg-1); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); height: var(--topbar-h); }
+.topbar .inner { max-width: 1300px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; align-items: center; gap: 14px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: inherit; }
+.logo { width: 34px; height: 34px; display: block; flex: none; }
+.tag { background: var(--green); color: #07140c; padding: 2px 9px; font-weight: 800; font-family: var(--display); letter-spacing: -.02em; font-size: 13px; }
+.topbar nav { margin-left: auto; display: flex; gap: 18px; align-items: center; }
+.topbar nav a { color: var(--dim); text-decoration: none; font-size: 13px; transition: color .2s; }
+.topbar nav a:hover, .topbar nav a.on { color: var(--green); }
+.nav-docs { color: var(--dim); text-decoration: none; font-size: 13px; transition: color .2s; margin-left: 20px; }
+.nav-docs:hover, .nav-docs.on { color: var(--green); }
+.gh-link { display: inline-flex; align-items: center; color: var(--dim); transition: color .2s; }
+.gh-link:hover { color: var(--green); }
+.lang-drop { position: relative; }
+.lang-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; color: var(--dim); font-family: var(--mono); font-size: 13px; cursor: pointer; padding: 0; transition: color .2s; }
+.lang-btn:hover { color: var(--green); }
+.lang-chevron { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+.lang-drop.open .lang-chevron { transform: rotate(180deg); }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: #141610; border: 1px solid var(--line); min-width: 86px; z-index: 200; padding: 4px 0; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.lang-menu[hidden] { display: none; }
+.lang-opt { display: block; width: 100%; padding: 7px 14px; background: none; border: none; color: var(--dim); font-family: var(--mono); font-size: 13px; text-align: left; cursor: pointer; white-space: nowrap; }
+.lang-opt:hover { color: var(--ink); background: rgba(116,230,160,.05); }
+.lang-opt.on { color: var(--green); }
+
+/* layout */
+.layout { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: var(--sidebar-w) 1fr; }
+
+/* sidebar */
+.sidebar { position: sticky; top: var(--topbar-h); height: calc(100vh - var(--topbar-h)); overflow-y: auto; border-right: 1px solid var(--line); padding: 24px 0 60px; }
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--line); }
+.nav-grp { margin-bottom: 22px; }
+.nav-grp-label { font-family: var(--display); font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); padding: 0 20px 7px; display: block; }
+.nav-link { display: block; padding: 4px 20px; color: var(--dim); text-decoration: none; font-size: 12.5px; transition: color .15s; border-right: 2px solid transparent; }
+.nav-link:hover { color: var(--ink); }
+.nav-link.active { color: var(--green); border-right-color: var(--green); background: rgba(116,230,160,.05); }
+.nav-link.sub { padding-left: 34px; font-size: 12px; }
+.nav-link code { font-size: 11.5px; }
+
+/* content */
+.content { padding: 44px 52px 100px; min-width: 0; }
+.page-eyebrow { font-family: var(--display); font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--green-deep); margin-bottom: 10px; }
+.content h1 { font-family: var(--display); font-weight: 800; font-size: 26px; letter-spacing: -.03em; margin-bottom: 12px; }
+.page-lead { color: var(--dim); font-size: 15px; margin-bottom: 36px; max-width: 68ch; }
+.page-lead code { font-size: .9em; color: var(--green); background: rgba(116,230,160,.08); border: 1px solid rgba(116,230,160,.2); padding: 1px 5px; }
+
+.content section { scroll-margin-top: 72px; }
+.content h2 { font-family: var(--display); font-weight: 700; font-size: 16px; letter-spacing: -.01em; color: var(--green-deep); margin: 52px 0 14px; padding-top: 52px; border-top: 1px solid var(--line); }
+.content h2.first { margin-top: 0; padding-top: 0; border-top: none; }
+.content h3 { font-family: var(--display); font-weight: 600; font-size: 13.5px; color: var(--ink); margin: 28px 0 10px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.content h3 .badge { font-family: var(--display); font-size: 10px; font-weight: 600; padding: 1px 8px; letter-spacing: .08em; border: 1px solid rgba(116,230,160,.3); color: var(--green); background: rgba(116,230,160,.08); }
+.content h3 .dim-badge { color: var(--faint); font-weight: 400; font-size: 12px; border: none; background: none; padding: 0; }
+.content p { color: var(--dim); margin-bottom: 12px; max-width: 74ch; }
+.content p b, .content p strong { color: var(--ink); font-weight: 500; }
+.content a { color: var(--green); text-decoration: none; border-bottom: 1px solid rgba(116,230,160,.3); }
+.content a:hover { border-bottom-color: var(--green); }
+.content ul, .content ol { color: var(--dim); padding-left: 20px; margin-bottom: 14px; }
+.content li { margin-bottom: 5px; max-width: 72ch; }
+.content li b, .content li strong { color: var(--ink); font-weight: 500; }
+.content code { font-family: var(--mono); font-size: .875em; color: var(--green); background: rgba(116,230,160,.08); border: 1px solid rgba(116,230,160,.2); padding: 1px 5px; }
+.content pre code { background: none; border: none; padding: 0; color: inherit; font-size: 1em; }
+em { font-style: italic; color: var(--ink); }
+
+/* cmd heading */
+.cmd-sig { display: inline-flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.cmd-name { font-family: var(--mono); font-size: 15px; color: var(--green); background: rgba(116,230,160,.08); border: 1px solid rgba(116,230,160,.22); padding: 3px 12px; }
+.cmd-args { color: var(--faint); font-size: 13px; }
+
+/* code block */
+.cb { background: #0c0e0a; border: 1px solid var(--line); padding: 16px 20px; margin: 14px 0; overflow-x: auto; font-size: 12.5px; line-height: 1.85; }
+.cb pre { color: var(--dim); white-space: pre; }
+.cb pre b { color: var(--green); font-weight: 500; }
+.cb pre i { color: var(--faint); font-style: normal; }
+.cb pre .u { color: var(--ink); }
+.cb pre .k { color: var(--green); }
+.cb pre .a { color: var(--amber); }
+
+/* table */
+.tbl { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12.5px; }
+.tbl th { text-align: left; color: var(--faint); font-weight: 500; padding: 6px 12px; border-bottom: 1px solid var(--line); font-family: var(--display); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.tbl td { padding: 8px 12px; border-bottom: 1px solid rgba(42,43,34,.6); vertical-align: top; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl td:first-child { color: var(--green); white-space: nowrap; }
+.tbl td.amber { color: var(--amber); }
+.tbl td:nth-child(2) { color: var(--dim); }
+.tbl td:nth-child(3) { color: var(--faint); font-size: 12px; white-space: nowrap; }
+.tbl tr:hover td { background: rgba(255,255,255,.015); }
+
+/* callout */
+.note { border-left: 2px solid var(--amber); background: rgba(255,180,84,.055); padding: 11px 16px; margin: 16px 0; font-size: 13px; color: var(--dim); }
+.note.tip { border-color: var(--green); background: rgba(116,230,160,.055); }
+.note p { margin: 0; max-width: none; color: inherit; }
+.note b { color: var(--amber); font-weight: 600; }
+.note.tip b { color: var(--green); }
+
+@media (max-width: 900px) {
+  .layout { display: block; }
+
+  .topbar .inner { padding: 0 16px; }
+
+  /* sidebar: sticky horizontally-scrollable row just below topbar */
+  .sidebar {
+    position: sticky; top: var(--topbar-h); z-index: 40; height: auto;
+    border-right: none; border-bottom: 1px solid var(--line);
+    background: var(--bg-1); backdrop-filter: blur(6px);
+    padding: 0; overflow-x: auto; overflow-y: hidden;
+    white-space: nowrap; scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .sidebar::-webkit-scrollbar { display: none; }
+  .nav-grp { display: inline-block; vertical-align: top; margin-bottom: 0; }
+  .nav-grp-label { display: none; }
+  .nav-link {
+    display: inline-block; padding: 9px 12px; font-size: 12px;
+    border-right: none; border-bottom: 2px solid transparent; white-space: nowrap;
+  }
+  .nav-link.active { border-bottom-color: var(--green); background: none; border-right: none; }
+  .nav-link.sub { display: none; }
+
+  /* content */
+  .content { padding: 24px 16px 60px; }
+
+  /* tables: contained scroll, no page bleed */
+  .tbl { display: block; overflow-x: auto; white-space: nowrap; }
+  .tbl td:nth-child(2) { white-space: normal; min-width: 140px; }
+  .tbl td:nth-child(3) { white-space: nowrap; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="inner">
+    <a class="brand" href="index.html">
+      <img class="logo" src="logo-mark.svg" width="34" height="34" alt="handmux">
+      <span class="tag">handmux</span>
+    </a>
+    <a class="nav-docs on" href="docs.html" data-i18n="nav.docs">docs</a>
+    <nav>
+      <a href="https://www.npmjs.com/package/handmux" class="gh-link" aria-label="npm" title="npm">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456l-.01 10.382H5.113z"/></svg>
+      </a>
+      <a href="https://github.com/yuanyuanzijin/handmux" class="gh-link" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <div class="lang-drop" id="langDrop">
+        <button class="lang-btn" id="langBtn" aria-haspopup="true">
+          <span id="langLabel">EN</span>
+          <svg class="lang-chevron" viewBox="0 0 10 6" width="9" height="9"><polyline points="1,1 5,5 9,1"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" hidden>
+          <button class="lang-opt" data-lang="en">English</button>
+          <button class="lang-opt" data-lang="zh">中文</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<div class="layout">
+
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-grp">
+      <span class="nav-grp-label" data-i18n="g.start">Getting started</span>
+      <a class="nav-link" href="#quickstart" data-i18n="l.quickstart">Quick start</a>
+      <a class="nav-link" href="#requirements" data-i18n="l.req">Requirements</a>
+    </div>
+    <div class="nav-grp">
+      <span class="nav-grp-label" data-i18n="g.cmds">Commands</span>
+      <a class="nav-link" href="#cmd-start"><code>start</code></a>
+      <a class="nav-link" href="#cmd-setup"><code>setup</code></a>
+      <a class="nav-link" href="#cmd-control"><code>stop · restart · status</code></a>
+      <a class="nav-link" href="#cmd-logs"><code>logs</code></a>
+      <a class="nav-link" href="#cmd-config"><code>config</code></a>
+      <a class="nav-link" href="#cmd-hooks"><code>hooks</code></a>
+      <a class="nav-link" href="#cmd-service"><code>service</code></a>
+    </div>
+    <div class="nav-grp">
+      <span class="nav-grp-label" data-i18n="g.ref">Reference</span>
+      <a class="nav-link" href="#flags" data-i18n="l.flags">Flags</a>
+      <a class="nav-link" href="#config-file" data-i18n="l.cfgfile">Config file</a>
+      <a class="nav-link" href="#tunnels" data-i18n="l.tunnels">Tunnels</a>
+      <a class="nav-link sub" href="#tunnel-none"><code>none</code></a>
+      <a class="nav-link sub" href="#tunnel-cloudflare"><code>cloudflare</code></a>
+      <a class="nav-link sub" href="#tunnel-cloudflare-named"><code>cloudflare-named</code></a>
+      <a class="nav-link sub" href="#tunnel-ssh"><code>ssh</code></a>
+      <a class="nav-link" href="#env-vars" data-i18n="l.env">Env variables</a>
+    </div>
+    <div class="nav-grp">
+      <span class="nav-grp-label" data-i18n="g.int">Integrations</span>
+      <a class="nav-link" href="#claude-code">Claude Code</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="page-eyebrow" data-i18n="page.eyebrow">CLI Reference</div>
+    <h1 data-i18n="page.h1">Documentation</h1>
+    <p class="page-lead" data-i18n="page.lead">Complete reference for the <code>handmux</code> CLI. Install once, configure once with <code>handmux setup</code>, run forever.</p>
+
+    <!-- QUICK START -->
+    <section id="quickstart">
+      <h2 class="first" data-i18n="qs.h2">Quick start</h2>
+      <p data-i18n="qs.p">Three steps. If you already have <code>tmux</code>, step one is done.</p>
+      <div class="cb"><pre><i data-i18n="qs.c1"># 1 — check prerequisites</i>
+node -v   <i data-i18n="qs.n1"># need Node ≥ 18  →  nodejs.org</i>
+tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
+
+<i data-i18n="qs.c2"># 2 — install</i>
+<b>npm i -g handmux</b>
+
+<i data-i18n="qs.c3"># 3 — run (LAN-only by default, zero config)</i>
+<b>handmux start</b>
+
+<i data-i18n="qs.c4"># reach it from anywhere:</i>
+<b>handmux start --tunnel cloudflare</b></pre></div>
+      <div class="note tip"><p><b data-i18n="qs.tip-b">Tip:</b> <span data-i18n="qs.tip">scan the QR with your phone camera — it encodes the token so you sign in automatically.</span></p></div>
+    </section>
+
+    <!-- REQUIREMENTS -->
+    <section id="requirements">
+      <h2 data-i18n="req.h2">Requirements</h2>
+      <table class="tbl">
+        <thead><tr><th data-i18n="th.what">What</th><th data-i18n="th.ver">Version</th><th data-i18n="th.note">Note</th></tr></thead>
+        <tbody>
+          <tr><td>Node.js</td><td data-i18n="req.node">≥ 18</td><td>nodejs.org</td></tr>
+          <tr><td>tmux</td><td data-i18n="req.tmux">≥ 3.0</td><td data-i18n="req.tmux-how">brew install tmux · apt install tmux</td></tr>
+          <tr><td data-i18n="req.phone">Phone browser</td><td data-i18n="req.phone-v">any modern</td><td data-i18n="req.phone-n">no app to install</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- CMD: START -->
+    <section id="cmd-start">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux start</span><span class="cmd-args">[flags]</span></div></h2>
+      <p data-i18n="s.p1">Start the server and tunnel. Reads <code>~/.handmux/config.json</code> if it exists; any flag overrides one value for this run only and is never persisted.</p>
+      <p data-i18n="s.p2">With no config file, starts LAN-only (<code>--tunnel none</code>), auto-generates a token, and prints the URL + QR code. Use <code>handmux setup</code> to persist settings.</p>
+      <div class="cb"><pre><b>handmux start</b>                        <i data-i18n="s.c1"># LAN-only — nothing exposed to the internet</i>
+<b>handmux start --tunnel cloudflare</b>    <i data-i18n="s.c2"># public https URL (random Cloudflare hostname)</i>
+<b>handmux start --port 8080</b>            <i data-i18n="s.c3"># listen on port 8080 instead of 19999</i>
+<b>handmux start -f</b>                     <i data-i18n="s.c4"># foreground mode — Ctrl-C to stop</i>
+<b>handmux start --name "Work Box"</b>      <i data-i18n="s.c5"># custom browser tab / home-screen name</i></pre></div>
+      <div class="note"><p><b data-i18n="s.note-b">Note:</b> <span data-i18n="s.note">flags are one-run overrides. To make a change stick, run <code>handmux setup</code> or edit <code>~/.handmux/config.json</code>.</span></p></div>
+    </section>
+
+    <!-- CMD: SETUP -->
+    <section id="cmd-setup">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux setup</span></div></h2>
+      <p data-i18n="su.p1">Interactive wizard that configures tunnel type, app name, push-notification credentials, and voice-input API keys, then writes <code>~/.handmux/config.json</code>. Re-run any time to change anything.</p>
+      <p data-i18n="su.p2">The wizard also offers to:</p>
+      <ul>
+        <li data-i18n="su.li1">Install <strong>Claude Code hooks</strong> — enables inbox and push notifications</li>
+        <li data-i18n="su.li2">Add a <strong>per-window Claude status dot</strong> to <code>~/.tmux.conf</code></li>
+        <li data-i18n="su.li3">Start <code>handmux</code> immediately when done</li>
+      </ul>
+      <div class="cb"><pre><b>handmux setup</b>                        <i data-i18n="su.c1"># interactive — walks through all options</i>
+<b>handmux setup --config ~/work.json</b>   <i data-i18n="su.c2"># write to a custom config file</i></pre></div>
+    </section>
+
+    <!-- CMD: CONTROL -->
+    <section id="cmd-control">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux stop</span><span class="cmd-args">·</span><span class="cmd-name">restart</span><span class="cmd-args">·</span><span class="cmd-name">status</span></div></h2>
+      <p data-i18n="ct.p">Control the running handmux process.</p>
+      <div class="cb"><pre><b>handmux stop</b>       <i data-i18n="ct.c1"># SIGTERM to supervisor — server + tunnel exit cleanly</i>
+<b>handmux restart</b>    <i data-i18n="ct.c2"># stop, wait 600 ms, start again with the same config</i>
+<b>handmux status</b>     <i data-i18n="ct.c3"># show running state, live URL, token</i></pre></div>
+      <h3 data-i18n="ct.out">Example status output</h3>
+      <div class="cb"><pre><span class="k">●</span> handmux running
+  tunnel   cloudflare   ·   pid 21352
+  🌐 open   https://elementary-incidents.trycloudflare.com
+  💻 local  localhost:19999
+  🔑 token  aicbHOGWdQ
+  ✓ reachable</pre></div>
+    </section>
+
+    <!-- CMD: LOGS -->
+    <section id="cmd-logs">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux logs</span><span class="cmd-args">[--follow] [--lines N]</span></div></h2>
+      <p data-i18n="lo.p">View the supervisor log at <code>~/.handmux/handmux.log</code>.</p>
+      <div class="cb"><pre><b>handmux logs</b>              <i data-i18n="lo.c1"># last 200 lines</i>
+<b>handmux logs --follow</b>     <i data-i18n="lo.c2"># stream live (tail -f)</i>
+<b>handmux logs --lines 50</b>   <i data-i18n="lo.c3"># last 50 lines</i></pre></div>
+    </section>
+
+    <!-- CMD: CONFIG -->
+    <section id="cmd-config">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux config</span></div></h2>
+      <p data-i18n="cf.p1">Print the effective config that would be used on next <code>start</code>, with each value's origin: <strong>flag</strong> (this run), <strong>file</strong> (path shown), <strong>env</strong>, or <strong>default</strong>. Secrets are masked; push / voice credentials shown as <em>on</em> or <em>off</em>.</p>
+      <div class="cb"><pre><b>handmux config</b>                        <i data-i18n="cf.c1"># read ~/.handmux/config.json</i>
+<b>handmux config --config ~/work.json</b>   <i data-i18n="cf.c2"># inspect a different file</i>
+<b>handmux config --tunnel cloudflare</b>    <i data-i18n="cf.c3"># preview with a flag applied</i></pre></div>
+    </section>
+
+    <!-- CMD: HOOKS -->
+    <section id="cmd-hooks">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux hooks</span><span class="cmd-args">install | uninstall</span></div></h2>
+      <p data-i18n="hk.p1">Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.</p>
+      <div class="cb"><pre><b>handmux hooks install</b>     <i data-i18n="hk.c1"># wire Claude Code → handmux (inbox · push · status dot)</i>
+<b>handmux hooks uninstall</b>   <i data-i18n="hk.c2"># remove the hooks</i></pre></div>
+      <p data-i18n="hk.p2">After installing, open a new Claude Code session (or restart one) to activate. See <a href="#claude-code">Claude Code</a> for details.</p>
+    </section>
+
+    <!-- CMD: SERVICE -->
+    <section id="cmd-service">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux service</span><span class="cmd-args">install | uninstall</span></div></h2>
+      <p data-i18n="sv.p">Register handmux as a login item so it starts at boot.</p>
+      <ul>
+        <li data-i18n="sv.mac"><strong>macOS:</strong> launchd plist in <code>~/Library/LaunchAgents/</code></li>
+        <li data-i18n="sv.linux"><strong>Linux:</strong> systemd user unit in <code>~/.config/systemd/user/</code></li>
+      </ul>
+      <div class="cb"><pre><b>handmux service install</b>                        <i data-i18n="sv.c1"># bake current config into a login item</i>
+<b>handmux service install --tunnel cloudflare</b>    <i data-i18n="sv.c2"># override tunnel for the autostart</i>
+<b>handmux service uninstall</b>                      <i data-i18n="sv.c3"># remove the login item</i></pre></div>
+      <div class="note"><p><b data-i18n="sv.note-b">Note:</b> <span data-i18n="sv.note">the service bakes the config at install time. After changing <code>~/.handmux/config.json</code>, re-run <code>handmux service install</code> to update it.</span></p></div>
+    </section>
+
+    <!-- FLAGS -->
+    <section id="flags">
+      <h2 data-i18n="fl.h2">Flags</h2>
+      <p data-i18n="fl.p1">Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>.</p>
+
+      <h3 data-i18n="fl.general">General</h3>
+      <table class="tbl">
+        <thead><tr><th data-i18n="th.flag">Flag</th><th data-i18n="th.desc">Description</th><th data-i18n="th.def">Default</th></tr></thead>
+        <tbody>
+          <tr><td>--tunnel</td><td data-i18n="fl.tunnel"><code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code></td><td><code>none</code></td></tr>
+          <tr><td>--port</td><td data-i18n="fl.port">Server listen port</td><td><code>19999</code></td></tr>
+          <tr><td>--host</td><td data-i18n="fl.host">Server bind address</td><td><code>0.0.0.0</code></td></tr>
+          <tr><td>--token</td><td data-i18n="fl.token">Auth token (random 8-char token generated if unset)</td><td data-i18n="fl.token-d">generated</td></tr>
+          <tr><td>--name</td><td data-i18n="fl.name">App name in browser tab and home-screen icon</td><td><code>handmux</code></td></tr>
+          <tr><td>--public-url</td><td data-i18n="fl.pub-url">Override the URL printed and embedded in the QR. Works with any tunnel including <code>none</code></td><td data-i18n="fl.pub-url-d">from tunnel</td></tr>
+          <tr><td>--preview-domain</td><td data-i18n="fl.preview">Wildcard subdomain for dynamic site previews</td><td data-i18n="fl.off">off</td></tr>
+          <tr><td>--foreground, -f</td><td data-i18n="fl.fg">Stay in foreground; Ctrl-C to stop</td><td>—</td></tr>
+          <tr><td>--no-qr</td><td data-i18n="fl.noqr">Skip the QR code</td><td>—</td></tr>
+          <tr><td>--config</td><td data-i18n="fl.cfg">Use this JSON file instead of <code>~/.handmux/config.json</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-i18n="fl.ssh-h">SSH tunnel flags <span class="dim-badge" data-i18n="fl.ssh-note">only with --tunnel ssh</span></h3>
+      <table class="tbl">
+        <thead><tr><th data-i18n="th.flag">Flag</th><th data-i18n="th.desc">Description</th><th data-i18n="th.def">Default</th></tr></thead>
+        <tbody>
+          <tr><td>--ssh-host</td><td data-i18n="fl.ssh-host"><code>user@host</code> or <code>user@host:port</code> — required for ssh tunnel</td><td>—</td></tr>
+          <tr><td>--remote-port</td><td data-i18n="fl.rport">Port to bind on the SSH host for the reverse forward</td><td><code>= --port</code></td></tr>
+          <tr><td>--ssh-jump</td><td data-i18n="fl.jump">Bastion: <code>user@jump[,user@jump2,…]</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-i18n="fl.cf-h">Cloudflare named tunnel flags <span class="dim-badge" data-i18n="fl.cf-note">only with --tunnel cloudflare-named</span></h3>
+      <table class="tbl">
+        <thead><tr><th data-i18n="th.flag">Flag</th><th data-i18n="th.desc">Description</th><th data-i18n="th.def">Default</th></tr></thead>
+        <tbody>
+          <tr><td>--cf-hostname</td><td data-i18n="fl.cf-host">Public hostname, e.g. <code>handmux.example.com</code> — required</td><td>—</td></tr>
+          <tr><td>--cf-tunnel-name</td><td data-i18n="fl.cf-name">Tunnel name in your Cloudflare dashboard</td><td><code>handmux</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- CONFIG FILE -->
+    <section id="config-file">
+      <h2 data-i18n="cj.h2">Config file</h2>
+      <p data-i18n="cj.p1">handmux reads <code>~/.handmux/config.json</code> on every <code>start</code>. Created and maintained by <code>handmux setup</code>; you can also edit it directly. Pass <code>--config PATH</code> to use a different file.</p>
+      <div class="cb"><pre><i data-i18n="cj.comment">// ~/.handmux/config.json (written by `handmux setup`)</i>
+{
+  <span class="k">"tunnel"</span>:        <span class="u">"cloudflare"</span>,     <i data-i18n="cj.f.tun">// "none"|"cloudflare"|"cloudflare-named"|"ssh"</i>
+  <span class="k">"port"</span>:          <span class="u">19999</span>,            <i data-i18n="cj.f.port">// server port</i>
+  <span class="k">"host"</span>:          <span class="u">"0.0.0.0"</span>,        <i data-i18n="cj.f.host">// bind address</i>
+  <span class="k">"name"</span>:          <span class="u">"My Box"</span>,         <i data-i18n="cj.f.name">// browser tab title (null = default)</i>
+  <span class="k">"token"</span>:         <span class="u">"your-secret"</span>,    <i data-i18n="cj.f.token">// omit to regenerate on every start</i>
+  <span class="k">"publicUrl"</span>:     <span class="u">"https://…"</span>,      <i data-i18n="cj.f.pub">// override printed URL (optional)</i>
+
+  <i data-i18n="cj.ssh">// SSH tunnel — only read when tunnel = "ssh"</i>
+  <span class="k">"sshHost"</span>:       <span class="u">"user@vps.example.com"</span>,
+  <span class="k">"remotePort"</span>:    <span class="u">19999</span>,
+  <span class="k">"sshJump"</span>:       <span class="u">null</span>,
+
+  <i data-i18n="cj.cf">// Cloudflare named tunnel — only read when tunnel = "cloudflare-named"</i>
+  <span class="k">"cfHostname"</span>:    <span class="u">"handmux.example.com"</span>,
+  <span class="k">"cfTunnelName"</span>:  <span class="u">"handmux"</span>,
+
+  <i data-i18n="cj.push">// Web Push — VAPID keys added by `handmux setup` when you enable notifications</i>
+  <span class="k">"vapid"</span>: { <span class="k">"public"</span>: <span class="u">"…"</span>, <span class="k">"private"</span>: <span class="u">"…"</span>, <span class="k">"subject"</span>: <span class="u">"mailto:you@example.com"</span> },
+
+  <i data-i18n="cj.voice">// Voice input — Xfyun credentials added by `handmux setup`</i>
+  <span class="k">"xfyun"</span>: { <span class="k">"appId"</span>: <span class="u">"…"</span>, <span class="k">"apiKey"</span>: <span class="u">"…"</span>, <span class="k">"apiSecret"</span>: <span class="u">"…"</span> }
+}</pre></div>
+    </section>
+
+    <!-- TUNNELS -->
+    <section id="tunnels">
+      <h2 data-i18n="tn.h2">Tunnels</h2>
+      <p data-i18n="tn.p">Four modes for making the server reachable. Pick one per run with <code>--tunnel</code>, or set it permanently with <code>handmux setup</code>.</p>
+    </section>
+
+    <section id="tunnel-none">
+      <h3><code>--tunnel none</code> <span class="dim-badge" data-i18n="tn.none.badge">(default)</span></h3>
+      <p data-i18n="tn.none.p1">No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi.</p>
+    </section>
+
+    <section id="tunnel-cloudflare">
+      <h3><code>--tunnel cloudflare</code> <span class="badge" data-i18n="tn.cf.badge">zero-config</span></h3>
+      <p data-i18n="tn.cf.p1">One outbound connection to Cloudflare's edge gives you a random public <code>https://xxx.trycloudflare.com</code> URL. No account, no port forwarding, no TLS setup. <code>cloudflared</code> is auto-downloaded to <code>~/.handmux/</code> on first use.</p>
+      <div class="cb"><pre><b>handmux start --tunnel cloudflare</b></pre></div>
+      <div class="note"><p><b data-i18n="tn.cf.note-b">Note:</b> <span data-i18n="tn.cf.note">the hostname is random and changes every restart. For a stable URL use <code>cloudflare-named</code> or <code>ssh</code>.</span></p></div>
+    </section>
+
+    <section id="tunnel-cloudflare-named">
+      <h3><code>--tunnel cloudflare-named</code> <span class="badge" data-i18n="tn.cfn.badge">stable domain</span></h3>
+      <p data-i18n="tn.cfn.p1">A permanent Cloudflare Tunnel on your own domain, e.g. <code>https://handmux.example.com</code>. Requires a Cloudflare account and a domain on Cloudflare DNS.</p>
+      <p data-i18n="tn.cfn.p2">Run <code>handmux setup</code> and pick <em>cloudflare-named</em> — it walks you through creating the tunnel, setting the DNS CNAME, and saving credentials.</p>
+      <div class="cb"><pre><b>handmux start --tunnel cloudflare-named --cf-hostname handmux.example.com</b></pre></div>
+    </section>
+
+    <section id="tunnel-ssh">
+      <h3><code>--tunnel ssh</code> <span class="badge" data-i18n="tn.ssh.badge">your server</span></h3>
+      <p data-i18n="tn.ssh.p1">Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable, fully under your control, and works where Cloudflare is unreliable (e.g. mainland China).</p>
+      <p data-i18n="tn.ssh.p2">Requires <strong>passwordless SSH</strong> to the target. If not configured, <code>handmux start</code> offers to set it up interactively, or run <code>tunlite setup-key user@host</code> yourself.</p>
+      <div class="cb"><pre><b>handmux start --tunnel ssh --ssh-host user@vps.example.com</b>
+
+<i data-i18n="tn.ssh.c2"># with a custom remote port + explicit public URL:</i>
+<b>handmux start --tunnel ssh --ssh-host user@vps.example.com \
+  --remote-port 9000 --public-url https://vps.example.com:9000</b>
+
+<i data-i18n="tn.ssh.c3"># through a bastion / jump host:</i>
+<b>handmux start --tunnel ssh --ssh-host user@inner \
+  --ssh-jump user@bastion.example.com</b></pre></div>
+    </section>
+
+    <!-- ENV VARS -->
+    <section id="env-vars">
+      <h2 data-i18n="ev.h2">Environment variables</h2>
+      <p data-i18n="ev.p">Lower-priority alternative to flags — useful in scripts or containers. Sit below flags and the config file in the resolution order.</p>
+      <table class="tbl">
+        <thead><tr><th data-i18n="th.var">Variable</th><th data-i18n="th.desc">Description</th><th data-i18n="th.flag">Flag</th></tr></thead>
+        <tbody>
+          <tr><td class="amber">HANDMUX_PORT</td><td data-i18n="ev.port">Server port</td><td>--port</td></tr>
+          <tr><td class="amber">HANDMUX_HOST</td><td data-i18n="ev.host">Bind address</td><td>--host</td></tr>
+          <tr><td class="amber">HANDMUX_TOKEN</td><td data-i18n="ev.token">Auth token</td><td>--token</td></tr>
+          <tr><td class="amber">HANDMUX_APP_NAME</td><td data-i18n="ev.name">App name</td><td>--name</td></tr>
+          <tr><td class="amber">HANDMUX_PUBLIC_URL</td><td data-i18n="ev.pub">Override advertised URL</td><td>--public-url</td></tr>
+          <tr><td class="amber">HANDMUX_PREVIEW_DOMAIN</td><td data-i18n="ev.preview">Wildcard subdomain for site previews</td><td>--preview-domain</td></tr>
+          <tr><td class="amber">HANDMUX_SSH_HOST</td><td data-i18n="ev.ssh-host">SSH tunnel target</td><td>--ssh-host</td></tr>
+          <tr><td class="amber">HANDMUX_REMOTE_PORT</td><td data-i18n="ev.rport">Port on the SSH host</td><td>--remote-port</td></tr>
+          <tr><td class="amber">HANDMUX_SSH_JUMP</td><td data-i18n="ev.jump">SSH bastion</td><td>--ssh-jump</td></tr>
+          <tr><td class="amber">HANDMUX_CF_HOSTNAME</td><td data-i18n="ev.cf-host">Cloudflare named tunnel hostname</td><td>--cf-hostname</td></tr>
+          <tr><td class="amber">HANDMUX_CF_TUNNEL_NAME</td><td data-i18n="ev.cf-name">Cloudflare tunnel name</td><td>--cf-tunnel-name</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- CLAUDE CODE -->
+    <section id="claude-code">
+      <h2>Claude Code</h2>
+      <p data-i18n="cc.p1">handmux drives any agent or TUI — and with Claude Code it goes furthest. Lifecycle hooks report each pane's state (working · needs you · done) to handmux in real time, powering the inbox and push notifications.</p>
+
+      <h3 data-i18n="cc.setup-h">Setup</h3>
+      <div class="cb"><pre><i data-i18n="cc.c1"># during handmux setup (recommended — wizard prompts you)</i>
+<b>handmux setup</b>
+
+<i data-i18n="cc.c2"># or on its own:</i>
+<b>handmux hooks install</b></pre></div>
+      <p data-i18n="cc.p2">After installing, open a <strong>new Claude Code session</strong> — hooks load from <code>~/.claude/settings.json</code> and an existing session only picks them up after a restart.</p>
+
+      <h3 data-i18n="cc.inbox-h">Inbox states</h3>
+      <p data-i18n="cc.p3">Once hooks are active, every Claude pane is tagged:</p>
+      <ul>
+        <li><span style="color:var(--blue)" data-i18n="cc.working">working</span><span data-i18n="cc.w-p"> — Claude is running</span></li>
+        <li><span style="color:var(--amber)" data-i18n="cc.needs">needs you</span><span data-i18n="cc.n-p"> — permission prompt or plan approval waiting; push sent to your phone</span></li>
+        <li><span style="color:var(--green)" data-i18n="cc.done">done</span><span data-i18n="cc.d-p"> — task finished; push sent</span></li>
+      </ul>
+      <p data-i18n="cc.p4">To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell in the app to subscribe the device.</p>
+
+      <h3 data-i18n="cc.dot-h">tmux status dot</h3>
+      <p data-i18n="cc.p5">Hooks write a colour into each window's <code>@claude_dot</code> option. To show it in the tmux status bar, handmux can patch <code>~/.tmux.conf</code>:</p>
+      <div class="cb"><pre><b>handmux hooks install</b>   <i data-i18n="cc.c3"># wizard also offers to add the tmux dot</i>
+
+<i data-i18n="cc.c4"># reload tmux to apply:</i>
+tmux source-file ~/.tmux.conf</pre></div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const I18N = {
+  en: {
+    'nav.home':'home','nav.docs':'docs',
+    'g.start':'Getting started','g.cmds':'Commands','g.ref':'Reference','g.int':'Integrations',
+    'l.quickstart':'Quick start','l.req':'Requirements','l.flags':'Flags','l.cfgfile':'Config file','l.tunnels':'Tunnels','l.env':'Env variables',
+    'page.eyebrow':'CLI Reference','page.h1':'Documentation',
+    'page.lead':'Complete reference for the <code>handmux</code> CLI. Install once, configure once with <code>handmux setup</code>, run forever.',
+    'qs.h2':'Quick start','qs.p':'Three steps. If you already have <code>tmux</code>, step one is done.',
+    'qs.c1':'# 1 — check prerequisites','qs.n1':'# need Node ≥ 18  →  nodejs.org','qs.n2':'# need tmux ≥ 3.0  →  brew install tmux',
+    'qs.c2':'# 2 — install','qs.c3':'# 3 — run (LAN-only, zero config)','qs.c4':'# reach it from anywhere:',
+    'qs.tip-b':'Tip:','qs.tip':"scan the QR with your phone camera — it carries the token so you sign in automatically.",
+    'req.h2':'Requirements','th.what':'What','th.ver':'Version','th.note':'Note',
+    'req.node':'≥ 18','req.tmux':'≥ 3.0','req.tmux-how':'brew install tmux · apt install tmux',
+    'req.phone':'Phone browser','req.phone-v':'any modern','req.phone-n':'no app to install',
+    's.p1':'Start the server and tunnel. Reads <code>~/.handmux/config.json</code> if it exists; any flag overrides one value for this run only and is never persisted.',
+    's.p2':'With no config file, starts LAN-only (<code>--tunnel none</code>), auto-generates a token, and prints the URL + QR code. Use <code>handmux setup</code> to persist settings.',
+    's.c1':'# LAN-only — nothing exposed to the internet','s.c2':'# public https URL (random Cloudflare hostname)',
+    's.c3':'# listen on port 8080 instead of 19999','s.c4':'# foreground mode — Ctrl-C to stop','s.c5':'# custom browser tab / home-screen name',
+    's.note-b':'Note:','s.note':'flags are one-run overrides. To make a change stick, run <code>handmux setup</code> or edit <code>~/.handmux/config.json</code>.',
+    'su.p1':'Interactive wizard that configures tunnel type, app name, push-notification credentials, and voice-input API keys, then writes <code>~/.handmux/config.json</code>. Re-run any time to change anything.',
+    'su.p2':'The wizard also offers to:',
+    'su.li1':'Install <strong>Claude Code hooks</strong> — enables inbox and push notifications',
+    'su.li2':'Add a <strong>per-window Claude status dot</strong> to <code>~/.tmux.conf</code>',
+    'su.li3':'Start <code>handmux</code> immediately when done',
+    'su.c1':'# interactive — walks through all options','su.c2':'# write to a custom config file',
+    'ct.p':'Control the running handmux process.',
+    'ct.c1':'# SIGTERM to supervisor — server + tunnel exit cleanly',
+    'ct.c2':'# stop, wait 600 ms, start again with the same config',
+    'ct.c3':'# show running state, live URL, token','ct.out':'Example status output',
+    'lo.p':'View the supervisor log at <code>~/.handmux/handmux.log</code>.',
+    'lo.c1':'# last 200 lines','lo.c2':'# stream live (tail -f)','lo.c3':'# last 50 lines',
+    'cf.p1':'Print the effective config that would be used on next <code>start</code>, with each value\'s origin: <strong>flag</strong> (this run), <strong>file</strong> (path shown), <strong>env</strong>, or <strong>default</strong>. Secrets are masked; push / voice credentials shown as <em>on</em> or <em>off</em>.',
+    'cf.c1':'# read ~/.handmux/config.json','cf.c2':'# inspect a different file','cf.c3':'# preview with a flag applied',
+    'hk.p1':'Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.',
+    'hk.c1':'# wire Claude Code → handmux (inbox · push · status dot)','hk.c2':'# remove the hooks',
+    'hk.p2':'After installing, open a new Claude Code session (or restart one) to activate. See <a href="#claude-code">Claude Code</a> for details.',
+    'sv.p':'Register handmux as a login item so it starts at boot.',
+    'sv.mac':'<strong>macOS:</strong> launchd plist in <code>~/Library/LaunchAgents/</code>',
+    'sv.linux':'<strong>Linux:</strong> systemd user unit in <code>~/.config/systemd/user/</code>',
+    'sv.c1':'# bake current config into a login item','sv.c2':'# override tunnel for the autostart','sv.c3':'# remove the login item',
+    'sv.note-b':'Note:','sv.note':'the service bakes the config at install time. After changing <code>~/.handmux/config.json</code>, re-run <code>handmux service install</code> to update it.',
+    'fl.h2':'Flags','fl.p1':'Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>.',
+    'fl.general':'General',
+    'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code>',
+    'fl.port':'Server listen port','fl.host':'Server bind address',
+    'fl.token':'Auth token (random 8-char token generated if unset)','fl.token-d':'generated',
+    'fl.name':'App name in browser tab and home-screen icon',
+    'fl.pub-url':'Override the URL printed and in the QR. Works with any tunnel including <code>none</code>','fl.pub-url-d':'from tunnel',
+    'fl.preview':'Wildcard subdomain for dynamic site previews','fl.off':'off',
+    'fl.fg':'Stay in foreground; Ctrl-C to stop','fl.noqr':'Skip the QR code',
+    'fl.cfg':'Use this JSON file instead of <code>~/.handmux/config.json</code>',
+    'fl.ssh-h':'SSH tunnel flags','fl.ssh-note':'only with --tunnel ssh',
+    'fl.ssh-host':'<code>user@host</code> or <code>user@host:port</code> — required','fl.rport':'Port to bind on SSH host','fl.jump':'Bastion: <code>user@jump[,…]</code>',
+    'fl.cf-h':'Cloudflare named tunnel flags','fl.cf-note':'only with --tunnel cloudflare-named',
+    'fl.cf-host':'Public hostname, e.g. <code>handmux.example.com</code> — required','fl.cf-name':'Tunnel name in Cloudflare dashboard',
+    'th.flag':'Flag','th.desc':'Description','th.def':'Default','th.var':'Variable',
+    'cj.h2':'Config file',
+    'cj.p1':'handmux reads <code>~/.handmux/config.json</code> on every <code>start</code>. Created and maintained by <code>handmux setup</code>; you can also edit it directly. Pass <code>--config PATH</code> to use a different file.',
+    'cj.comment':'// ~/.handmux/config.json (written by `handmux setup`)',
+    'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"','cj.f.port':'// server port','cj.f.host':'// bind address',
+    'cj.f.name':'// browser tab title (null = default)','cj.f.token':'// omit to regenerate on every start','cj.f.pub':'// override printed URL (optional)',
+    'cj.ssh':'// SSH tunnel — only read when tunnel = "ssh"','cj.cf':'// Cloudflare named tunnel — only read when tunnel = "cloudflare-named"',
+    'cj.push':'// Web Push — VAPID keys added by `handmux setup` when you enable notifications',
+    'cj.voice':'// Voice input — Xfyun credentials added by `handmux setup`',
+    'tn.h2':'Tunnels','tn.p':'Four modes for making the server reachable. Pick one per run with <code>--tunnel</code>, or set permanently with <code>handmux setup</code>.',
+    'tn.none.badge':'(default)','tn.none.p1':'No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi.',
+    'tn.cf.badge':'zero-config','tn.cf.p1':'One outbound connection to Cloudflare\'s edge gives you a random public <code>https://xxx.trycloudflare.com</code> URL. No account, no port forwarding, no TLS setup. <code>cloudflared</code> is auto-downloaded to <code>~/.handmux/</code> on first use.',
+    'tn.cf.note-b':'Note:','tn.cf.note':'the hostname is random and changes every restart. For a stable URL use <code>cloudflare-named</code> or <code>ssh</code>.',
+    'tn.cfn.badge':'stable domain','tn.cfn.p1':'A permanent Cloudflare Tunnel on your own domain, e.g. <code>https://handmux.example.com</code>. Requires a Cloudflare account and a domain on Cloudflare DNS.',
+    'tn.cfn.p2':'Run <code>handmux setup</code> and pick <em>cloudflare-named</em> — it walks you through creating the tunnel, setting the DNS CNAME, and saving credentials.',
+    'tn.ssh.badge':'your server','tn.ssh.p1':'Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable, fully under your control, and works where Cloudflare is unreliable (e.g. mainland China).',
+    'tn.ssh.p2':'Requires <strong>passwordless SSH</strong> to the target. If not configured, <code>handmux start</code> offers to set it up interactively, or run <code>tunlite setup-key user@host</code> yourself.',
+    'tn.ssh.c2':'# with a custom remote port + explicit public URL:','tn.ssh.c3':'# through a bastion / jump host:',
+    'ev.h2':'Environment variables','ev.p':'Lower-priority alternative to flags — useful in scripts or containers. Sit below flags and the config file in resolution order.',
+    'ev.port':'Server port','ev.host':'Bind address','ev.token':'Auth token','ev.name':'App name',
+    'ev.pub':'Override advertised URL','ev.preview':'Wildcard subdomain for site previews',
+    'ev.ssh-host':'SSH tunnel target','ev.rport':'Port on the SSH host','ev.jump':'SSH bastion',
+    'ev.cf-host':'Cloudflare named tunnel hostname','ev.cf-name':'Cloudflare tunnel name','th.flag':'Flag',
+    'cc.p1':'handmux drives any agent or TUI — and with Claude Code it goes furthest. Lifecycle hooks report each pane\'s state (working · needs you · done) to handmux in real time, powering the inbox and push notifications.',
+    'cc.setup-h':'Setup','cc.c1':'# during handmux setup (recommended — wizard prompts you)','cc.c2':'# or on its own:',
+    'cc.p2':'After installing, open a <strong>new Claude Code session</strong> — hooks load from <code>~/.claude/settings.json</code> and an existing session only picks them up after a restart.',
+    'cc.inbox-h':'Inbox states','cc.p3':'Once hooks are active, every Claude pane is tagged:',
+    'cc.working':'working','cc.w-p':' — Claude is running',
+    'cc.needs':'needs you','cc.n-p':' — permission prompt or plan approval waiting; push sent to your phone',
+    'cc.done':'done','cc.d-p':' — task finished; push sent',
+    'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
+    'cc.dot-h':'tmux status dot','cc.p5':'Hooks write a colour into each window\'s <code>@claude_dot</code> option. To show it in the tmux status bar, handmux can patch <code>~/.tmux.conf</code>:',
+    'cc.c3':'# wizard also offers to add the tmux dot','cc.c4':'# reload tmux to apply:',
+  },
+  zh: {
+    'nav.home':'首页','nav.docs':'文档',
+    'g.start':'上手','g.cmds':'命令','g.ref':'参考','g.int':'集成',
+    'l.quickstart':'快速开始','l.req':'环境要求','l.flags':'参数','l.cfgfile':'配置文件','l.tunnels':'隧道','l.env':'环境变量',
+    'page.eyebrow':'CLI 参考','page.h1':'文档',
+    'page.lead':'<code>handmux</code> CLI 完整参考。装一次、<code>handmux setup</code> 配一次，之后让它跑着就好。',
+    'qs.h2':'快速开始','qs.p':'三步跑起来。已在用 <code>tmux</code> 的话，第一步算完成了。',
+    'qs.c1':'# 1 — 检查基础环境','qs.n1':'# 需要 Node ≥ 18  →  nodejs.org','qs.n2':'# 需要 tmux ≥ 3.0  →  brew install tmux',
+    'qs.c2':'# 2 — 安装','qs.c3':'# 3 — 跑起来（默认仅局域网，零配置）','qs.c4':'# 从任何地方连：',
+    'qs.tip-b':'提示：','qs.tip':'用手机相机扫打印出来的二维码——二维码里带了 token，扫完自动登录。',
+    'req.h2':'环境要求','th.what':'依赖','th.ver':'版本','th.note':'说明',
+    'req.node':'≥ 18','req.tmux':'≥ 3.0','req.tmux-how':'brew install tmux · apt install tmux',
+    'req.phone':'手机浏览器','req.phone-v':'现代浏览器即可','req.phone-n':'不用装 App',
+    's.p1':'启动服务器和隧道。若 <code>~/.handmux/config.json</code> 存在则读取它；参数只对本次运行生效，不会写入配置。',
+    's.p2':'无配置文件时默认仅局域网（<code>--tunnel none</code>），自动生成 token 并打印 URL 和二维码。用 <code>handmux setup</code> 持久化设置。',
+    's.c1':'# 仅局域网 — 不对外网暴露','s.c2':'# 公网 https URL（Cloudflare 随机主机名）',
+    's.c3':'# 用 8080 端口替代默认的 19999','s.c4':'# 前台运行，Ctrl-C 停止','s.c5':'# 自定义浏览器标签页/主屏名称',
+    's.note-b':'注意：','s.note':'参数只是本次覆盖，不会持久化。要永久生效，运行 <code>handmux setup</code> 或直接编辑 <code>~/.handmux/config.json</code>。',
+    'su.p1':'交互式向导：引导配置隧道类型、应用名称、推送通知凭证和语音输入 API 密钥，结果写入 <code>~/.handmux/config.json</code>。随时可以重跑来修改。',
+    'su.p2':'向导还会提示你：',
+    'su.li1':'安装 <strong>Claude Code hooks</strong>——开启收件箱和推送通知',
+    'su.li2':'在 <code>~/.tmux.conf</code> 加上每个窗口的 <strong>Claude 状态圆点</strong>',
+    'su.li3':'配置完成后立即启动 <code>handmux</code>',
+    'su.c1':'# 交互式，一步步引导','su.c2':'# 写到自定义配置文件',
+    'ct.p':'控制正在运行的 handmux 进程。',
+    'ct.c1':'# 给 supervisor 发 SIGTERM，服务器和隧道干净退出',
+    'ct.c2':'# 停止，等 600 ms，再用同样配置重启',
+    'ct.c3':'# 显示运行状态、当前 URL、token','ct.out':'status 输出示例',
+    'lo.p':'查看 <code>~/.handmux/handmux.log</code> 的 supervisor 日志。',
+    'lo.c1':'# 最后 200 行','lo.c2':'# 实时流式输出（tail -f）','lo.c3':'# 最后 50 行',
+    'cf.p1':'打印下次 <code>start</code> 生效的配置，以及每个值的来源：<strong>flag</strong>（本次运行）、<strong>file</strong>（文件路径）、<strong>env</strong> 或 <strong>default</strong>。Token 被掩码；推送/语音凭证仅显示 <em>on</em>/<em>off</em>。',
+    'cf.c1':'# 读取 ~/.handmux/config.json','cf.c2':'# 查看其他文件','cf.c3':'# 预览加上参数后的效果',
+    'hk.p1':'安装或卸载驱动收件箱和推送通知的 Claude Code 生命周期 hooks，写入 <code>~/.claude/settings.json</code>。未检测到 Claude Code 时静默跳过。',
+    'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送·状态圆点）','hk.c2':'# 移除 hooks',
+    'hk.p2':'安装后新开一个 Claude Code 会话（或重启已有会话）来激活。详情见 <a href="#claude-code">Claude Code</a>。',
+    'sv.p':'把 handmux 注册为登录项，开机自动运行。',
+    'sv.mac':'<strong>macOS：</strong>在 <code>~/Library/LaunchAgents/</code> 创建 launchd plist',
+    'sv.linux':'<strong>Linux：</strong>在 <code>~/.config/systemd/user/</code> 创建 systemd 用户 unit',
+    'sv.c1':'# 将当前配置写进登录项','sv.c2':'# 覆盖自启时的隧道','sv.c3':'# 移除登录项',
+    'sv.note-b':'注意：','sv.note':'service 在安装时将配置固化。修改 <code>~/.handmux/config.json</code> 后需重跑 <code>handmux service install</code> 更新。',
+    'fl.h2':'参数','fl.p1':'参数是本次运行的覆盖，不会持久化。解析优先级：<strong>参数 &gt; 配置文件 &gt; 环境变量 &gt; 内置默认值</strong>。',
+    'fl.general':'通用',
+    'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code>',
+    'fl.port':'服务器监听端口','fl.host':'服务器绑定地址',
+    'fl.token':'认证 token（未设置时每次启动随机生成 8 位）','fl.token-d':'随机生成',
+    'fl.name':'浏览器标签页和主屏图标名称',
+    'fl.pub-url':'覆盖打印和二维码里的 URL，适用于任何隧道（包括 <code>none</code>）','fl.pub-url-d':'从隧道推导',
+    'fl.preview':'动态网站预览的通配符子域名','fl.off':'关闭',
+    'fl.fg':'在前台运行，Ctrl-C 停止','fl.noqr':'不打印二维码',
+    'fl.cfg':'使用此 JSON 文件替代 <code>~/.handmux/config.json</code>',
+    'fl.ssh-h':'SSH 隧道参数','fl.ssh-note':'仅在 --tunnel ssh 时使用',
+    'fl.ssh-host':'<code>user@host</code> 或 <code>user@host:port</code>，必填','fl.rport':'在 SSH 主机上绑定的端口','fl.jump':'跳板机：<code>user@jump[,…]</code>',
+    'fl.cf-h':'Cloudflare 命名隧道参数','fl.cf-note':'仅在 --tunnel cloudflare-named 时使用',
+    'fl.cf-host':'公网主机名，如 <code>handmux.example.com</code>，必填','fl.cf-name':'Cloudflare 控制台里的隧道名称',
+    'th.flag':'参数','th.desc':'说明','th.def':'默认值','th.var':'变量',
+    'cj.h2':'配置文件',
+    'cj.p1':'每次 <code>start</code> 都会读取 <code>~/.handmux/config.json</code>，由 <code>handmux setup</code> 创建和维护，也可直接手动编辑。用 <code>--config PATH</code> 使用其他文件。',
+    'cj.comment':'// ~/.handmux/config.json（由 `handmux setup` 生成）',
+    'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"','cj.f.port':'// 服务器端口','cj.f.host':'// 绑定地址',
+    'cj.f.name':'// 浏览器标签页标题（null = 默认）','cj.f.token':'// 不填则每次启动重新生成','cj.f.pub':'// 覆盖打印的 URL（可选）',
+    'cj.ssh':'// SSH 隧道——仅在 tunnel = "ssh" 时读取','cj.cf':'// Cloudflare 命名隧道——仅在 tunnel = "cloudflare-named" 时读取',
+    'cj.push':'// Web Push——启用通知时由 `handmux setup` 填入的 VAPID 密钥',
+    'cj.voice':'// 语音输入——由 `handmux setup` 填入的讯飞凭证',
+    'tn.h2':'隧道','tn.p':'四种让服务器对外可访问的方式。用 <code>--tunnel</code> 临时切换，或通过 <code>handmux setup</code> 永久配置。',
+    'tn.none.badge':'（默认）','tn.none.p1':'不对外暴露——只在局域网可访问。打印局域网 URL（<code>http://192.168.x.x:19999/…</code>）和本地 URL。手机和电脑同一 WiFi 时使用。',
+    'tn.cf.badge':'零配置','tn.cf.p1':'向 Cloudflare 边缘拉一条出站连接，获得随机公网 <code>https://xxx.trycloudflare.com</code> URL。不需要账号，不用开端口，不用配 TLS。首次使用自动下载 <code>cloudflared</code> 到 <code>~/.handmux/</code>。',
+    'tn.cf.note-b':'注意：','tn.cf.note':'主机名随机，每次重启都会变。需要固定 URL 请用 <code>cloudflare-named</code> 或 <code>ssh</code>。',
+    'tn.cfn.badge':'稳定域名','tn.cfn.p1':'用自己域名建立永久 Cloudflare 命名隧道，如 <code>https://handmux.example.com</code>。需要 Cloudflare 账号和接入 Cloudflare DNS 的域名。',
+    'tn.cfn.p2':'运行 <code>handmux setup</code> 选 <em>cloudflare-named</em>——向导引导你创建隧道、设置 DNS CNAME 并保存凭证。',
+    'tn.ssh.badge':'你的服务器','tn.ssh.p1':'通过 <code>tunlite</code> 向自己的 VPS 建立反向 SSH 隧道。稳定、完全可控，在 Cloudflare 不稳定的地区（如中国大陆）也能正常使用。',
+    'tn.ssh.p2':'需要对目标主机配好<strong>免密 SSH</strong>。未配置时 <code>handmux start</code> 会提示交互式设置，或手动执行 <code>tunlite setup-key user@host</code>。',
+    'tn.ssh.c2':'# 自定义远端端口并指定公网 URL：','tn.ssh.c3':'# 通过跳板机/堡垒机：',
+    'ev.h2':'环境变量','ev.p':'参数的低优先级替代方案——适合脚本或容器。优先级低于参数和配置文件。',
+    'ev.port':'服务器端口','ev.host':'绑定地址','ev.token':'认证 token','ev.name':'应用名称',
+    'ev.pub':'覆盖广播的 URL','ev.preview':'网站预览的通配符子域名',
+    'ev.ssh-host':'SSH 隧道目标','ev.rport':'SSH 主机上的端口','ev.jump':'SSH 跳板机',
+    'ev.cf-host':'Cloudflare 命名隧道主机名','ev.cf-name':'Cloudflare 隧道名称',
+    'cc.p1':'handmux 能带任何 agent 或 TUI——配合 Claude Code 时发挥最大价值。生命周期 hooks 实时上报每个 pane 的状态（进行中·需要你·已完成），驱动收件箱和推送通知。',
+    'cc.setup-h':'接入方式','cc.c1':'# 在 handmux setup 时接入（推荐——向导会提示你）','cc.c2':'# 或单独安装：',
+    'cc.p2':'安装后<strong>新开一个 Claude Code 会话</strong>——hooks 从 <code>~/.claude/settings.json</code> 加载，已有会话需重启才生效。',
+    'cc.inbox-h':'收件箱状态','cc.p3':'hooks 激活后，每个 Claude pane 都会被标注：',
+    'cc.working':'进行中','cc.w-p':'——Claude 正在运行',
+    'cc.needs':'需要你','cc.n-p':'——有授权提示或计划待批准，推送已发到手机',
+    'cc.done':'已完成','cc.d-p':'——任务结束，推送已发',
+    'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
+    'cc.dot-h':'tmux 状态圆点','cc.p5':'hooks 将颜色写入每个窗口的 <code>@claude_dot</code> 选项。要在 tmux 状态栏显示，handmux 可以修改 <code>~/.tmux.conf</code>：',
+    'cc.c3':'# 向导会询问是否一并添加 tmux 圆点','cc.c4':'# 重新加载 tmux 使其生效：',
+  }
+};
+
+let curLang = 'en';
+function applyLang(lang) {
+  if (!I18N[lang]) lang = 'en';
+  curLang = lang;
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = I18N[lang][el.getAttribute('data-i18n')];
+    if (v != null) el.innerHTML = v;
+  });
+  const lbl = document.getElementById('langLabel');
+  if (lbl) lbl.textContent = lang === 'zh' ? '中' : 'EN';
+  document.querySelectorAll('.lang-opt').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
+  try { localStorage.setItem('handmux_lang', lang); } catch(e) {}
+}
+const _langMenu = document.getElementById('langMenu');
+const _langDrop = document.getElementById('langDrop');
+document.getElementById('langBtn').addEventListener('click', () => {
+  const open = !_langMenu.hidden;
+  _langMenu.hidden = open;
+  _langDrop.classList.toggle('open', !open);
+});
+document.addEventListener('click', e => {
+  if (_langDrop && !_langDrop.contains(e.target)) {
+    _langMenu.hidden = true;
+    _langDrop.classList.remove('open');
+  }
+});
+document.querySelectorAll('.lang-opt').forEach(b =>
+  b.addEventListener('click', () => { applyLang(b.dataset.lang); _langMenu.hidden = true; _langDrop.classList.remove('open'); }));
+let init = 'en';
+try { init = localStorage.getItem('handmux_lang'); } catch(e) {}
+if (!init) init = (navigator.language||'').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+applyLang(init);
+
+// active sidebar link tracking
+const secs = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+secs.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

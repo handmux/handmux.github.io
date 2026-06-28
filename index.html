@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>handmux — drive your agent, ditch the desk · code from your phone</title>
+<meta name="description" content="Drive your agent, ditch the desk — keep coding from your phone. Keep your creativity in hand: the same live tmux session on your computer and your phone. Pick up your build anywhere — drive real panes, get pushed when your agent (Claude Code & co) needs you, approve with your thumb. One command, a link, a token.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0b09;
+    --bg-1: #111310;
+    --bg-2: #181b15;
+    --ink: #ece6d4;
+    --dim: #8f8b76;
+    --faint: #5c5a4d;
+    --amber: #ffb454;
+    --amber-deep: #d98a2b;
+    --green: #74e6a0;
+    --green-deep: #46d6a2;
+    --pink: #e879a6;
+    --blue: #6ea8ff;
+    --line: #2a2b22;
+    --glow: 0 0 22px rgba(116,230,160,.30);
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --display: "Martian Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+  /* atmosphere: amber halo + scanlines + grain */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(1100px 620px at 72% -8%, rgba(116,230,160,.12), transparent 60%),
+      radial-gradient(820px 520px at 8% 18%, rgba(116,230,160,.06), transparent 55%);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .5;
+    background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px);
+    mix-blend-mode: multiply;
+  }
+  .grain { position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: .045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* tmux-style status bar */
+  .statusbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg-1); border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(6px);
+  }
+  .statusbar .inner { max-width: 1300px; margin: 0 auto; padding: 0 24px; height: 53px;
+    display: flex; align-items: center; gap: 14px; font-size: 13px; }
+  .tag { background: var(--green); color: #07140c; padding: 2px 9px; font-weight: 800;
+    font-family: var(--display); letter-spacing: -.02em; font-size: 13px; }
+  .statusbar .brand { display: inline-flex; align-items: center; gap: 9px; }
+  .statusbar .logo { width: 34px; height: 34px; display: block; flex: none; }
+  .statusbar .sep { color: var(--faint); }
+  .statusbar .host { color: var(--dim); }
+  .statusbar nav { margin-left: auto; display: flex; gap: 18px; align-items: center; }
+  .statusbar nav a { color: var(--dim); text-decoration: none; transition: color .2s; }
+  .statusbar nav a:hover { color: var(--green); }
+  .nav-docs { color: var(--dim); text-decoration: none; font-size: 13px; transition: color .2s; margin-left: 20px; }
+  .nav-docs:hover { color: var(--green); }
+  /* language toggle / github icon */
+  .gh-link { display: inline-flex; align-items: center; color: var(--dim); transition: color .2s; }
+  .gh-link:hover { color: var(--green); }
+  .lang-drop { position: relative; }
+  .lang-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; color: var(--dim); font-family: var(--mono); font-size: 13px; cursor: pointer; padding: 0; transition: color .2s; }
+  .lang-btn:hover { color: var(--green); }
+  .lang-chevron { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+  .lang-drop.open .lang-chevron { transform: rotate(180deg); }
+  .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: #141610; border: 1px solid var(--line); min-width: 86px; z-index: 200; padding: 4px 0; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+  .lang-menu[hidden] { display: none; }
+  .lang-opt { display: block; width: 100%; padding: 7px 14px; background: none; border: none; color: var(--dim); font-family: var(--mono); font-size: 13px; text-align: left; cursor: pointer; white-space: nowrap; }
+  .lang-opt:hover { color: var(--ink); background: rgba(116,230,160,.05); }
+  .lang-opt.on { color: var(--green); }
+
+  /* hero */
+  .hero { padding: 64px 0 52px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 36px; align-items: center; }
+  .eyebrow { color: var(--green-deep); font-size: 12.5px; letter-spacing: .18em; text-transform: uppercase; }
+  h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 5.2vw, 52px);
+    line-height: .98; letter-spacing: -.04em; margin: 14px 0 6px; white-space: normal; min-width: 0; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .lede { font-size: clamp(16px, 2.1vw, 19px); color: var(--ink); max-width: 44ch; margin-top: 14px; }
+  .lede b { color: var(--green); font-weight: 600; }
+  .sub { color: var(--dim); margin-top: 12px; max-width: 52ch; font-size: 14.5px; }
+
+  .cta { margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .install {
+    display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+    background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
+    font-family: var(--mono); font-size: 15px; padding: 13px 16px; transition: border-color .2s, box-shadow .2s;
+  }
+  .install:hover { border-color: var(--green-deep); box-shadow: var(--glow); }
+  .install .dollar { color: var(--green); }
+  .install .copyhint { color: var(--faint); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; border-left: 1px solid var(--line); padding-left: 10px; }
+  .install.copied .copyhint { color: var(--green); }
+  .ghost { color: var(--dim); text-decoration: none; font-size: 14px; border-bottom: 1px dashed var(--faint); padding-bottom: 2px; transition: color .2s, border-color .2s; }
+  .ghost:hover { color: var(--green); border-color: var(--green); }
+
+  /* terminal window mock */
+  .term { background: linear-gradient(180deg, var(--bg-1), #0d0f0b); border: 1px solid var(--line);
+    box-shadow: 0 40px 90px -40px rgba(0,0,0,.9), inset 0 0 0 1px rgba(116,230,160,.04);
+    font-size: 13.5px; }
+  .term .bar { display: flex; align-items: center; gap: 8px; padding: 9px 13px; border-bottom: 1px solid var(--line); color: var(--dim); }
+  .term .bar .dot { width: 9px; height: 9px; border-radius: 50%; background: #2f3127; }
+  .term .bar .dot.r { background: var(--pink); } .term .bar .dot.y { background: var(--amber); } .term .bar .dot.g { background: var(--green); }
+  .term .bar .name { margin-left: 6px; font-size: 12px; }
+  .term .body { padding: 18px 18px 20px; min-height: 272px; }
+  /* invisible width-reservation: the widest line (the open URL) is always present at height 0, so the
+     terminal box is sized to its widest content from the start and never grows as lines stream in.
+     A ::before survives the screencast's innerHTML='' resets (pseudo-elements aren't part of innerHTML). */
+  .term .body::before { content: "  🌐 open   https://elementary-incidents.trycloudflare.com";
+    display: block; height: 0; overflow: hidden; white-space: pre; color: transparent; }
+  .term .body .caret { display: inline-block; width: .55ch; height: 1em; background: var(--green);
+    transform: translateY(.12em); animation: blink 1.1s steps(1) infinite; }
+  .term .body div { white-space: pre; opacity: 0; animation: line .5s forwards; }
+  .term .body .l1 { animation-delay: .25s; } .term .body .l2 { animation-delay: .6s; }
+  .term .body .l3 { animation-delay: .95s; } .term .body .l4 { animation-delay: 1.25s; }
+  .term .body .l5 { animation-delay: 1.55s; } .term .body .l6 { animation-delay: 1.85s; }
+  @keyframes line { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .term .p { color: var(--green); } .term .ok { color: var(--green); } .term .k { color: var(--green); }
+  .term .u { color: var(--ink); } .term .d { color: var(--dim); }
+  .qrimg { width: 96px; height: 96px; display: block; margin-top: 8px; opacity: .92; }
+
+  /* real-phone showcase (recorded GIFs) */
+  .showcase { text-align: center; }
+  .showcase .h2 { justify-content: center; }
+  .showcase .h2::after, .showcase .h2::before { content: ""; flex: 1; height: 1px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 10px); }
+  .showcase .lead { margin: 16px auto 34px; text-align: center; }
+  .phones { display: flex; gap: 48px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+  .phone-fig { margin: 0; }
+  .phone-fig figcaption { margin-top: 16px; color: var(--dim); font-size: 13px; max-width: 26ch; }
+  .phone-fig figcaption b { color: var(--green); font-weight: 500; }
+  .phone { width: 270px; margin: 0 auto; padding: 11px 11px 13px; border: 1px solid var(--line); border-radius: 34px;
+    background: linear-gradient(180deg, #15170f, #0a0c07);
+    box-shadow: 0 50px 110px -50px rgba(0,0,0,.95), inset 0 0 0 1px rgba(116,230,160,.05), var(--glow); }
+  .phone .notch { width: 56px; height: 5px; border-radius: 3px; background: #2f3127; margin: 1px auto 8px; }
+  .phone .screen { display: block; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+  .phone .screen img { display: block; width: 100%; height: auto; }
+  /* simulated phone OS status bar */
+  .phone .statusbar { display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 15px 5px; background: #000; color: #e9e7df; font-family: var(--mono);
+    font-size: 12px; line-height: 1; }
+  .phone .statusbar .time { font-weight: 600; letter-spacing: .01em; }
+  .phone .statusbar .ic { display: inline-flex; align-items: center; gap: 6px; }
+  .phone .sig { display: inline-flex; align-items: flex-end; gap: 1.5px; height: 9px; }
+  .phone .sig i { width: 2.5px; background: #e9e7df; border-radius: .5px; }
+  .phone .sig i:nth-child(1){ height: 3px } .phone .sig i:nth-child(2){ height: 5px }
+  .phone .sig i:nth-child(3){ height: 7px } .phone .sig i:nth-child(4){ height: 9px }
+  .phone .wifi { width: 13px; height: 9px; }
+  .phone .batt { display: inline-flex; align-items: center; }
+  .phone .batt .b { position: relative; width: 18px; height: 9px; border: 1px solid #e9e7df; border-radius: 2px; padding: 1px; }
+  .phone .batt .b::after { content: ""; position: absolute; right: -3px; top: 2.5px; width: 1.5px; height: 3px; background: #e9e7df; border-radius: 0 1px 1px 0; }
+  .phone .batt .b i { display: block; height: 100%; width: 78%; background: var(--green); border-radius: .5px; }
+  @media (max-width: 620px) { .phones { gap: 36px; } }
+
+  /* claude code section */
+  .claude-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 44px; align-items: center; margin-top: 28px; }
+  .notif-stack { display: flex; flex-direction: column; gap: 12px; }
+  .notif { background: rgba(20,22,17,.92); border: 1px solid var(--line); border-left: 2px solid var(--amber);
+    padding: 13px 15px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 24px 60px -36px #000;
+    opacity: 0; animation: line .55s forwards; }
+  .notif:nth-child(1){ animation-delay:.1s } .notif:nth-child(2){ animation-delay:.3s } .notif:nth-child(3){ animation-delay:.5s }
+  .notif .ic { width: 34px; height: 34px; background: var(--amber); color: #1a1206; display: grid; place-items: center;
+    font-family: var(--display); font-weight: 800; font-size: 14px; flex: none; }
+  .notif .meta { font-size: 13px; min-width: 0; }
+  .notif .title { color: var(--ink); } .notif .title b { color: var(--amber); font-weight: 600; }
+  .notif .desc { color: var(--dim); margin-top: 2px; }
+  .notif .desc code { color: var(--green); }
+  .notif .time { margin-left: auto; color: var(--faint); font-size: 11px; flex: none; padding-left: 8px; }
+  /* inbox mock — mirrors the real in-app Inbox (web/src/components/Inbox.jsx + styles.css), real colours */
+  .inbox { background: #232427; border-radius: 12px; padding: 8px; box-shadow: 0 14px 44px rgba(0,0,0,.5); color: #e6e6e6; }
+  .inbox-head { display: flex; align-items: center; gap: 8px; padding: 2px 8px 8px; font-size: 13px; color: #9aa0a6; }
+  .inbox-summary { display: flex; gap: 4px; margin-left: auto; }
+  .inbox-summary .inbox-chip { animation: none; font-size: 10px; padding: 1px 5px; }
+  .inbox-chip { font-size: 11px; padding: 1px 6px; border-radius: 4px; flex: none; }
+  .inbox-chip.needs { background: #e0a020; color: #111; }
+  .inbox-chip.done { background: #2e7d46; color: #fff; }
+  .inbox-chip.working { background: #2f6fed; color: #fff; animation: tw-blink 1s ease-in-out infinite; }
+  @keyframes tw-blink { 50% { opacity: .4; } }
+  .inbox-group-title { font-size: 12px; color: #888; letter-spacing: 1px; padding: 8px 8px 4px; }
+  .inbox-row { display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 8px; }
+  .inbox-row-head { display: flex; align-items: center; gap: 6px; }
+  .inbox-loc { font-weight: 600; }
+  .inbox-time { margin-left: auto; font-size: 11px; color: #888; }
+  .inbox-msg { font-size: 12px; color: #9aa0a6; }
+  .claude-points { display: grid; gap: 20px; }
+  .pt { display: flex; gap: 14px; } .pt .n { color: var(--green-deep); font-family: var(--display); font-size: 12px; padding-top: 3px; }
+  .pt h4 { font-family: var(--display); font-weight: 600; font-size: 15px; color: var(--ink); letter-spacing: -.01em; }
+  .pt p { color: var(--dim); font-size: 13.5px; margin-top: 3px; }
+  @media (max-width: 860px) { .claude-grid { grid-template-columns: 1fr; gap: 28px; } }
+
+  /* section heading with box-draw rule */
+  section { padding: 58px 0; }
+  .h2 { font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--green-deep); display: flex; align-items: center; gap: 16px; }
+  .h2::after { content: ""; flex: 1; height: 1px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 10px); }
+
+  /* feature grid */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 26px; }
+  .card { background: var(--bg); padding: 26px 24px; transition: background .25s; position: relative; }
+  .card:hover { background: var(--bg-1); }
+  .card .ix { font-family: var(--display); color: var(--faint); font-size: 12px; }
+  .card h3 { font-family: var(--display); font-weight: 600; font-size: 17px; margin: 14px 0 8px; letter-spacing: -.01em; color: var(--ink); }
+  .card:hover h3 { color: var(--green); }
+  .card p { color: var(--dim); font-size: 13.5px; }
+  .card p code { color: var(--green); }
+  .lead { color: var(--dim); font-size: 14.5px; margin-top: 16px; max-width: 66ch; }
+  .lead b { color: var(--ink); font-weight: 500; }
+  .card .corner { position: absolute; top: 12px; right: 14px; color: var(--faint); transition: color .25s; }
+  .card:hover .corner { color: var(--green-deep); }
+
+  /* how it works */
+  .flow { margin-top: 26px; display: flex; align-items: stretch; }
+  .node { flex: 1; border: 1px solid var(--line); background: linear-gradient(180deg, var(--bg-1), var(--bg));
+    padding: 28px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 7px; }
+  .node.mid { border-color: rgba(116,230,160,.32); box-shadow: inset 0 0 34px rgba(116,230,160,.07); }
+  .node-ico { width: 50px; height: 50px; display: grid; place-items: center; border: 1px solid var(--line);
+    background: rgba(116,230,160,.08); margin-bottom: 6px; }
+  .node-ico svg { width: 27px; height: 27px; stroke: var(--green); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .node-t { font-family: var(--display); font-size: 15px; color: var(--ink); letter-spacing: -.01em; }
+  .node-s { font-size: 12.5px; color: var(--dim); line-height: 1.45; max-width: 24ch; }
+  .node-s code { display: inline-block; margin-top: 1px; font-family: var(--mono); color: var(--green);
+    background: rgba(116,230,160,.1); border: 1px solid rgba(116,230,160,.28); padding: 3px 9px; font-size: 12px; white-space: nowrap; }
+  .hop { flex: none; width: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; }
+  .hop-l { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; font-family: var(--mono); color: var(--green-deep); }
+  .hop svg { width: 62px; height: 10px; stroke: var(--green-deep); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  /* stay one row on phones — squeeze nodes/hops rather than stacking */
+  @media (max-width: 720px) {
+    .node { padding: 16px 7px; gap: 5px; min-width: 0; }
+    .node-ico { width: 38px; height: 38px; margin-bottom: 3px; }
+    .node-ico svg { width: 21px; height: 21px; }
+    .node-t { font-size: 12px; }
+    .node-s { font-size: 10px; line-height: 1.35; }
+    .hop { width: 46px; gap: 4px; }
+    .hop svg { width: 32px; }
+    .hop-l { font-size: 8px; letter-spacing: .04em; }
+    .node-s code { white-space: normal; font-size: 10px; padding: 2px 6px; }
+  }
+  @media (max-width: 430px) {
+    .node { padding: 12px 4px; }
+    .node-ico { width: 31px; height: 31px; }
+    .node-ico svg { width: 17px; height: 17px; }
+    .node-t { font-size: 11px; }
+    .node-s { font-size: 9px; }
+    .node-s code { font-size: 8.5px; padding: 1px 4px; }
+    .hop { width: 28px; }
+    .hop svg { width: 18px; }
+    .hop-l { font-size: 7px; letter-spacing: 0; }
+  }
+  .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; }
+  .way { border: 1px solid var(--line); padding: 22px; background: var(--bg); }
+  .way .t { font-family: var(--display); font-size: 14px; color: var(--ink); letter-spacing: -.01em; }
+  .way .t .badge { font-size: 10px; padding: 2px 8px; margin-left: 8px; letter-spacing: .08em; text-transform: uppercase; }
+  .way.cf .badge { background: rgba(116,230,160,.16); color: var(--green); }
+  .way.self .badge { background: rgba(116,230,160,.14); color: var(--green); }
+  .way p { color: var(--dim); font-size: 13px; margin-top: 10px; }
+
+  /* commands */
+  .cmds { margin-top: 24px; border: 1px solid var(--line); background: #0d0f0b; padding: 24px 26px; }
+  .cmds pre { white-space: pre; overflow-x: auto; font-size: 13px; line-height: 1.85; color: var(--dim); }
+  .cmds pre b { color: var(--green); font-weight: 500; } .cmds pre i { color: var(--faint); font-style: normal; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 30px; }
+  footer .inner { padding: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; color: var(--faint); font-size: 12.5px; }
+  footer a { color: var(--dim); text-decoration: none; } footer a:hover { color: var(--green); }
+  footer .ml { margin-left: auto; }
+
+  @media (max-width: 1040px) {
+    .hero { grid-template-columns: 1fr; gap: 34px; padding-top: 48px; }
+    .grid { grid-template-columns: 1fr; } .ways { grid-template-columns: 1fr; }
+    .statusbar .host { display: none; }
+    /* single column: the terminal fills the column and may be narrower than its widest line — drop the
+       width reservation and let the long URL scroll inside the terminal instead of overflowing the page. */
+    .term { min-width: 0; }
+    .term .body { overflow-x: auto; }
+    .term .body::before { content: none; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<div class="statusbar">
+  <div class="inner">
+    <span class="brand"><img class="logo" src="logo-mark.svg" width="34" height="34" alt="handmux logo"><span class="tag">handmux</span></span>
+    <a class="nav-docs" href="docs.html" data-i18n="nav.docs">docs</a>
+    <nav>
+      <a href="https://www.npmjs.com/package/handmux" class="gh-link" aria-label="npm" title="npm">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456l-.01 10.382H5.113z"/></svg>
+      </a>
+      <a href="https://github.com/yuanyuanzijin/handmux" class="gh-link" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <div class="lang-drop" id="langDrop">
+        <button class="lang-btn" id="langBtn" aria-haspopup="true">
+          <span id="langLabel">EN</span>
+          <svg class="lang-chevron" viewBox="0 0 10 6" width="9" height="9"><polyline points="1,1 5,5 9,1"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" hidden>
+          <button class="lang-opt" data-lang="en">English</button>
+          <button class="lang-opt" data-lang="zh">中文</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow" data-i18n="hero.eyebrow">open-source · mobile vibe coding</div>
+      <h1><span data-i18n="hero.h1">drive your agent,<br>ditch the desk</span></h1>
+      <p class="lede" data-i18n="hero.lede"><b>Keep your creativity in hand.</b> One command on your computer, scan a QR — and pick up your build the moment inspiration hits.</p>
+      <p class="sub" data-i18n="hero.sub">Step away from your desk and the work doesn't stop. handmux drives your <b style="color:var(--green);font-weight:500">real tmux panes</b>, so the agent keeps running while you're on the train, in a queue, on the couch — pick up exactly where you left off. <b>No app to install — open the link in your phone's browser and you're in.</b> Works with <b>Claude Code</b>, Codex, aider, any shell — and it pings your phone the moment a pane needs you.</p>
+      <div class="cta">
+        <button class="install" id="install" aria-label="copy install command">
+          <span><span class="dollar">$</span>&nbsp;npm i -g handmux</span>
+          <span class="copyhint" data-i18n="cta.copy">copy</span>
+        </button>
+        <a class="ghost" href="#how" data-i18n="cta.how">how it works →</a>
+      </div>
+    </div>
+
+    <div class="term" aria-hidden="true">
+      <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="name">— handmux —</span></div>
+      <div class="body" id="screencast">
+        <div class="l1"><span class="p">$</span> <span class="u">handmux start --tunnel cloudflare</span></div>
+        <div class="l2"><span class="ok">✔</span> <span class="d">tmux ok   </span><span class="ok">✔</span> <span class="d">server :19999   </span><span class="ok">✔</span> <span class="d">tunnel up</span></div>
+        <div class="l3"><span class="k">🔑 token</span>  <span class="d">aicbHOGWdQ…</span></div>
+        <div class="l4"><span class="k">🌐 open </span>  <span class="u">https://elementary-incidents</span><span class="d">.trycloudflare.com</span></div>
+        <div class="l5"><svg class="qrimg" viewBox="0 0 25 25" shape-rendering="crispEdges" aria-hidden="true"><path stroke="#f3f1ea" d="M0 0.5h7M9 0.5h3M13 0.5h1M16 0.5h1M18 0.5h7M0 1.5h1M6 1.5h1M11 1.5h1M13 1.5h4M18 1.5h1M24 1.5h1M0 2.5h1M2 2.5h3M6 2.5h1M8 2.5h2M11 2.5h2M14 2.5h1M18 2.5h1M20 2.5h3M24 2.5h1M0 3.5h1M2 3.5h3M6 3.5h1M8 3.5h1M11 3.5h5M18 3.5h1M20 3.5h3M24 3.5h1M0 4.5h1M2 4.5h3M6 4.5h1M8 4.5h1M12 4.5h2M16 4.5h1M18 4.5h1M20 4.5h3M24 4.5h1M0 5.5h1M6 5.5h1M8 5.5h5M14 5.5h2M18 5.5h1M24 5.5h1M0 6.5h7M8 6.5h1M10 6.5h1M12 6.5h1M14 6.5h1M16 6.5h1M18 6.5h7M8 7.5h4M14 7.5h1M16 7.5h1M0 8.5h1M2 8.5h5M9 8.5h1M11 8.5h2M18 8.5h5M0 9.5h1M2 9.5h2M5 9.5h1M8 9.5h3M12 9.5h2M19 9.5h1M23 9.5h1M0 10.5h5M6 10.5h6M13 10.5h3M18 10.5h1M21 10.5h1M23 10.5h2M2 11.5h3M7 11.5h1M10 11.5h1M13 11.5h1M15 11.5h1M17 11.5h2M20 11.5h1M24 11.5h1M0 12.5h2M4 12.5h3M8 12.5h2M11 12.5h2M14 12.5h1M16 12.5h3M20 12.5h1M22 12.5h3M0 13.5h1M3 13.5h1M7 13.5h1M9 13.5h1M16 13.5h1M19 13.5h1M21 13.5h1M23 13.5h1M0 14.5h1M3 14.5h1M6 14.5h2M9 14.5h4M15 14.5h3M19 14.5h3M23 14.5h2M0 15.5h1M2 15.5h2M5 15.5h1M7 15.5h1M9 15.5h1M11 15.5h1M14 15.5h3M19 15.5h2M24 15.5h1M0 16.5h1M2 16.5h2M5 16.5h3M9 16.5h1M11 16.5h1M15 16.5h6M22 16.5h1M8 17.5h1M10 17.5h1M12 17.5h3M16 17.5h1M20 17.5h2M0 18.5h7M9 18.5h1M13 18.5h2M16 18.5h1M18 18.5h1M20 18.5h1M22 18.5h3M0 19.5h1M6 19.5h1M8 19.5h1M10 19.5h1M12 19.5h2M16 19.5h1M20 19.5h2M23 19.5h1M0 20.5h1M2 20.5h3M6 20.5h1M8 20.5h1M10 20.5h1M12 20.5h1M14 20.5h7M22 20.5h1M24 20.5h1M0 21.5h1M2 21.5h3M6 21.5h1M8 21.5h3M17 21.5h2M20 21.5h5M0 22.5h1M2 22.5h3M6 22.5h1M8 22.5h1M11 22.5h2M16 22.5h1M21 22.5h2M24 22.5h1M0 23.5h1M6 23.5h1M9 23.5h1M11 23.5h1M14 23.5h8M24 23.5h1M0 24.5h7M8 24.5h1M10 24.5h2M18 24.5h7"/></svg></div>
+        <div class="l6"><span class="d" data-i18n="term.scan">scan it → you're in (the QR carries your token)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="showcase" id="see">
+    <div class="h2" data-i18n="see.h2">a real session, on your phone</div>
+    <p class="lead" data-i18n="see.lead">No mockup — a real phone browser driving real panes: a push pings you to approve a <b>Claude Code</b> prompt, read rendered docs aloud, review a git diff — all with your thumb.</p>
+    <div class="phones">
+      <figure class="phone-fig">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span class="time">9:41</span><span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span><svg class="wifi" viewBox="0 0 16 12" fill="none"><path d="M8 10.5l1.6-2a2 2 0 0 0-3.2 0L8 10.5zM4.8 6.4a5 5 0 0 1 6.4 0l1.3-1.6a7 7 0 0 0-9 0l1.3 1.6zM2.2 3.2a9 9 0 0 1 11.6 0L15 1.7a11 11 0 0 0-14 0l1.2 1.5z" fill="#e9e7df"/></svg><span class="batt"><span class="b"><i></i></span></span></span></div>
+            <img src="handmux-approve.gif" width="300" height="649" loading="lazy" alt="handmux on a phone: a Claude Code permission prompt arrives and is approved with a tap">
+          </div>
+        </div>
+        <figcaption data-i18n="see.cap1">A push pings your phone — a <b>Claude Code</b> permission to approve with a tap.</figcaption>
+      </figure>
+      <figure class="phone-fig">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span class="time">9:41</span><span class="ic"><span class="sig"><i></i><i></i><i></i><i></i></span><svg class="wifi" viewBox="0 0 16 12" fill="none"><path d="M8 10.5l1.6-2a2 2 0 0 0-3.2 0L8 10.5zM4.8 6.4a5 5 0 0 1 6.4 0l1.3-1.6a7 7 0 0 0-9 0l1.3 1.6zM2.2 3.2a9 9 0 0 1 11.6 0L15 1.7a11 11 0 0 0-14 0l1.2 1.5z" fill="#e9e7df"/></svg><span class="batt"><span class="b"><i></i></span></span></span></div>
+            <img src="handmux-git.gif" width="300" height="649" loading="lazy" alt="handmux on a phone: rendered Markdown doc preview and a full-screen git diff">
+          </div>
+        </div>
+        <figcaption data-i18n="see.cap2">Open a doc as rendered <b>Markdown</b> — even have it <b>read aloud</b> — then a full-screen <b>git diff</b>.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="h2" data-i18n="start.h2">get going · 2 minutes</div>
+    <p class="lead" data-i18n="start.lead">Two things on your computer — and if you already use <b>tmux</b>, you're basically set. Your phone needs nothing but a browser.</p>
+    <div class="cmds">
+<pre data-i18n="start.body"><i># 1 · do you have the basics? (run on your computer)</i>
+node -v     <i># need Node ≥ 18   → nodejs.org</i>
+tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
+
+<i># 2 · install once, then run it</i>
+<b>npm i -g handmux</b>
+<b>handmux start</b>            <i># local / same wifi — nothing exposed</i>
+
+<i># 3 · scan the QR it prints → you're on your phone, driving your real terminal</i>
+<i># reach it from anywhere: </i><b>handmux start --tunnel cloudflare</b><i>  → a public link</i></pre>
+    </div>
+  </section>
+
+  <section id="claude">
+    <div class="h2" data-i18n="claude.h2">deepest with claude code</div>
+    <p class="lead" data-i18n="claude.lead">It drives <b>any</b> agent or TUI — and with <b>Claude Code</b> it goes furthest: it knows the moment a pane needs you.</p>
+    <div class="claude-grid">
+      <div class="inbox" aria-hidden="true">
+        <div class="inbox-head">
+          <span data-i18n="claude.ibx.title">Inbox</span>
+          <div class="inbox-summary">
+            <span class="inbox-chip working"><span data-i18n="claude.ibx.sw">Running</span> 1</span>
+            <span class="inbox-chip done"><span data-i18n="claude.ibx.sd">Completed</span> 1</span>
+            <span class="inbox-chip needs"><span data-i18n="claude.ibx.sn">Needs you</span> 1</span>
+          </div>
+        </div>
+        <div class="inbox-group">
+          <div class="inbox-group-title">dev</div>
+          <div class="inbox-row">
+            <div class="inbox-row-head"><span class="inbox-chip needs" data-i18n="claude.ibx.sn">Needs you</span><span class="inbox-loc">claude</span><span class="inbox-time">2m</span></div>
+            <div class="inbox-msg" data-i18n="claude.ibx.m2">Allow <code>git push origin main</code>?</div>
+          </div>
+          <div class="inbox-row">
+            <div class="inbox-row-head"><span class="inbox-chip done" data-i18n="claude.ibx.sd">Completed</span><span class="inbox-loc">tests</span><span class="inbox-time">9m</span></div>
+            <div class="inbox-msg" data-i18n="claude.ibx.m3">12 passed, 0 failed</div>
+          </div>
+          <div class="inbox-row">
+            <div class="inbox-row-head"><span class="inbox-chip working" data-i18n="claude.ibx.sw">Running</span><span class="inbox-loc">api</span><span class="inbox-time">now</span></div>
+            <div class="inbox-msg" data-i18n="claude.ibx.m1">vite build — compiling…</div>
+          </div>
+        </div>
+      </div>
+      <div class="claude-points">
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p1.h">Pinged when it needs you</h4><p data-i18n="claude.p1.p">A push the instant a pane hits a permission prompt, a plan approval, or finishes — even with the tab closed. No more babysitting a screen.</p></div></div>
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p2.h">Every agent at a glance</h4><p data-i18n="claude.p2.p">An inbox of your Claude panes, each tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Jump straight to the one that's blocked.</p></div></div>
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p3.h">Approve with your thumb</h4><p data-i18n="claude.p3.p">Answer permission prompts and plan approvals right from the phone — it's driving the real keys, so a tap is a real keystroke.</p></div></div>
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p4.h">Talk to it</h4><p data-i18n="claude.p4.p">Voice input to fire off the next prompt, hands-free, from wherever you are.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="h2" data-i18n="feat.h2">more than a terminal</div>
+    <p class="lead" data-i18n="feat.lead">The competitors stop at a remote shell. handmux is a full <b>mobile cockpit</b> for your sessions — review code, preview your app, read docs and move files without leaving the couch.</p>
+    <div class="grid">
+      <div class="card"><span class="corner">┐</span><div class="ix">open</div><h3 data-i18n="feat.c1.h">Nothing to install</h3><p data-i18n="feat.c1.p">Open the link in your phone's browser — that's it. No App Store, no client. Add to Home Screen and it runs full-screen as a PWA, basically native.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">git</div><h3 data-i18n="feat.c2.h">Diffs in your hand</h3><p data-i18n="feat.c2.p">A VS&nbsp;Code-style git panel: changes, commit history, any branch — tap for a full-screen colored diff. Multi-repo tabs, read-only, never touches your tree.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">preview</div><h3 data-i18n="feat.c3.h">Preview your work, anywhere</h3><p data-i18n="feat.c3.p">Preview a static site from a folder, or a live service by port — your phone renders it with routing, API and HMR intact. Phone or desktop viewport.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">docs</div><h3 data-i18n="feat.c4.h">Read &amp; hear docs</h3><p data-i18n="feat.c4.p">Tap any path in the terminal to open it — Markdown rendered, font zoom, and read-aloud with sentence-by-sentence highlight.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">files</div><h3 data-i18n="feat.c5.h">Files both ways</h3><p data-i18n="feat.c5.p">Upload from the chat box (multi-select, path auto-filled), download with a tap, share straight into the app, copy any absolute path.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">image</div><h3 data-i18n="feat.c6.h">Image &amp; GIF viewer</h3><p data-i18n="feat.c6.p">Open any image, screenshot or GIF the terminal throws up — pinch-zoom, save to your photos, share it out, and GIFs play inline.</p></div>
+    </div>
+  </section>
+
+  <section id="fundamentals">
+    <div class="h2" data-i18n="fund.h2">and the fundamentals</div>
+    <div class="grid">
+      <div class="card"><span class="corner">┐</span><div class="ix">01</div><h3 data-i18n="fund.c1.h">Same session, two screens</h3><p data-i18n="fund.c1.p">Your phone drives the very terminal on your desk — the same live tmux. Anything a terminal can do, it does: run commands, open vim, any TUI, any agent. Step away mid-build and pick it up from your thumb, exact same state.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">02</div><h3 data-i18n="fund.c2.h">Two commands</h3><p data-i18n="fund.c2.p"><code>handmux start</code> just runs it; <code>handmux setup</code> configures a tunnel and saves it. The server, the tunnel, the QR — handled.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">03</div><h3 data-i18n="fund.c3.h">Public or private</h3><p data-i18n="fund.c3.p">Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, or self-host on your own VPS — all wired up by <code>handmux setup</code>.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">04</div><h3 data-i18n="fund.c4.h">Ideas &amp; commands</h3><p data-i18n="fund.c4.p">A per-window to-do list you can voice in and one-tap insert, plus a command palette with frequent/recent and slash shortcuts (<code>/compact</code>, <code>/model</code>…).</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">05</div><h3 data-i18n="fund.c5.h">Built for flaky networks</h3><p data-i18n="fund.c5.p">Reconnect with backoff, a connection-lost banner, an offline page, polling that pauses when hidden — plus a reflow-safe cursor and drag-to-select copy.</p></div>
+      <div class="card"><span class="corner">┐</span><div class="ix">06</div><h3 data-i18n="fund.c6.h">Starts at login</h3><p data-i18n="fund.c6.p"><code>service install</code> registers launchd / systemd so the whole thing comes back after reboot.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="h2" data-i18n="how.h2">how it works</div>
+    <div class="flow">
+      <div class="node">
+        <div class="node-ico"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg></div>
+        <div class="node-t" data-i18n="how.n1.t">Your phone</div>
+        <div class="node-s" data-i18n="how.n1.s">no app · add to home screen</div>
+      </div>
+      <div class="hop"><span class="hop-l" data-i18n="how.hop1">https</span><svg viewBox="0 0 60 10"><path d="M0 5h50"/><path d="M50 1l8 4-8 4"/></svg></div>
+      <div class="node mid">
+        <div class="node-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
+        <div class="node-t" data-i18n="how.n2.t">Tunnel</div>
+        <div class="node-s" data-i18n="how.n2.s">we start it for you · or your own</div>
+      </div>
+      <div class="hop"><span class="hop-l" data-i18n="how.hop2">reverse</span><svg viewBox="0 0 60 10"><path d="M0 5h50"/><path d="M50 1l8 4-8 4"/></svg></div>
+      <div class="node">
+        <div class="node-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><line x1="6.5" y1="7.5" x2="6.5" y2="7.5"/><line x1="6.5" y1="16.5" x2="6.5" y2="16.5"/></svg></div>
+        <div class="node-t" data-i18n="how.n3.t">Your machine</div>
+        <div class="node-s" data-i18n="how.n3.s"><code>handmux start</code></div>
+      </div>
+    </div>
+    <div class="ways">
+      <div class="way cf">
+        <div class="t" data-i18n="how.cf.t">cloudflare<span class="badge">zero-config</span></div>
+        <p data-i18n="how.cf.p">One outbound connection to Cloudflare's edge hands you a public <code>https</code> link. No ports to open, no IP, no certs. Great to start in seconds.</p>
+      </div>
+      <div class="way self">
+        <div class="t" data-i18n="how.self.t">self-hosted<span class="badge">your domain</span></div>
+        <p data-i18n="how.self.p">A reverse tunnel to your own VPS with your domain and TLS — stable, fully yours, and works where Cloudflare's edge is unreliable.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="h2" data-i18n="cli.h2">the whole cli</div>
+    <div class="cmds">
+<pre data-i18n="cli.body"><b>handmux start</b> [flags]                 <i># run it — LAN-only by default, no config needed</i>
+<b>handmux setup</b>                         <i># configure tunnel / name / notifications (saved; re-run to change)</i>
+<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see the live URL</i>
+<b>handmux logs</b> [--follow]              <i># tail the supervisor log</i>
+<b>handmux config</b>                        <i># show effective config + where each value came from</i>
+<b>handmux service install</b>               <i># start at login</i>
+
+<i># flags (one-run overrides):</i> --tunnel none|cloudflare|cloudflare-named|ssh  --port  --token  --config</pre>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="inner wrap">
+    <span>handmux</span>
+    <span class="sep" style="color:var(--faint)">·</span>
+    <span data-i18n="footer.req">needs Node ≥ 18 &amp; tmux ≥ 3.0</span>
+    <a class="ml" href="https://github.com/yuanyuanzijin/handmux">github →</a>
+    <a href="https://www.npmjs.com/package/handmux">npm →</a>
+    <span>AGPL-3.0</span>
+  </div>
+</footer>
+
+<script>
+  // ---- bilingual copy (EN / 中文). Values are innerHTML for the matching [data-i18n] node. ----
+  const I18N = {
+    en: {
+      'nav.docs': 'docs',
+      'hero.eyebrow': 'open-source · mobile vibe coding',
+      'hero.h1': 'drive your agent,<br>ditch the desk',
+      'hero.lede': '<b>Keep your creativity in hand.</b> One command on your computer, scan a QR — and pick up your build the moment inspiration hits.',
+      'hero.sub': 'Step away from your desk and the work doesn\'t stop. handmux drives your <b style="color:var(--green);font-weight:500">real tmux panes</b>, so the agent keeps running while you\'re on the train, in a queue, on the couch — pick up exactly where you left off. <b>No app to install — open the link in your phone\'s browser and you\'re in.</b> Works with <b>Claude Code</b>, Codex, aider, any shell — and it pings your phone the moment a pane needs you.',
+      'cta.copy': 'copy', 'cta.how': 'how it works →',
+      'term.scan': "scan it → you're in (the QR carries your token)",
+      'see.h2': 'a real session, on your phone',
+      'see.lead': 'No mockup — a real phone browser driving real panes: a push pings you to approve a <b>Claude Code</b> prompt, read rendered docs aloud, review a git diff — all with your thumb.',
+      'see.cap1': 'A push pings your phone — a <b>Claude Code</b> permission to approve with a tap.',
+      'see.cap2': 'Open a doc as rendered <b>Markdown</b> — even have it <b>read aloud</b> — then a full-screen <b>git diff</b>.',
+      'start.h2': 'get going · 2 minutes',
+      'start.lead': "Two things on your computer — and if you already use <b>tmux</b>, you're basically set. Your phone needs nothing but a browser.",
+      'start.body': "<i># 1 · do you have the basics? (run on your computer)</i>\nnode -v     <i># need Node ≥ 18   → nodejs.org</i>\ntmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>\n\n<i># 2 · install once, then run it</i>\n<b>npm i -g handmux</b>\n<b>handmux start</b>            <i># local / same wifi — nothing exposed</i>\n\n<i># 3 · scan the QR it prints → you're on your phone, driving your real terminal</i>\n<i># reach it from anywhere: </i><b>handmux start --tunnel cloudflare</b><i>  → a public link</i>",
+      'claude.h2': 'deepest with claude code',
+      'claude.lead': 'It drives <b>any</b> agent or TUI — and with <b>Claude Code</b> it goes furthest: it knows the moment a pane needs you.',
+      'claude.ibx.title': 'Inbox',
+      'claude.ibx.sw': 'Running', 'claude.ibx.sd': 'Completed', 'claude.ibx.sn': 'Needs you',
+      'claude.ibx.m1': 'vite build — compiling…', 'claude.ibx.m2': 'Allow <code>git push origin main</code>?', 'claude.ibx.m3': '12 passed, 0 failed',
+      'claude.p1.h': 'Pinged when it needs you', 'claude.p1.p': 'A push the instant a pane hits a permission prompt, a plan approval, or finishes — even with the tab closed. No more babysitting a screen.',
+      'claude.p2.h': 'Every agent at a glance', 'claude.p2.p': 'An inbox of your Claude panes, each tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Jump straight to the one that’s blocked.',
+      'claude.p3.h': 'Approve with your thumb', 'claude.p3.p': "Answer permission prompts and plan approvals right from the phone — it's driving the real keys, so a tap is a real keystroke.",
+      'claude.p4.h': 'Talk to it', 'claude.p4.p': 'Voice input to fire off the next prompt, hands-free, from wherever you are.',
+      'feat.h2': 'more than a terminal',
+      'feat.lead': 'The competitors stop at a remote shell. handmux is a full <b>mobile cockpit</b> for your sessions — review code, preview your app, read docs and move files without leaving the couch.',
+      'feat.c1.h': 'Nothing to install', 'feat.c1.p': 'Open the link in your phone\'s browser — that\'s it. No App Store, no client. Add to Home Screen and it runs full-screen as a PWA, basically native.',
+      'feat.c2.h': 'Diffs in your hand', 'feat.c2.p': 'A VS&nbsp;Code-style git panel: changes, commit history, any branch — tap for a full-screen colored diff. Multi-repo tabs, read-only, never touches your tree.',
+      'feat.c3.h': 'Preview your work, anywhere', 'feat.c3.p': 'Preview a static site from a folder, or a live service by port — your phone renders it with routing, API and HMR intact. Phone or desktop viewport.',
+      'feat.c4.h': 'Read &amp; hear docs', 'feat.c4.p': 'Tap any path in the terminal to open it — Markdown rendered, font zoom, and read-aloud with sentence-by-sentence highlight.',
+      'feat.c5.h': 'Files both ways', 'feat.c5.p': 'Upload from the chat box (multi-select, path auto-filled), download with a tap, share straight into the app, copy any absolute path.',
+      'feat.c6.h': 'Image &amp; GIF viewer', 'feat.c6.p': 'Open any image, screenshot or GIF the terminal throws up — pinch-zoom, save to your photos, share it out, and GIFs play inline.',
+      'fund.h2': 'and the fundamentals',
+      'fund.c1.h': 'Same session, two screens', 'fund.c1.p': 'Your phone drives the very terminal on your desk — the same live tmux. Anything a terminal can do, it does: run commands, open vim, any TUI, any agent. Step away mid-build and pick it up from your thumb, exact same state.',
+      'fund.c2.h': 'Two commands', 'fund.c2.p': '<code>handmux start</code> just runs it; <code>handmux setup</code> configures a tunnel and saves it. The server, the tunnel, the QR — handled.',
+      'fund.c3.h': 'Public or private', 'fund.c3.p': 'Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, or self-host on your own VPS — all wired up by <code>handmux setup</code>.',
+      'fund.c4.h': 'Ideas &amp; commands', 'fund.c4.p': 'A per-window to-do list you can voice in and one-tap insert, plus a command palette with frequent/recent and slash shortcuts (<code>/compact</code>, <code>/model</code>…).',
+      'fund.c5.h': 'Built for flaky networks', 'fund.c5.p': 'Reconnect with backoff, a connection-lost banner, an offline page, polling that pauses when hidden — plus a reflow-safe cursor and drag-to-select copy.',
+      'fund.c6.h': 'Starts at login', 'fund.c6.p': '<code>service install</code> registers launchd / systemd so the whole thing comes back after reboot.',
+      'how.h2': 'how it works',
+      'how.n1.t': 'Your phone', 'how.n1.s': 'no app · add to home screen', 'how.hop1': 'https',
+      'how.n2.t': 'Tunnel', 'how.n2.s': 'we start it for you · or your own', 'how.hop2': 'reverse',
+      'how.n3.t': 'Your machine', 'how.n3.s': '<code>handmux start</code>',
+      'how.cf.t': 'cloudflare<span class="badge">zero-config</span>',
+      'how.cf.p': "One outbound connection to Cloudflare's edge hands you a public <code>https</code> link. No ports to open, no IP, no certs. Great to start in seconds.",
+      'how.self.t': 'self-hosted<span class="badge">your domain</span>',
+      'how.self.p': "A reverse tunnel to your own VPS with your domain and TLS — stable, fully yours, and works where Cloudflare's edge is unreliable.",
+      'cli.h2': 'the whole cli',
+      'cli.body': '<b>handmux start</b> [flags]                 <i># run it — LAN-only by default, no config needed</i>\n<b>handmux setup</b>                         <i># configure tunnel / name / notifications (saved; re-run to change)</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see the live URL</i>\n<b>handmux logs</b> [--follow]              <i># tail the supervisor log</i>\n<b>handmux config</b>                        <i># show effective config + where each value came from</i>\n<b>handmux service install</b>               <i># start at login</i>\n\n<i># flags (one-run overrides):</i> --tunnel none|cloudflare|cloudflare-named|ssh  --port  --token  --config',
+      'footer.req': 'needs Node ≥ 18 &amp; tmux ≥ 3.0',
+      'copy.idle': 'copy', 'copy.done': 'copied ✓', 'copy.fail': 'select & ⌘C',
+    },
+    zh: {
+      'nav.docs': '文档',
+      'hero.eyebrow': '开源 · 移动端 vibe coding',
+      'hero.h1': '指挥Agent干活,<br>何必守在电脑前?',
+      'hero.lede': '<b>把创造力随时握在手里。</b>电脑上跑一行命令、手机扫码连上,灵感一来就接着写。',
+      'hero.sub': '以前写代码,得钉在电脑前;现在不用了。手机操作的是你<b style="color:var(--green);font-weight:500">真实的 tmux pane</b>,里头的进程照跑不停——挤地铁、等公交、窝沙发,灵感来了随手接着写,离开时什么样、回来还什么样。<b>不用装 App——手机浏览器点开链接就进去了。</b>Claude Code、Codex、aider、任意 shell 都行;哪个 pane 要你拍板,第一时间叮一下推到你手机上。',
+      'cta.copy': '复制', 'cta.how': '看它怎么跑 →',
+      'term.scan': '扫码 → 直接进(token 就在二维码里)',
+      'see.h2': '真实会话演示',
+      'see.lead': '不是效果图——真实手机浏览器操作真实的 pane:推送提醒你批 <b>Claude Code</b> 的授权、把文档朗读出来、看 git diff——全用拇指。',
+      'see.cap1': '推送弹到手机上——一条 <b>Claude Code</b> 授权,拇指点一下就批。',
+      'see.cap2': '把文档当 <b>Markdown</b> 渲染打开,还能<b>朗读</b>出来,再全屏看一段 <b>git diff</b>。',
+      'start.h2': '上手 · 2 分钟',
+      'start.lead': '电脑上准备两样东西——如果你本来就用 <b>tmux</b>,基本就齐了。手机端只要一个浏览器。',
+      'start.body': '<i># 1 · 先看看基础够不够(在电脑上跑)</i>\nnode -v     <i># 需要 Node ≥ 18   → nodejs.org</i>\ntmux -V     <i># 需要 tmux ≥ 3.0  → brew install tmux / apt install tmux</i>\n\n<i># 2 · 装一次,然后跑起来</i>\n<b>npm i -g handmux</b>\n<b>handmux start</b>            <i># 仅本机 / 同一 wifi —— 不对外暴露</i>\n\n<i># 3 · 扫它打印的二维码 → 手机上就连上你真实的终端了</i>\n<i># 想从任何地方连:</i><b>handmux start --tunnel cloudflare</b><i>  → 一个公网链接</i>',
+      'claude.h2': '跟 Claude Code 最搭',
+      'claude.lead': '什么智能体、什么 TUI 都能带;而配上 <b>Claude Code</b> 最到位:哪个 pane 该你出手了,它当场就知道。',
+      'claude.ibx.title': '收件箱',
+      'claude.ibx.sw': '进行中', 'claude.ibx.sd': '已完成', 'claude.ibx.sn': '需要你',
+      'claude.ibx.m1': 'vite 构建中…', 'claude.ibx.m2': '允许执行 <code>git push origin main</code>?', 'claude.ibx.m3': '12 通过,0 失败',
+      'claude.p1.h': '需要你,就推给你', 'claude.p1.p': 'pane 一弹授权、要你批计划、或者干完了,立刻推到手机上,哪怕你早把标签页关了。再不用守着屏幕干等。',
+      'claude.p2.h': '哪个在忙,一眼看全', 'claude.p2.p': '一个收件箱把你所有 Claude pane 排好,每个都标着 <span style="color:var(--blue)">进行中</span> · <span style="color:var(--amber)">需要你</span> · <span style="color:var(--green)">已完成</span>。哪个卡住了,点一下直接过去。',
+      'claude.p3.h': '拇指点一下就批', 'claude.p3.p': '授权、批计划,在手机上直接点;手机敲的就是真实按键,你点一下,就等于在键盘上敲了一下。',
+      'claude.p4.h': '张嘴就能发', 'claude.p4.p': '下一条 prompt 直接说出来,手都不用动,人在哪都能发。',
+      'feat.h2': '不只是个终端',
+      'feat.lead': '别家做到远程 shell 就停了。handmux 给你的是一整个<b>移动驾驶舱</b>:看代码、开预览、读文档、传文件——窝在沙发上全办了。',
+      'feat.c1.h': '零安装,点开就用', 'feat.c1.p': '手机浏览器点开链接就用,不下 App、不装客户端。愿意的话"添加到主屏",立马变全屏 PWA,跟原生 App 几乎一样。',
+      'feat.c2.h': 'diff 一手掌握', 'feat.c2.p': '一块 VS&nbsp;Code 那样的 git 面板:改动、提交记录、随便哪个分支,点开就是全屏彩色 diff。多仓库分页、只读,绝不动你的工作区。',
+      'feat.c3.h': '随时随地预览你的作品', 'feat.c3.p': '挑个文件夹预览静态站点,或者按端口预览正跑着的服务;手机直接渲染,路由、API、HMR 一个不少。手机、桌面视口随你切。',
+      'feat.c4.h': '文档能读,也能听', 'feat.c4.p': '终端里的路径点一下就打开:Markdown 排好版、字号能缩放,还能一句一句高亮念给你听。',
+      'feat.c5.h': '文件随手传', 'feat.c5.p': '聊天框里直接传(能多选、路径自动填好),下载点一下就行,从别的 App 分享进来也行,绝对路径随手复制。',
+      'feat.c6.h': '看图、刷 GIF', 'feat.c6.p': '终端里蹦出来的图片、截图、GIF,点开就能看——双指缩放、存进相册、分享出去,GIF 还能动起来。',
+      'fund.h2': '还有那些基本功',
+      'fund.c1.h': '一个会话,两块屏', 'fund.c1.p': '手机连的就是你电脑上那个 tmux 终端本身——同一个、实时的。终端能干的它都能干:跑命令、开 vim、用各种 TUI、带任何智能体。干到一半起身走人,掏出手机原样接着干,状态一点不差。',
+      'fund.c2.h': '两条命令', 'fund.c2.p': '<code>handmux start</code> 直接就跑;<code>handmux setup</code> 把隧道配好存下来。服务、隧道、二维码,全给你弄妥。',
+      'fund.c3.h': '公开、私有都行', 'fund.c3.p': 'Cloudflare 快速隧道零配置就能连、Cloudflare 命名域名,或者自托管到自己的 VPS;不管哪种,<code>handmux setup</code> 都帮你接好。',
+      'fund.c4.h': '想法和命令', 'fund.c4.p': '每个窗口配一份待办,能语音记、点一下填进去;再加个命令面板,常用、最近、斜杠命令(<code>/compact</code>、<code>/model</code>…)都在里头。',
+      'fund.c5.h': '专治弱网', 'fund.c5.p': '断了自动退避重连、掉线有横幅、离线有兜底页、切走就暂停轮询;再加上不乱跳的光标和拖动选中复制。',
+      'fund.c6.h': '开机自启', 'fund.c6.p': '<code>service install</code> 注册到 launchd / systemd,机器重启后整套自己回来。',
+      'how.h2': '它怎么跑起来',
+      'how.n1.t': '你的手机', 'how.n1.s': '免装 App · 可加桌面', 'how.hop1': 'https',
+      'how.n2.t': '隧道', 'how.n2.s': '帮你起好,或用你自己的', 'how.hop2': '反向',
+      'how.n3.t': '你的机器', 'how.n3.s': '<code>handmux start</code>',
+      'how.cf.t': 'cloudflare<span class="badge">零配置</span>',
+      'how.cf.p': '往 Cloudflare 边缘拉一条出站连接,就换来一个公网 <code>https</code> 链接。不用开端口、不用公网 IP、不用证书,几秒就起。',
+      'how.self.t': '自托管<span class="badge">你的域名</span>',
+      'how.self.p': '反向隧道接到你自己的 VPS,用你的域名、你的 TLS:稳、全归你,Cloudflare 边缘不给力的地方照样能用。',
+      'cli.h2': '完整命令行',
+      'cli.body': '<b>handmux start</b> [flags]                 <i># 直接跑,默认只走局域网,零配置</i>\n<b>handmux setup</b>                         <i># 配隧道 / 名称 / 通知(存盘;想改再跑一次)</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># 起停 + 看当前地址</i>\n<b>handmux logs</b> [--follow]              <i># 看 supervisor 日志</i>\n<b>handmux config</b>                        <i># 打印生效配置,以及每个值从哪来</i>\n<b>handmux service install</b>               <i># 开机自启</i>\n\n<i># 参数(只对这一次生效):</i> --tunnel none|cloudflare|cloudflare-named|ssh  --port  --token  --config',
+      'footer.req': '需要 Node ≥ 18、tmux ≥ 3.0',
+      'copy.idle': '复制', 'copy.done': '已复制 ✓', 'copy.fail': '请手动选中再 ⌘C',
+    },
+  };
+
+  let curLang = 'en';
+  function applyLang(lang) {
+    if (!I18N[lang]) lang = 'en';
+    curLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const v = I18N[lang][el.getAttribute('data-i18n')];
+      if (v != null) el.innerHTML = v;
+    });
+    const lbl = document.getElementById('langLabel');
+    if (lbl) lbl.textContent = lang === 'zh' ? '中' : 'EN';
+    document.querySelectorAll('.lang-opt').forEach((b) => b.classList.toggle('on', b.dataset.lang === lang));
+    try { localStorage.setItem('handmux_lang', lang); } catch (e) {}
+  }
+
+  const _langMenu = document.getElementById('langMenu');
+  const _langDrop = document.getElementById('langDrop');
+  document.getElementById('langBtn').addEventListener('click', () => {
+    const open = !_langMenu.hidden;
+    _langMenu.hidden = open;
+    _langDrop.classList.toggle('open', !open);
+  });
+  document.addEventListener('click', (e) => {
+    if (_langDrop && !_langDrop.contains(e.target)) {
+      _langMenu.hidden = true;
+      _langDrop.classList.remove('open');
+    }
+  });
+  document.querySelectorAll('.lang-opt').forEach((b) =>
+    b.addEventListener('click', () => { applyLang(b.dataset.lang); _langMenu.hidden = true; _langDrop.classList.remove('open'); }));
+
+  let initial = 'en';
+  try { initial = localStorage.getItem('handmux_lang'); } catch (e) {}
+  if (!initial) initial = (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  applyLang(initial);
+
+  // copy-to-clipboard on the install command (localized hint)
+  const btn = document.getElementById('install');
+  const hint = btn.querySelector('.copyhint');
+  btn.addEventListener('click', async () => {
+    const text = 'npm i -g handmux';
+    const ok = () => {
+      btn.classList.add('copied'); hint.textContent = I18N[curLang]['copy.done'];
+      setTimeout(() => { btn.classList.remove('copied'); hint.textContent = I18N[curLang]['copy.idle']; }, 1800);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); ok(); return; }
+      throw new Error('no async clipboard');
+    } catch (e) {
+      // fallback for insecure origins (file:// / http) where navigator.clipboard is unavailable
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const done = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (done) { ok(); return; }
+        throw new Error('execCommand rejected');
+      } catch (e2) { hint.textContent = I18N[curLang]['copy.fail']; }
+    }
+  });
+
+  // ---- hero terminal "screencast": a looping, scripted handmux session. Pure JS, no deps. It types a
+  // command then streams the output, scene by scene, forever. Respects reduced-motion (leaves the static
+  // first frame). Isolated from the i18n/copy code above, so a hiccup here can never break the page. ----
+  (function () {
+    const el = document.getElementById('screencast');
+    if (!el) return;
+    let reduce = false;
+    try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    if (reduce) return;                                  // keep the static first frame, don't animate
+
+    const QR = '<svg class="qrimg" viewBox="0 0 25 25" shape-rendering="crispEdges" aria-hidden="true"><path stroke="#f3f1ea" d="M0 0.5h7M9 0.5h3M13 0.5h1M16 0.5h1M18 0.5h7M0 1.5h1M6 1.5h1M11 1.5h1M13 1.5h4M18 1.5h1M24 1.5h1M0 2.5h1M2 2.5h3M6 2.5h1M8 2.5h2M11 2.5h2M14 2.5h1M18 2.5h1M20 2.5h3M24 2.5h1M0 3.5h1M2 3.5h3M6 3.5h1M8 3.5h1M11 3.5h5M18 3.5h1M20 3.5h3M24 3.5h1M0 4.5h1M2 4.5h3M6 4.5h1M8 4.5h1M12 4.5h2M16 4.5h1M18 4.5h1M20 4.5h3M24 4.5h1M0 5.5h1M6 5.5h1M8 5.5h5M14 5.5h2M18 5.5h1M24 5.5h1M0 6.5h7M8 6.5h1M10 6.5h1M12 6.5h1M14 6.5h1M16 6.5h1M18 6.5h7M8 7.5h4M14 7.5h1M16 7.5h1M0 8.5h1M2 8.5h5M9 8.5h1M11 8.5h2M18 8.5h5M0 9.5h1M2 9.5h2M5 9.5h1M8 9.5h3M12 9.5h2M19 9.5h1M23 9.5h1M0 10.5h5M6 10.5h6M13 10.5h3M18 10.5h1M21 10.5h1M23 10.5h2M2 11.5h3M7 11.5h1M10 11.5h1M13 11.5h1M15 11.5h1M17 11.5h2M20 11.5h1M24 11.5h1M0 12.5h2M4 12.5h3M8 12.5h2M11 12.5h2M14 12.5h1M16 12.5h3M20 12.5h1M22 12.5h3M0 13.5h1M3 13.5h1M7 13.5h1M9 13.5h1M16 13.5h1M19 13.5h1M21 13.5h1M23 13.5h1M0 14.5h1M3 14.5h1M6 14.5h2M9 14.5h4M15 14.5h3M19 14.5h3M23 14.5h2M0 15.5h1M2 15.5h2M5 15.5h1M7 15.5h1M9 15.5h1M11 15.5h1M14 15.5h3M19 15.5h2M24 15.5h1M0 16.5h1M2 16.5h2M5 16.5h3M9 16.5h1M11 16.5h1M15 16.5h6M22 16.5h1M8 17.5h1M10 17.5h1M12 17.5h3M16 17.5h1M20 17.5h2M0 18.5h7M9 18.5h1M13 18.5h2M16 18.5h1M18 18.5h1M20 18.5h1M22 18.5h3M0 19.5h1M6 19.5h1M8 19.5h1M10 19.5h1M12 19.5h2M16 19.5h1M20 19.5h2M23 19.5h1M0 20.5h1M2 20.5h3M6 20.5h1M8 20.5h1M10 20.5h1M12 20.5h1M14 20.5h7M22 20.5h1M24 20.5h1M0 21.5h1M2 21.5h3M6 21.5h1M8 21.5h3M17 21.5h2M20 21.5h5M0 22.5h1M2 22.5h3M6 22.5h1M8 22.5h1M11 22.5h2M16 22.5h1M21 22.5h2M24 22.5h1M0 23.5h1M6 23.5h1M9 23.5h1M11 23.5h1M14 23.5h8M24 23.5h1M0 24.5h7M8 24.5h1M10 24.5h2M18 24.5h7"/></svg>';
+    const P = '<span class="p">$</span> ';
+    const scenes = [
+      { cmd: 'handmux start --tunnel cloudflare', out: [
+        ['<span class="ok">✔</span> <span class="d">tmux 3.5</span>   <span class="ok">✔</span> <span class="d">server :19999</span>   <span class="ok">✔</span> <span class="d">tunnel up</span>', 520],
+        ['<span class="k">🔑 token</span>  <span class="d">aicbHOGWdQ…</span>', 360],
+        ['<span class="k">🌐 open </span>  <span class="u">https://elementary-incidents</span><span class="d">.trycloudflare.com</span>', 320],
+        [QR, 240],
+        ['<span class="ok">✓</span> <span class="d">reachable — scan the QR to sign in</span>', 460],
+      ] },
+      { cmd: 'handmux status', out: [
+        ['<span class="ok">●</span> <span class="u">handmux running</span>', 460],
+        ['  <span class="d">tunnel</span>  <span class="u">cloudflare</span>  <span class="d">·  pid 21352</span>', 300],
+        ['  <span class="k">🌐 open </span> <span class="u">https://elementary-incidents</span><span class="d">.trycloudflare.com</span>', 300],
+        ['  <span class="k">💻 local</span>  <span class="d">localhost:19999</span>', 280],
+        ['  <span class="k">🔑 token</span>  <span class="d">aicbHOGWdQ…</span>', 300],
+        ['  <span class="ok">✓</span> <span class="d">reachable</span>', 360],
+      ] },
+    ];
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const addLine = (html) => { const d = document.createElement('div'); d.innerHTML = html; el.appendChild(d); return d; };
+    async function typeCmd(text) {
+      const d = addLine(P + '<span class="u"></span><span class="caret"></span>');
+      const span = d.querySelector('.u'); const caret = d.querySelector('.caret');
+      for (const ch of text) { span.textContent += ch; await sleep(46); }
+      await sleep(280); if (caret) caret.remove();
+    }
+    async function run() {
+      for (;;) {
+        for (const sc of scenes) {
+          el.innerHTML = '';
+          await sleep(520);
+          await typeCmd(sc.cmd);
+          await sleep(260);
+          for (const [html, d] of sc.out) { addLine(html); await sleep(d); }
+          await sleep(2400);
+        }
+      }
+    }
+    run();
+  })();
+</script>
+</body>
+</html>

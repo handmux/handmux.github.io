@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#16180f"/><stop offset="1" stop-color="#080907"/></linearGradient>
+    <radialGradient id="glow" cx="230" cy="262" r="250" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#74e6a0" stop-opacity="0.26"/><stop offset="1" stop-color="#74e6a0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="body" x1="150" y1="120" x2="300" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#aef9c8"/><stop offset="1" stop-color="#46d6a2"/></linearGradient>
+    <linearGradient id="a1" x1="300" y1="190" x2="372" y2="262" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7fe9b8" stop-opacity="0.95"/><stop offset="1" stop-color="#7fe9b8" stop-opacity="0.12"/></linearGradient>
+    <linearGradient id="a2" x1="296" y1="150" x2="406" y2="262" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6fe2ac" stop-opacity="0.7"/><stop offset="1" stop-color="#6fe2ac" stop-opacity="0.05"/></linearGradient>
+    <linearGradient id="a3" x1="292" y1="112" x2="446" y2="262" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#62dca4" stop-opacity="0.45"/><stop offset="1" stop-color="#62dca4" stop-opacity="0"/></linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="116" fill="url(#glow)"/>
+  <g transform="rotate(-7 221 281)">
+    <g fill="none" stroke-linecap="round">
+      <path d="M300 190 a74 74 0 0 1 70 70"   stroke="url(#a1)" stroke-width="15"/>
+      <path d="M296 148 a118 118 0 0 1 112 112" stroke="url(#a2)" stroke-width="14"/>
+      <path d="M292 108 a160 160 0 0 1 154 154" stroke="url(#a3)" stroke-width="13"/>
+    </g>
+    <g filter="url(#soft)"><rect x="146" y="150" width="150" height="262" rx="36" fill="url(#body)"/></g>
+    <rect x="163" y="184" width="116" height="194" rx="18" fill="#0a0b09"/>
+    <rect x="194" y="146" width="30" height="6" rx="3" fill="#0a0b09" opacity="0.45"/>
+    <rect x="206" y="396" width="30" height="6" rx="3" fill="#0a0b09" opacity="0.45"/>
+    <polyline points="188,236 212,266 188,296" fill="none" stroke="#aef9c8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="224" y="252" width="15" height="32" rx="3" fill="#aef9c8"/>
+  </g>
+</svg>
