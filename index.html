@@ -113,6 +113,9 @@
   .install.copied .copyhint { color: var(--green); }
   .ghost { color: var(--dim); text-decoration: none; font-size: 14px; border-bottom: 1px dashed var(--faint); padding-bottom: 2px; transition: color .2s, border-color .2s; }
   .ghost:hover { color: var(--green); border-color: var(--green); }
+  .cta .then { flex-basis: 100%; margin: 2px 0 -4px; color: var(--dim); font-size: 13.5px; }
+  .cta .then code { font-family: var(--mono); color: var(--green); }
+  .cta .then .arr { color: var(--faint); }
 
   /* terminal window mock */
   .term { background: linear-gradient(180deg, var(--bg-1), #0d0f0b); border: 1px solid var(--line);
@@ -335,6 +338,8 @@
           <span><span class="dollar">$</span>&nbsp;npm i -g handmux</span>
           <span class="copyhint" data-i18n="cta.copy">copy</span>
         </button>
+        <div class="then" data-i18n="cta.then">then <code>handmux start</code> <span class="arr">→</span> scan the QR to hop on your phone</div>
+        <a class="ghost" href="#start" data-i18n="cta.start">get started →</a>
         <a class="ghost" href="#how" data-i18n="cta.how">how it works →</a>
       </div>
     </div>
@@ -394,6 +399,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
 <i># 3 · scan the QR it prints → you're on your phone, driving your real terminal</i>
 <i># reach it from anywhere: </i><b>handmux start --tunnel cloudflare</b><i>  → a public link</i></pre>
     </div>
+    <p class="lead" data-i18n="start.notif">Want it to <b>ping your phone</b> when a pane needs you? Open the <b>inbox</b> on your phone and tap once to turn it on — no extra command to run.</p>
+    <p class="lead" data-i18n="start.win">On <b>Windows</b>? handmux drives tmux (Unix-only), so run it inside <b>WSL2</b> — <a href="docs.html#windows">WSL2 setup →</a></p>
   </section>
 
   <section id="claude">
@@ -529,6 +536,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       'hero.lede': '<b>Keep your creativity in hand.</b> One command on your computer, scan a QR — and pick up your build the moment inspiration hits.',
       'hero.sub': 'Step away from your desk and the work doesn\'t stop. handmux drives your <b style="color:var(--green);font-weight:500">real tmux panes</b>, so the agent keeps running while you\'re on the train, in a queue, on the couch — pick up exactly where you left off. <b>No app to install — open the link in your phone\'s browser and you\'re in.</b> Works with <b>Claude Code</b>, Codex, aider, any shell — and it pings your phone the moment a pane needs you.',
       'cta.copy': 'copy', 'cta.how': 'how it works →',
+      'cta.then': 'then <code>handmux start</code> <span class="arr">→</span> scan the QR to hop on your phone',
+      'cta.start': 'get started →',
       'term.scan': "scan it → you're in (the QR carries your token)",
       'see.h2': 'a real session, on your phone',
       'see.lead': 'No mockup — a real phone browser driving real panes: a push pings you to approve a <b>Claude Code</b> prompt, read rendered docs aloud, review a git diff — all with your thumb.',
@@ -537,6 +546,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       'start.h2': 'get going · 2 minutes',
       'start.lead': "Two things on your computer — and if you already use <b>tmux</b>, you're basically set. Your phone needs nothing but a browser.",
       'start.body': "<i># 1 · do you have the basics? (run on your computer)</i>\nnode -v     <i># need Node ≥ 18   → nodejs.org</i>\ntmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>\n\n<i># 2 · install once, then run it</i>\n<b>npm i -g handmux</b>\n<b>handmux start</b>            <i># local / same wifi — nothing exposed</i>\n\n<i># 3 · scan the QR it prints → you're on your phone, driving your real terminal</i>\n<i># reach it from anywhere: </i><b>handmux start --tunnel cloudflare</b><i>  → a public link</i>",
+      'start.notif': 'Want it to <b>ping your phone</b> when a pane needs you? Open the <b>inbox</b> on your phone and tap once to turn it on — no extra command to run.',
+      'start.win': 'On <b>Windows</b>? handmux drives tmux (Unix-only), so run it inside <b>WSL2</b> — <a href="docs.html#windows">WSL2 setup →</a>',
       'claude.h2': 'deepest with claude code',
       'claude.lead': 'It drives <b>any</b> agent or TUI — and with <b>Claude Code</b> it goes furthest: it knows the moment a pane needs you.',
       'claude.ibx.title': 'Inbox',
@@ -581,6 +592,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       'hero.lede': '<b>把创造力随时握在手里。</b>电脑上跑一行命令、手机扫码连上,灵感一来就接着写。',
       'hero.sub': '以前写代码,得钉在电脑前;现在不用了。手机操作的是你<b style="color:var(--green);font-weight:500">真实的 tmux pane</b>,里头的进程照跑不停——挤地铁、等公交、窝沙发,灵感来了随手接着写,离开时什么样、回来还什么样。<b>不用装 App——手机浏览器点开链接就进去了。</b>Claude Code、Codex、aider、任意 shell 都行;哪个 pane 要你拍板,第一时间叮一下推到你手机上。',
       'cta.copy': '复制', 'cta.how': '看它怎么跑 →',
+      'cta.then': '再 <code>handmux start</code> <span class="arr">→</span> 扫码即上手机',
+      'cta.start': '完整上手 →',
       'term.scan': '扫码 → 直接进(token 就在二维码里)',
       'see.h2': '真实会话演示',
       'see.lead': '不是效果图——真实手机浏览器操作真实的 pane:推送提醒你批 <b>Claude Code</b> 的授权、把文档朗读出来、看 git diff——全用拇指。',
@@ -589,6 +602,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       'start.h2': '上手 · 2 分钟',
       'start.lead': '电脑上准备两样东西——如果你本来就用 <b>tmux</b>,基本就齐了。手机端只要一个浏览器。',
       'start.body': '<i># 1 · 先看看基础够不够(在电脑上跑)</i>\nnode -v     <i># 需要 Node ≥ 18   → nodejs.org</i>\ntmux -V     <i># 需要 tmux ≥ 3.0  → brew install tmux / apt install tmux</i>\n\n<i># 2 · 装一次,然后跑起来</i>\n<b>npm i -g handmux</b>\n<b>handmux start</b>            <i># 仅本机 / 同一 wifi —— 不对外暴露</i>\n\n<i># 3 · 扫它打印的二维码 → 手机上就连上你真实的终端了</i>\n<i># 想从任何地方连:</i><b>handmux start --tunnel cloudflare</b><i>  → 一个公网链接</i>',
+      'start.notif': '想让它在某个 pane <b>需要你时推送到手机</b>?在手机上打开<b>收件箱</b>,点一下即可开启——不用再敲任何命令。',
+      'start.win': '用 <b>Windows</b>?handmux 靠 tmux 驱动(只有 Unix 版),所以装进 <b>WSL2</b> 里跑 — <a href="docs.html#windows">WSL2 安装 →</a>',
       'claude.h2': '跟 Claude Code 最搭',
       'claude.lead': '什么智能体、什么 TUI 都能带;而配上 <b>Claude Code</b> 最到位:哪个 pane 该你出手了,它当场就知道。',
       'claude.ibx.title': '收件箱',

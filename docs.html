@@ -190,6 +190,7 @@ em { font-style: italic; color: var(--ink); }
       <span class="nav-grp-label" data-i18n="g.start">Getting started</span>
       <a class="nav-link" href="#quickstart" data-i18n="l.quickstart">Quick start</a>
       <a class="nav-link" href="#requirements" data-i18n="l.req">Requirements</a>
+      <a class="nav-link" href="#windows" data-i18n="l.win">Windows (WSL2)</a>
     </div>
     <div class="nav-grp">
       <span class="nav-grp-label" data-i18n="g.cmds">Commands</span>
@@ -255,6 +256,18 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
       </table>
     </section>
 
+    <!-- WINDOWS / WSL2 -->
+    <section id="windows">
+      <h2 data-i18n="win.h2">Windows (WSL2)</h2>
+      <p data-i18n="win.p">handmux drives <strong>tmux</strong>, which is Unix-only — there's no native Windows build. Run it inside <strong>WSL2</strong> (a real Linux kernel with real tmux) and the quick start above works unchanged.</p>
+      <div class="cb"><pre><i data-i18n="win.c1"># one-time, in PowerShell (admin): installs WSL2 + Ubuntu, then reboot</i>
+<b>wsl --install</b>
+
+<i data-i18n="win.c2"># then open Ubuntu and follow Quick start: apt install tmux · install Node · npm i -g handmux</i></pre></div>
+      <div class="note"><p><b data-i18n="win.n1-b">Use a tunnel.</b> <span data-i18n="win.n1">WSL2 is a NAT'd VM with its own IP, so the same-wifi LAN URL won't reach your phone. Start with <code>handmux start --tunnel cloudflare</code> — the public link works regardless.</span></p></div>
+      <div class="note"><p><b data-i18n="win.n2-b">Autostart needs systemd.</b> <span data-i18n="win.n2"><code>handmux service</code> uses systemd; enable it once by adding <code>[boot]</code> / <code>systemd=true</code> to <code>/etc/wsl.conf</code>, then <code>wsl --shutdown</code>. Without it, just run <code>handmux start</code> in a terminal you keep open.</span></p></div>
+    </section>
+
     <!-- CMD: START -->
     <section id="cmd-start">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux start</span><span class="cmd-args">[flags]</span></div></h2>
@@ -271,12 +284,11 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
     <!-- CMD: SETUP -->
     <section id="cmd-setup">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux setup</span></div></h2>
-      <p data-i18n="su.p1">Interactive wizard that configures tunnel type, app name, push-notification credentials, and voice-input API keys, then writes <code>~/.handmux/config.json</code>. Re-run any time to change anything.</p>
-      <p data-i18n="su.p2">The wizard also offers to:</p>
+      <p data-i18n="su.p1">Interactive wizard: language, app name, tunnel type — a new user defaults to the zero-config Cloudflare <strong>quick tunnel</strong> — plus optional push-notification and voice-input credentials. Writes <code>~/.handmux/config.json</code>; re-run any time.</p>
+      <p data-i18n="su.p2">When it's done it also offers to:</p>
       <ul>
-        <li data-i18n="su.li1">Install <strong>Claude Code hooks</strong> — enables inbox and push notifications</li>
-        <li data-i18n="su.li2">Add a <strong>per-window Claude status dot</strong> to <code>~/.tmux.conf</code></li>
-        <li data-i18n="su.li3">Start <code>handmux</code> immediately when done</li>
+        <li data-i18n="su.li1">Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications</li>
+        <li data-i18n="su.li2"><strong>Start handmux</strong> right away</li>
       </ul>
       <div class="cb"><pre><b>handmux setup</b>                        <i data-i18n="su.c1"># interactive — walks through all options</i>
 <b>handmux setup --config ~/work.json</b>   <i data-i18n="su.c2"># write to a custom config file</i></pre></div>
@@ -320,8 +332,9 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
     <section id="cmd-hooks">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux hooks</span><span class="cmd-args">install | uninstall</span></div></h2>
       <p data-i18n="hk.p1">Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.</p>
-      <div class="cb"><pre><b>handmux hooks install</b>     <i data-i18n="hk.c1"># wire Claude Code → handmux (inbox · push · status dot)</i>
+      <div class="cb"><pre><b>handmux hooks install</b>     <i data-i18n="hk.c1"># wire Claude Code → handmux (inbox · push)</i>
 <b>handmux hooks uninstall</b>   <i data-i18n="hk.c2"># remove the hooks</i></pre></div>
+      <div class="note tip"><p><b data-i18n="hk.note-b">You usually don't need this.</b> <span data-i18n="hk.note">The first time you open the inbox on your phone, it wires these hooks with one tap. Run this only to install them from the computer instead.</span></p></div>
       <p data-i18n="hk.p2">After installing, open a new Claude Code session (or restart one) to activate. See <a href="#claude-code">Claude Code</a> for details.</p>
     </section>
 
@@ -494,13 +507,6 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
         <li><span style="color:var(--green)" data-i18n="cc.done">done</span><span data-i18n="cc.d-p"> — task finished; push sent</span></li>
       </ul>
       <p data-i18n="cc.p4">To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell in the app to subscribe the device.</p>
-
-      <h3 data-i18n="cc.dot-h">tmux status dot</h3>
-      <p data-i18n="cc.p5">Hooks write a colour into each window's <code>@claude_dot</code> option. To show it in the tmux status bar, handmux can patch <code>~/.tmux.conf</code>:</p>
-      <div class="cb"><pre><b>handmux hooks install</b>   <i data-i18n="cc.c3"># wizard also offers to add the tmux dot</i>
-
-<i data-i18n="cc.c4"># reload tmux to apply:</i>
-tmux source-file ~/.tmux.conf</pre></div>
     </section>
 
   </div>
@@ -521,16 +527,21 @@ const I18N = {
     'req.h2':'Requirements','th.what':'What','th.ver':'Version','th.note':'Note',
     'req.node':'≥ 18','req.tmux':'≥ 3.0','req.tmux-how':'brew install tmux · apt install tmux',
     'req.phone':'Phone browser','req.phone-v':'any modern','req.phone-n':'no app to install',
+    'l.win':'Windows (WSL2)','win.h2':'Windows (WSL2)',
+    'win.p':"handmux drives <strong>tmux</strong>, which is Unix-only — there's no native Windows build. Run it inside <strong>WSL2</strong> (a real Linux kernel with real tmux) and the quick start above works unchanged.",
+    'win.c1':'# one-time, in PowerShell (admin): installs WSL2 + Ubuntu, then reboot',
+    'win.c2':'# then open Ubuntu and follow Quick start: apt install tmux · install Node · npm i -g handmux',
+    'win.n1-b':'Use a tunnel.','win.n1':"WSL2 is a NAT'd VM with its own IP, so the same-wifi LAN URL won't reach your phone. Start with <code>handmux start --tunnel cloudflare</code> — the public link works regardless.",
+    'win.n2-b':'Autostart needs systemd.','win.n2':'<code>handmux service</code> uses systemd; enable it once by adding <code>[boot]</code> / <code>systemd=true</code> to <code>/etc/wsl.conf</code>, then <code>wsl --shutdown</code>. Without it, just run <code>handmux start</code> in a terminal you keep open.',
     's.p1':'Start the server and tunnel. Reads <code>~/.handmux/config.json</code> if it exists; any flag overrides one value for this run only and is never persisted.',
     's.p2':'With no config file, starts LAN-only (<code>--tunnel none</code>), auto-generates a token, and prints the URL + QR code. Use <code>handmux setup</code> to persist settings.',
     's.c1':'# LAN-only — nothing exposed to the internet','s.c2':'# public https URL (random Cloudflare hostname)',
     's.c3':'# listen on port 8080 instead of 19999','s.c4':'# foreground mode — Ctrl-C to stop','s.c5':'# custom browser tab / home-screen name',
     's.note-b':'Note:','s.note':'flags are one-run overrides. To make a change stick, run <code>handmux setup</code> or edit <code>~/.handmux/config.json</code>.',
-    'su.p1':'Interactive wizard that configures tunnel type, app name, push-notification credentials, and voice-input API keys, then writes <code>~/.handmux/config.json</code>. Re-run any time to change anything.',
-    'su.p2':'The wizard also offers to:',
-    'su.li1':'Install <strong>Claude Code hooks</strong> — enables inbox and push notifications',
-    'su.li2':'Add a <strong>per-window Claude status dot</strong> to <code>~/.tmux.conf</code>',
-    'su.li3':'Start <code>handmux</code> immediately when done',
+    'su.p1':'Interactive wizard: language, app name, tunnel type — a new user defaults to the zero-config Cloudflare <strong>quick tunnel</strong> — plus optional push-notification and voice-input credentials. Writes <code>~/.handmux/config.json</code>; re-run any time.',
+    'su.p2':"When it's done it also offers to:",
+    'su.li1':'Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications',
+    'su.li2':'<strong>Start handmux</strong> right away',
     'su.c1':'# interactive — walks through all options','su.c2':'# write to a custom config file',
     'ct.p':'Control the running handmux process.',
     'ct.c1':'# SIGTERM to supervisor — server + tunnel exit cleanly',
@@ -541,7 +552,8 @@ const I18N = {
     'cf.p1':'Print the effective config that would be used on next <code>start</code>, with each value\'s origin: <strong>flag</strong> (this run), <strong>file</strong> (path shown), <strong>env</strong>, or <strong>default</strong>. Secrets are masked; push / voice credentials shown as <em>on</em> or <em>off</em>.',
     'cf.c1':'# read ~/.handmux/config.json','cf.c2':'# inspect a different file','cf.c3':'# preview with a flag applied',
     'hk.p1':'Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.',
-    'hk.c1':'# wire Claude Code → handmux (inbox · push · status dot)','hk.c2':'# remove the hooks',
+    'hk.c1':'# wire Claude Code → handmux (inbox · push)','hk.c2':'# remove the hooks',
+    'hk.note-b':"You usually don't need this.",'hk.note':'The first time you open the inbox on your phone, it wires these hooks with one tap. Run this only to install them from the computer instead.',
     'hk.p2':'After installing, open a new Claude Code session (or restart one) to activate. See <a href="#claude-code">Claude Code</a> for details.',
     'sv.p':'Register handmux as a login item so it starts at boot.',
     'sv.mac':'<strong>macOS:</strong> launchd plist in <code>~/Library/LaunchAgents/</code>',
@@ -593,8 +605,6 @@ const I18N = {
     'cc.needs':'needs you','cc.n-p':' — permission prompt or plan approval waiting; push sent to your phone',
     'cc.done':'done','cc.d-p':' — task finished; push sent',
     'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
-    'cc.dot-h':'tmux status dot','cc.p5':'Hooks write a colour into each window\'s <code>@claude_dot</code> option. To show it in the tmux status bar, handmux can patch <code>~/.tmux.conf</code>:',
-    'cc.c3':'# wizard also offers to add the tmux dot','cc.c4':'# reload tmux to apply:',
   },
   zh: {
     'nav.home':'首页','nav.docs':'文档',
@@ -609,16 +619,21 @@ const I18N = {
     'req.h2':'环境要求','th.what':'依赖','th.ver':'版本','th.note':'说明',
     'req.node':'≥ 18','req.tmux':'≥ 3.0','req.tmux-how':'brew install tmux · apt install tmux',
     'req.phone':'手机浏览器','req.phone-v':'现代浏览器即可','req.phone-n':'不用装 App',
+    'l.win':'Windows (WSL2)','win.h2':'Windows(WSL2)',
+    'win.p':'handmux 靠 <strong>tmux</strong> 驱动，而 tmux 只有 Unix 版、没有原生 Windows 版。装进 <strong>WSL2</strong>（真正的 Linux 内核 + 真 tmux），上面的快速开始原样适用。',
+    'win.c1':'# 一次性，在 PowerShell（管理员）里：装好 WSL2 + Ubuntu，然后重启',
+    'win.c2':'# 然后打开 Ubuntu，按快速开始来：apt install tmux · 装 Node · npm i -g handmux',
+    'win.n1-b':'务必走隧道。','win.n1':'WSL2 是带独立 IP 的 NAT 虚拟机，同 wifi 的局域网地址手机连不到。直接用 <code>handmux start --tunnel cloudflare</code>，公网链接不受影响。',
+    'win.n2-b':'自启需要 systemd。','win.n2':'<code>handmux service</code> 依赖 systemd；在 <code>/etc/wsl.conf</code> 加 <code>[boot]</code> / <code>systemd=true</code> 再 <code>wsl --shutdown</code> 启用一次即可。不启用的话，开个终端跑 <code>handmux start</code> 并保持窗口即可。',
     's.p1':'启动服务器和隧道。若 <code>~/.handmux/config.json</code> 存在则读取它；参数只对本次运行生效，不会写入配置。',
     's.p2':'无配置文件时默认仅局域网（<code>--tunnel none</code>），自动生成 token 并打印 URL 和二维码。用 <code>handmux setup</code> 持久化设置。',
     's.c1':'# 仅局域网 — 不对外网暴露','s.c2':'# 公网 https URL（Cloudflare 随机主机名）',
     's.c3':'# 用 8080 端口替代默认的 19999','s.c4':'# 前台运行，Ctrl-C 停止','s.c5':'# 自定义浏览器标签页/主屏名称',
     's.note-b':'注意：','s.note':'参数只是本次覆盖，不会持久化。要永久生效，运行 <code>handmux setup</code> 或直接编辑 <code>~/.handmux/config.json</code>。',
-    'su.p1':'交互式向导：引导配置隧道类型、应用名称、推送通知凭证和语音输入 API 密钥，结果写入 <code>~/.handmux/config.json</code>。随时可以重跑来修改。',
-    'su.p2':'向导还会提示你：',
-    'su.li1':'安装 <strong>Claude Code hooks</strong>——开启收件箱和推送通知',
-    'su.li2':'在 <code>~/.tmux.conf</code> 加上每个窗口的 <strong>Claude 状态圆点</strong>',
-    'su.li3':'配置完成后立即启动 <code>handmux</code>',
+    'su.p1':'交互式向导：语言、应用名称、隧道类型——新用户默认零配置的 Cloudflare <strong>快速隧道</strong>——外加可选的推送通知与语音输入凭证。写入 <code>~/.handmux/config.json</code>，随时可重跑。',
+    'su.p2':'配完后它还会问你要不要：',
+    'su.li1':'为 Claude Code / Codex 安装<strong>收件箱 hooks</strong>——开启收件箱和推送通知',
+    'su.li2':'立即<strong>启动 handmux</strong>',
     'su.c1':'# 交互式，一步步引导','su.c2':'# 写到自定义配置文件',
     'ct.p':'控制正在运行的 handmux 进程。',
     'ct.c1':'# 给 supervisor 发 SIGTERM，服务器和隧道干净退出',
@@ -629,7 +644,8 @@ const I18N = {
     'cf.p1':'打印下次 <code>start</code> 生效的配置，以及每个值的来源：<strong>flag</strong>（本次运行）、<strong>file</strong>（文件路径）、<strong>env</strong> 或 <strong>default</strong>。Token 被掩码；推送/语音凭证仅显示 <em>on</em>/<em>off</em>。',
     'cf.c1':'# 读取 ~/.handmux/config.json','cf.c2':'# 查看其他文件','cf.c3':'# 预览加上参数后的效果',
     'hk.p1':'安装或卸载驱动收件箱和推送通知的 Claude Code 生命周期 hooks，写入 <code>~/.claude/settings.json</code>。未检测到 Claude Code 时静默跳过。',
-    'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送·状态圆点）','hk.c2':'# 移除 hooks',
+    'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送）','hk.c2':'# 移除 hooks',
+    'hk.note-b':'一般你用不到这条。','hk.note':'第一次在手机上打开收件箱时，它会一键把这些 hooks 装好。只有当你想从电脑上装时才需要这条命令。',
     'hk.p2':'安装后新开一个 Claude Code 会话（或重启已有会话）来激活。详情见 <a href="#claude-code">Claude Code</a>。',
     'sv.p':'把 handmux 注册为登录项，开机自动运行。',
     'sv.mac':'<strong>macOS：</strong>在 <code>~/Library/LaunchAgents/</code> 创建 launchd plist',
@@ -681,8 +697,6 @@ const I18N = {
     'cc.needs':'需要你','cc.n-p':'——有授权提示或计划待批准，推送已发到手机',
     'cc.done':'已完成','cc.d-p':'——任务结束，推送已发',
     'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
-    'cc.dot-h':'tmux 状态圆点','cc.p5':'hooks 将颜色写入每个窗口的 <code>@claude_dot</code> 选项。要在 tmux 状态栏显示，handmux 可以修改 <code>~/.tmux.conf</code>：',
-    'cc.c3':'# 向导会询问是否一并添加 tmux 圆点','cc.c4':'# 重新加载 tmux 使其生效：',
   }
 };
 
