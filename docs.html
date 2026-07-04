@@ -199,6 +199,7 @@ em { font-style: italic; color: var(--ink); }
       <a class="nav-link" href="#cmd-control"><code>stop · restart · status</code></a>
       <a class="nav-link" href="#cmd-logs"><code>logs</code></a>
       <a class="nav-link" href="#cmd-config"><code>config</code></a>
+      <a class="nav-link" href="#cmd-update"><code>update</code></a>
       <a class="nav-link" href="#cmd-hooks"><code>hooks</code></a>
       <a class="nav-link" href="#cmd-service"><code>service</code></a>
     </div>
@@ -326,6 +327,15 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
       <div class="cb"><pre><b>handmux config</b>                        <i data-i18n="cf.c1"># read ~/.handmux/config.json</i>
 <b>handmux config --config ~/work.json</b>   <i data-i18n="cf.c2"># inspect a different file</i>
 <b>handmux config --tunnel cloudflare</b>    <i data-i18n="cf.c3"># preview with a flag applied</i></pre></div>
+    </section>
+
+    <!-- CMD: UPDATE -->
+    <section id="cmd-update">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux update</span></div></h2>
+      <p data-i18n="up.p1">Upgrade the global install to the latest published version — a convenience wrapper for <code>npm i -g handmux@latest</code>, run through your own npm so a China mirror / private registry is honoured. It doesn't restart a running instance: after it finishes, run <code>handmux restart</code> to actually run the new version.</p>
+      <div class="cb"><pre><b>handmux update</b>      <i data-i18n="up.c1"># npm i -g handmux@latest</i>
+<b>handmux restart</b>     <i data-i18n="up.c2"># then apply it to the running server</i></pre></div>
+      <div class="note tip"><p><b data-i18n="up.note-b">The app nudges you.</b> <span data-i18n="up.note">handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer.</span></p></div>
     </section>
 
     <!-- CMD: HOOKS -->
@@ -551,6 +561,9 @@ const I18N = {
     'lo.c1':'# last 200 lines','lo.c2':'# stream live (tail -f)','lo.c3':'# last 50 lines',
     'cf.p1':'Print the effective config that would be used on next <code>start</code>, with each value\'s origin: <strong>flag</strong> (this run), <strong>file</strong> (path shown), <strong>env</strong>, or <strong>default</strong>. Secrets are masked; push / voice credentials shown as <em>on</em> or <em>off</em>.',
     'cf.c1':'# read ~/.handmux/config.json','cf.c2':'# inspect a different file','cf.c3':'# preview with a flag applied',
+    'up.p1':'Upgrade the global install to the latest published version — a convenience wrapper for <code>npm i -g handmux@latest</code>, run through your own npm so a China mirror / private registry is honoured. It doesn\'t restart a running instance: after it finishes, run <code>handmux restart</code> to actually run the new version.',
+    'up.c1':'# npm i -g handmux@latest','up.c2':'# then apply it to the running server',
+    'up.note-b':'The app nudges you.','up.note':'handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer.',
     'hk.p1':'Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.',
     'hk.c1':'# wire Claude Code → handmux (inbox · push)','hk.c2':'# remove the hooks',
     'hk.note-b':"You usually don't need this.",'hk.note':'The first time you open the inbox on your phone, it wires these hooks with one tap. Run this only to install them from the computer instead.',
@@ -643,6 +656,9 @@ const I18N = {
     'lo.c1':'# 最后 200 行','lo.c2':'# 实时流式输出（tail -f）','lo.c3':'# 最后 50 行',
     'cf.p1':'打印下次 <code>start</code> 生效的配置，以及每个值的来源：<strong>flag</strong>（本次运行）、<strong>file</strong>（文件路径）、<strong>env</strong> 或 <strong>default</strong>。Token 被掩码；推送/语音凭证仅显示 <em>on</em>/<em>off</em>。',
     'cf.c1':'# 读取 ~/.handmux/config.json','cf.c2':'# 查看其他文件','cf.c3':'# 预览加上参数后的效果',
+    'up.p1':'把全局安装升级到最新发布版——就是 <code>npm i -g handmux@latest</code> 的便捷封装，走你自己的 npm(所以国内镜像 / 私有源都照用)。它不会重启正在运行的实例:装完后再跑 <code>handmux restart</code> 才真正切到新版本。',
+    'up.c1':'# npm i -g handmux@latest','up.c2':'# 再重启,让运行中的服务用上新版',
+    'up.note-b':'App 会提醒你。','up.note':'handmux 大约每小时查一次有没有新版;有的话,手机端设置齿轮上会亮个点、设置里显示当前 / 最新版本号——提醒你到电脑上跑这条命令。',
     'hk.p1':'安装或卸载驱动收件箱和推送通知的 Claude Code 生命周期 hooks，写入 <code>~/.claude/settings.json</code>。未检测到 Claude Code 时静默跳过。',
     'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送）','hk.c2':'# 移除 hooks',
     'hk.note-b':'一般你用不到这条。','hk.note':'第一次在手机上打开收件箱时，它会一键把这些 hooks 装好。只有当你想从电脑上装时才需要这条命令。',
