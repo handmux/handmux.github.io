@@ -17,9 +17,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://handmux.com/og-card-zh.png">
 <meta name="theme-color" content="#0a0b09">
-<link rel="canonical" href="https://handmux.com/">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<meta http-equiv="refresh" content="0; url=./?lang=zh">
+<!-- redirect is JS-ONLY on purpose: crawlers don't run JS, so they read THIS page's zh card.
+     A meta-refresh (or rel=canonical) gets followed by WeChat/FB crawlers → they'd grab the EN card. -->
 <script>location.replace('./?lang=zh');</script>
 <style>body{background:#0a0b09;color:#a9a394;font-family:ui-monospace,monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}</style>
 </head>
