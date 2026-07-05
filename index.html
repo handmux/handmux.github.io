@@ -727,6 +727,12 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
     const lbl = document.getElementById('langLabel');
     if (lbl) lbl.textContent = lang === 'zh' ? '中' : 'EN';
     document.querySelectorAll('.lang-opt').forEach((b) => b.classList.toggle('on', b.dataset.lang === lang));
+    // Clean URLs on the real host only: /docs instead of docs.html (GH Pages serves it extensionless).
+    // Source keeps docs.html so the in-app preview / file:// / local servers still resolve. Runs on
+    // every applyLang because the i18n strings re-inject docs.html links.
+    if (location.hostname === 'handmux.com')
+      document.querySelectorAll('a[href^="docs.html"]').forEach((a) =>
+        a.setAttribute('href', a.getAttribute('href').replace('docs.html', 'docs')));
   }
 
   const _langMenu = document.getElementById('langMenu');

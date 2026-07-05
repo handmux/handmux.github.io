@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>handmux docs — CLI reference</title>
-<meta name="description" content="Complete CLI reference for handmux: commands, flags, tunnels, config file, Claude Code integration.">
+<meta name="description" content="Complete CLI reference for handmux: commands, flags, tunnels, config file, agent integration. · handmux 完整命令参考：命令、参数、隧道、配置文件、agent 集成。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://handmux.com/docs.html">
+<meta property="og:url" content="https://handmux.com/docs">
 <meta property="og:title" content="handmux docs — CLI reference">
-<meta property="og:description" content="Complete CLI reference for handmux: commands, flags, tunnels, config file, agent integration.">
+<meta property="og:description" content="Complete CLI reference for handmux: commands, flags, tunnels, config file, agent integration. · handmux 完整命令参考：命令、参数、隧道、配置文件、agent 集成。">
 <meta property="og:image" content="https://handmux.com/og-card.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://handmux.com/og-card.png">
@@ -755,6 +755,11 @@ let init = 'en';
 try { init = localStorage.getItem('handmux_lang'); } catch(e) {}
 if (!init) init = (navigator.language||'').toLowerCase().startsWith('zh') ? 'zh' : 'en';
 applyLang(init);
+// Clean URLs on the real host only (source keeps .html so previews/local servers resolve).
+if (location.hostname === 'handmux.com') {
+  document.querySelector('a.brand').setAttribute('href', './');
+  document.querySelectorAll('a[href="docs.html"]').forEach((a) => a.setAttribute('href', 'docs'));
+}
 
 // active sidebar link tracking
 const secs = document.querySelectorAll('section[id]');
