@@ -744,8 +744,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
   document.querySelectorAll('.lang-opt').forEach((b) =>
     b.addEventListener('click', () => { applyLang(b.dataset.lang); _langMenu.hidden = true; _langDrop.classList.remove('open'); }));
 
-  let initial = 'en';
-  try { initial = localStorage.getItem('handmux_lang'); } catch (e) {}
+  let initial = new URLSearchParams(location.search).get('lang'); // zh.html share entry forces ?lang=zh
+  if (!initial) { try { initial = localStorage.getItem('handmux_lang'); } catch (e) {} }
   if (!initial) initial = (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
   applyLang(initial);
 
