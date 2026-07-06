@@ -370,9 +370,9 @@
 
   <section class="hero">
     <div>
-      <div class="eyebrow" data-i18n="hero.eyebrow">free &amp; open-source · mobile vibe coding</div>
+      <div class="eyebrow" data-i18n="hero.eyebrow">free &amp; open-source · mobile vibe-coding cockpit</div>
       <h1><span data-i18n="hero.h1">drive your agent,<br>ditch the desk</span></h1>
-      <p class="lede" data-i18n="hero.lede"><b>Keep your creativity in hand.</b> One command on your computer, scan a QR — and pick up your build the moment inspiration hits.</p>
+      <p class="lede" data-i18n="hero.lede"><b>Not just a terminal — a mobile vibe-coding cockpit.</b> Built on tmux: one command on your computer, scan a QR, and your live session, Claude Code, git and previews are all in your hand — creativity ready wherever you are.</p>
       <p class="sub" data-i18n="hero.sub">Step away from your desk and the work doesn't stop. handmux drives your <b style="color:var(--green);font-weight:500">real tmux panes</b>, so the agent keeps running while you're on the train, in a queue, on the couch — pick up exactly where you left off. <b>No app to install — open the link in your phone's browser and you're in.</b> Works with <b>Claude Code</b>, Codex, aider, any shell — and it pings your phone the moment a pane needs you.</p>
       <div class="cta">
         <button class="install" id="install" aria-label="copy install command">
@@ -472,11 +472,6 @@
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s1.h">Zero install — with a native-app feel</h3>
         <p data-i18n="sig.s1.p">No App Store, no client, no iOS lock-in — open the link in your phone's browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.</p>
-      </div>
-      <div class="sig-item">
-        <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
-        <h3 data-i18n="sig.s2.h">One live session, two screens</h3>
-        <p data-i18n="sig.s2.p">Your phone drives the very tmux on your desk — not an SSH session you spun up from the phone, the <b>same live panes</b>. Run commands, open vim, any TUI, any agent. Step away mid-build and pick it up from your thumb, exact same state.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -605,9 +600,9 @@
   const I18N = {
     en: {
       'nav.docs': 'docs',
-      'hero.eyebrow': 'free &amp; open-source · mobile vibe coding',
+      'hero.eyebrow': 'free &amp; open-source · mobile vibe-coding cockpit',
       'hero.h1': 'drive your agent,<br>ditch the desk',
-      'hero.lede': '<b>Keep your creativity in hand.</b> One command on your computer, scan a QR — and pick up your build the moment inspiration hits.',
+      'hero.lede': '<b>Not just a terminal — a mobile vibe-coding cockpit.</b> Built on tmux: one command on your computer, scan a QR, and your live session, Claude Code, git and previews are all in your hand — creativity ready wherever you are.',
       'hero.sub': 'Step away from your desk and the work doesn\'t stop. handmux drives your <b style="color:var(--green);font-weight:500">real tmux panes</b>, so the agent keeps running while you\'re on the train, in a queue, on the couch — pick up exactly where you left off. <b>No app to install — open the link in your phone\'s browser and you\'re in.</b> Works with <b>Claude Code</b>, Codex, aider, any shell — and it pings your phone the moment a pane needs you.',
       'cta.copy': 'copy', 'cta.how': 'how it works →',
       'cta.then': 'then <code>handmux start</code> <span class="arr">→</span> scan the QR to hop on your phone',
@@ -636,7 +631,6 @@
       'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': 'No App Store, no client, no iOS lock-in — open the link in your phone\'s browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.',
       'sig.free': 'free · open-source',
       'sig.sec.h': 'Free, open-source, no relay', 'sig.sec.p': 'handmux is fully open-source (AGPL-3.0) and free — there\'s nothing to pay for. It also runs <b>no servers</b>: many similar tools pass your session through their cloud, handmux doesn\'t — no cloud, no account, no middleman. Your data travels straight between your computer and your phone.',
-      'sig.s2.h': 'One live session, two screens', 'sig.s2.p': 'Your phone drives the very tmux on your desk — not an SSH session you spun up from the phone, the <b>same live panes</b>. Run commands, open vim, any TUI, any agent. Step away mid-build and pick it up from your thumb, exact same state.',
       'sig.s3.h': 'Agent usage, always in view', 'sig.s3.p': 'See <b>Claude</b>\'s 5-hour and weekly limit bars with reset countdowns, plus <b>Codex</b>\'s quota ring — read from local files on the host, no account login or API calls. A time marker shows whether you\'re burning slower or faster than the clock.',
       'sig.s4.h': 'A deeply-tuned keyboard for the terminal', 'sig.s4.p': 'Typing into a terminal is the hard part on a phone — so handmux built an input system for it. Two modes fit two scenarios: <b>command mode</b> types straight into the terminal, with preset ESC/Tab/Ctrl+C and key combos (⌃⇧⌥ + a base key — one tap fires a real keystroke); <b>chat mode</b> talks to the agent in natural language. Save common commands global or per-window, reorder and edit it all in a ⚙ sheet.',
       'sig.s5.h': 'A git client in your hand', 'sig.s5.p': 'Not just a diff — a VS&nbsp;Code-style git panel: working changes, commit history, any branch, tap for a full-screen colored diff. Multi-repo tabs, read-only, never touches your tree.',
@@ -666,9 +660,9 @@
     },
     zh: {
       'nav.docs': '文档',
-      'hero.eyebrow': '开源免费 · 移动端 vibe coding',
+      'hero.eyebrow': '开源免费 · 移动 Vibe Coding 驾驶舱',
       'hero.h1': '指挥Agent干活,<br>何必守在电脑前?',
-      'hero.lede': '<b>把创造力随时握在手里。</b>电脑上跑一行命令、手机扫码连上,灵感一来就接着写。',
+      'hero.lede': '<b>不只是终端——一整套移动 Vibe Coding 驾驶舱。</b>基于 tmux:电脑上一行命令、手机扫码,正跑着的会话、Claude Code、git、预览全到手里,创造力随时随地都在你手上。',
       'hero.sub': '以前写代码,得钉在电脑前;现在不用了。手机操作的是你<b style="color:var(--green);font-weight:500">真实的 tmux pane</b>,里头的进程照跑不停——挤地铁、等公交、窝沙发,灵感来了随手接着写,离开时什么样、回来还什么样。<b>不用装 App——手机浏览器点开链接就进去了。</b>Claude Code、Codex、aider、任意 shell 都行;哪个 pane 要你拍板,第一时间叮一下推到你手机上。',
       'cta.copy': '复制', 'cta.how': '看它怎么跑 →',
       'cta.then': '再 <code>handmux start</code> <span class="arr">→</span> 扫码即上手机',
@@ -697,7 +691,6 @@
       'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '不下 App、不装客户端、不锁 iOS——手机浏览器点开链接,「<b>添加到主屏</b>」即可。全屏运行的 PWA,<b>基本就是个原生 App</b>,iPhone、安卓都一样。在 iPhone 上,推送也靠它——加到主屏后,pane 一有情况 handmux 就能推到你手机。建议用 <b>Safari</b>(iOS)或 <b>Chrome</b>。',
       'sig.free': '免费 · 开源',
       'sig.sec.h': '完全免费 · 开源 · 不经过我们', 'sig.sec.p': 'handmux 完全开源(AGPL-3.0)、免费——没有任何收费项。而且它<b>不跑任何服务器</b>:很多同类工具会把你的会话经它们的云服务器中转,handmux 不会——没有云、没有账号、没有中间人。数据只在你的电脑和你的手机之间直接走。',
-      'sig.s2.h': '同一个实时会话,两块屏', 'sig.s2.p': '手机连的就是你电脑上那个 tmux 本身——不是你从手机新开的 SSH,而是<b>同一批实时 pane</b>。跑命令、开 vim、任何 TUI、任何 agent;干到一半起身,掏出手机原样接着干,状态一点不差。',
       'sig.s3.h': 'Agent 用量,一眼可见', 'sig.s3.p': '一眼看 <b>Claude</b> 的 5 小时 / 本周额度进度条 + 重置倒计时,还有 <b>Codex</b> 的额度环——全读主机本地文件,不登录账号、不调 API。进度条上还有条时间竖线,烧得比时钟快还是慢一目了然。',
       'sig.s4.h': '为手机深度打磨的键盘操作', 'sig.s4.p': '在手机上敲终端本是最难的一环,handmux 为此深度打磨了一套输入操作。两种模式适配不同场景:<b>命令模式</b>直接敲进终端,配上预置的 ESC/Tab/Ctrl+C 和组合键(⌃⇧⌥ + 基键,点一下直发真实按键);<b>聊天模式</b>用自然语言发给 agent。常用命令还能分全局或按窗口保存,全在 ⚙ 面板里拖拽排序、点按即改。',
       'sig.s5.h': '一只手掌握的 Git 客户端', 'sig.s5.p': '不止是 diff——一块 VS&nbsp;Code 那样的 git 面板:工作区改动、提交历史、随便哪个分支,点开就是全屏彩色 diff。多仓库分页、只读,绝不动你的工作区。',
