@@ -172,7 +172,7 @@ em { font-style: italic; color: var(--ink); }
       <a href="https://www.npmjs.com/package/handmux" class="gh-link" aria-label="npm" title="npm">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456l-.01 10.382H5.113z"/></svg>
       </a>
-      <a href="https://github.com/yuanyuanzijin/handmux" class="gh-link" aria-label="GitHub" title="GitHub">
+      <a href="https://github.com/handmux/handmux" class="gh-link" aria-label="GitHub" title="GitHub">
         <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       </a>
       <div class="lang-drop" id="langDrop">
@@ -195,6 +195,7 @@ em { font-style: italic; color: var(--ink); }
     <div class="nav-grp">
       <span class="nav-grp-label" data-i18n="g.start">Getting started</span>
       <a class="nav-link" href="#quickstart" data-i18n="l.quickstart">Quick start</a>
+      <a class="nav-link" href="#add-to-home" data-i18n="l.a2hs">Add to Home Screen</a>
       <a class="nav-link" href="#requirements" data-i18n="l.req">Requirements</a>
       <a class="nav-link" href="#windows" data-i18n="l.win">Windows (WSL2)</a>
     </div>
@@ -248,6 +249,21 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
 <i data-i18n="qs.c4"># reach it from anywhere:</i>
 <b>handmux start --tunnel cloudflare</b></pre></div>
       <div class="note tip"><p><b data-i18n="qs.tip-b">Tip:</b> <span data-i18n="qs.tip">scan the QR with your phone camera — it encodes the token so you sign in automatically.</span></p></div>
+    </section>
+
+    <!-- ADD TO HOME SCREEN -->
+    <section id="add-to-home">
+      <h2 data-i18n="a2h.h2">Add to Home Screen</h2>
+      <p data-i18n="a2h.p">handmux runs as a PWA — add it to your home screen to open it full-screen, like a native app. On iPhone this is also required for push, so it can ping you the moment a pane needs you.</p>
+      <h3 data-i18n="a2h.ios-h">iPhone / iPad — Safari</h3>
+      <ol>
+        <li data-i18n="a2h.ios1">Tap the Share button (the ⬆︎ box) in Safari.</li>
+        <li data-i18n="a2h.ios2">Tap “More”, or scroll down the actions list.</li>
+        <li data-i18n="a2h.ios3">Choose “Add to Home Screen”, then “Add”.</li>
+      </ol>
+      <div class="note"><p><b data-i18n="a2h.ios-note-b">Note:</b> <span data-i18n="a2h.ios-note">only Safari can install a PWA on iOS. If you opened the link in another browser, reopen it in Safari first.</span></p></div>
+      <h3 data-i18n="a2h.and-h">Android — Chrome</h3>
+      <p data-i18n="a2h.and-p">Tap the browser menu (⋮) and choose “Install app” / “Add to Home screen” — or accept the install banner if it appears.</p>
     </section>
 
     <!-- REQUIREMENTS -->
@@ -448,14 +464,14 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
 
     <section id="tunnel-none">
       <h3><code>--tunnel none</code> <span class="dim-badge" data-i18n="tn.none.badge">(default)</span></h3>
-      <p data-i18n="tn.none.p1">No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi.</p>
+      <p data-i18n="tn.none.p1">No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi. If your machine already has a public IP or domain, <code>none</code> is all you need — add <code>--public-url</code> to advertise that address, no tunnel required.</p>
     </section>
 
     <section id="tunnel-cloudflare">
       <h3><code>--tunnel cloudflare</code> <span class="badge" data-i18n="tn.cf.badge">zero-config</span></h3>
       <p data-i18n="tn.cf.p1">One outbound connection to Cloudflare's edge gives you a random public <code>https://xxx.trycloudflare.com</code> URL. No account, no port forwarding, no TLS setup. <code>cloudflared</code> is auto-downloaded to <code>~/.handmux/</code> on first use.</p>
       <div class="cb"><pre><b>handmux start --tunnel cloudflare</b></pre></div>
-      <div class="note"><p><b data-i18n="tn.cf.note-b">Note:</b> <span data-i18n="tn.cf.note">the hostname is random and changes every restart. For a stable URL use <code>cloudflare-named</code> or <code>ssh</code>.</span></p></div>
+      <div class="note"><p><b data-i18n="tn.cf.note-b">Note:</b> <span data-i18n="tn.cf.note">the hostname is random and changes every restart — and Cloudflare's public edge can be unstable or unreliable in some regions (e.g. mainland China). For a stable URL, or reliable access there, use <code>cloudflare-named</code> or <code>ssh</code>.</span></p></div>
     </section>
 
     <section id="tunnel-cloudflare-named">
@@ -533,12 +549,22 @@ const I18N = {
   en: {
     'nav.home':'home','nav.docs':'docs',
     'g.start':'Getting started','g.cmds':'Commands','g.ref':'Reference','g.int':'Integrations',
-    'l.quickstart':'Quick start','l.req':'Requirements','l.flags':'Flags','l.cfgfile':'Config file','l.tunnels':'Tunnels','l.env':'Env variables',
+    'l.quickstart':'Quick start','l.a2hs':'Add to Home Screen','l.req':'Requirements','l.flags':'Flags','l.cfgfile':'Config file','l.tunnels':'Tunnels','l.env':'Env variables',
     'page.eyebrow':'CLI Reference','page.h1':'Documentation',
     'page.lead':'Complete reference for the <code>handmux</code> CLI. Install once, configure once with <code>handmux setup</code>, run forever.',
     'qs.h2':'Quick start','qs.p':'Three steps. If you already have <code>tmux</code>, step one is done.',
     'qs.c1':'# 1 — check prerequisites','qs.n1':'# need Node ≥ 18  →  nodejs.org','qs.n2':'# need tmux ≥ 3.0  →  brew install tmux',
     'qs.c2':'# 2 — install','qs.c3':'# 3 — run (LAN-only, zero config)','qs.c4':'# reach it from anywhere:',
+    'a2h.h2':'Add to Home Screen',
+    'a2h.p':'handmux runs as a PWA — add it to your home screen to open it full-screen, like a native app. On iPhone this is also required for push, so it can ping you the moment a pane needs you.',
+    'a2h.ios-h':'iPhone / iPad — Safari',
+    'a2h.ios1':'Tap the Share button (the ⬆︎ box) in Safari.',
+    'a2h.ios2':'Tap “More”, or scroll down the actions list.',
+    'a2h.ios3':'Choose “Add to Home Screen”, then “Add”.',
+    'a2h.ios-note-b':'Note:',
+    'a2h.ios-note':'only Safari can install a PWA on iOS. If you opened the link in another browser, reopen it in Safari first.',
+    'a2h.and-h':'Android — Chrome',
+    'a2h.and-p':'Tap the browser menu (⋮) and choose “Install app” / “Add to Home screen” — or accept the install banner if it appears.',
     'qs.tip-b':'Tip:','qs.tip':"scan the QR with your phone camera — it carries the token so you sign in automatically.",
     'req.h2':'Requirements','th.what':'What','th.ver':'Version','th.note':'Note',
     'req.node':'≥ 18','req.tmux':'≥ 3.0','req.tmux-how':'brew install tmux · apt install tmux',
@@ -603,9 +629,9 @@ const I18N = {
     'cj.push':'// Web Push — VAPID keys added by `handmux setup` when you enable notifications',
     'cj.voice':'// Voice input — Xfyun credentials added by `handmux setup`',
     'tn.h2':'Tunnels','tn.p':'Four modes for making the server reachable. Pick one per run with <code>--tunnel</code>, or set permanently with <code>handmux setup</code>.',
-    'tn.none.badge':'(default)','tn.none.p1':'No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi.',
+    'tn.none.badge':'(default)','tn.none.p1':'No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi. If your machine already has a public IP or domain, <code>none</code> is all you need — add <code>--public-url</code> to advertise that address, no tunnel required.',
     'tn.cf.badge':'zero-config','tn.cf.p1':'One outbound connection to Cloudflare\'s edge gives you a random public <code>https://xxx.trycloudflare.com</code> URL. No account, no port forwarding, no TLS setup. <code>cloudflared</code> is auto-downloaded to <code>~/.handmux/</code> on first use.',
-    'tn.cf.note-b':'Note:','tn.cf.note':'the hostname is random and changes every restart. For a stable URL use <code>cloudflare-named</code> or <code>ssh</code>.',
+    'tn.cf.note-b':'Note:','tn.cf.note':'the hostname is random and changes every restart — and Cloudflare\'s public edge can be unstable or unreliable in some regions (e.g. mainland China). For a stable URL, or reliable access there, use <code>cloudflare-named</code> or <code>ssh</code>.',
     'tn.cfn.badge':'stable domain','tn.cfn.p1':'A permanent Cloudflare Tunnel on your own domain, e.g. <code>https://handmux.example.com</code>. Requires a Cloudflare account and a domain on Cloudflare DNS.',
     'tn.cfn.p2':'Run <code>handmux setup</code> and pick <em>cloudflare-named</em> — it walks you through creating the tunnel, setting the DNS CNAME, and saving credentials.',
     'tn.ssh.badge':'your server','tn.ssh.p1':'Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable, fully under your control, and works where Cloudflare is unreliable (e.g. mainland China).',
@@ -628,12 +654,22 @@ const I18N = {
   zh: {
     'nav.home':'首页','nav.docs':'文档',
     'g.start':'上手','g.cmds':'命令','g.ref':'参考','g.int':'集成',
-    'l.quickstart':'快速开始','l.req':'环境要求','l.flags':'参数','l.cfgfile':'配置文件','l.tunnels':'隧道','l.env':'环境变量',
+    'l.quickstart':'快速开始','l.a2hs':'添加到主屏','l.req':'环境要求','l.flags':'参数','l.cfgfile':'配置文件','l.tunnels':'隧道','l.env':'环境变量',
     'page.eyebrow':'CLI 参考','page.h1':'文档',
     'page.lead':'<code>handmux</code> CLI 完整参考。装一次、<code>handmux setup</code> 配一次，之后让它跑着就好。',
     'qs.h2':'快速开始','qs.p':'三步跑起来。已在用 <code>tmux</code> 的话，第一步算完成了。',
     'qs.c1':'# 1 — 检查基础环境','qs.n1':'# 需要 Node ≥ 18  →  nodejs.org','qs.n2':'# 需要 tmux ≥ 3.0  →  brew install tmux',
     'qs.c2':'# 2 — 安装','qs.c3':'# 3 — 跑起来（默认仅局域网，零配置）','qs.c4':'# 从任何地方连：',
+    'a2h.h2':'添加到主屏',
+    'a2h.p':'handmux 以 PWA 运行——把它添加到主屏,就能像原生 App 一样全屏打开。在 iPhone 上,这也是收到推送的前提,pane 需要你时才能推到手机。',
+    'a2h.ios-h':'iPhone / iPad —— Safari',
+    'a2h.ios1':'点 Safari 里的分享按钮（⬆︎ 方框）。',
+    'a2h.ios2':'点「更多」，或向下滑动操作列表。',
+    'a2h.ios3':'选「添加到主屏幕」，再点「添加」。',
+    'a2h.ios-note-b':'注意：',
+    'a2h.ios-note':'iOS 上只有 Safari 能安装 PWA。如果你是用别的浏览器打开的，请先在 Safari 里重新打开。',
+    'a2h.and-h':'Android —— Chrome',
+    'a2h.and-p':'点浏览器菜单（⋮），选「安装应用」/「添加到主屏幕」——或在弹出的安装提示里确认。',
     'qs.tip-b':'提示：','qs.tip':'用手机相机扫打印出来的二维码——二维码里带了 token，扫完自动登录。',
     'req.h2':'环境要求','th.what':'依赖','th.ver':'版本','th.note':'说明',
     'req.node':'≥ 18','req.tmux':'≥ 3.0','req.tmux-how':'brew install tmux · apt install tmux',
@@ -698,9 +734,9 @@ const I18N = {
     'cj.push':'// Web Push——启用通知时由 `handmux setup` 填入的 VAPID 密钥',
     'cj.voice':'// 语音输入——由 `handmux setup` 填入的讯飞凭证',
     'tn.h2':'隧道','tn.p':'四种让服务器对外可访问的方式。用 <code>--tunnel</code> 临时切换，或通过 <code>handmux setup</code> 永久配置。',
-    'tn.none.badge':'（默认）','tn.none.p1':'不对外暴露——只在局域网可访问。打印局域网 URL（<code>http://192.168.x.x:19999/…</code>）和本地 URL。手机和电脑同一 WiFi 时使用。',
+    'tn.none.badge':'（默认）','tn.none.p1':'不对外暴露——只在局域网可访问。打印局域网 URL（<code>http://192.168.x.x:19999/…</code>）和本地 URL。手机和电脑同一 WiFi 时使用。如果你的电脑本身就有公网 IP 或域名，用 <code>none</code> 就够了——加上 <code>--public-url</code> 告知外网地址即可，不需要隧道。',
     'tn.cf.badge':'零配置','tn.cf.p1':'向 Cloudflare 边缘拉一条出站连接，获得随机公网 <code>https://xxx.trycloudflare.com</code> URL。不需要账号，不用开端口，不用配 TLS。首次使用自动下载 <code>cloudflared</code> 到 <code>~/.handmux/</code>。',
-    'tn.cf.note-b':'注意：','tn.cf.note':'主机名随机，每次重启都会变。需要固定 URL 请用 <code>cloudflare-named</code> 或 <code>ssh</code>。',
+    'tn.cf.note-b':'注意：','tn.cf.note':'主机名随机，每次重启都会变；而且 Cloudflare 公共边缘在部分地区（如中国大陆）可能不稳定。需要固定 URL、或在这些地区稳定访问，请用 <code>cloudflare-named</code> 或 <code>ssh</code>。',
     'tn.cfn.badge':'稳定域名','tn.cfn.p1':'用自己域名建立永久 Cloudflare 命名隧道，如 <code>https://handmux.example.com</code>。需要 Cloudflare 账号和接入 Cloudflare DNS 的域名。',
     'tn.cfn.p2':'运行 <code>handmux setup</code> 选 <em>cloudflare-named</em>——向导引导你创建隧道、设置 DNS CNAME 并保存凭证。',
     'tn.ssh.badge':'你的服务器','tn.ssh.p1':'通过 <code>tunlite</code> 向自己的 VPS 建立反向 SSH 隧道。稳定、完全可控，在 Cloudflare 不稳定的地区（如中国大陆）也能正常使用。',

@@ -305,13 +305,17 @@
     .hop svg { width: 18px; }
     .hop-l { font-size: 7px; letter-spacing: 0; }
   }
-  .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; }
+  .how-lead { text-align: center; color: var(--dim); font-size: 14px; line-height: 1.65; max-width: 660px; margin: 26px auto 0; }
+  .how-lead b { color: var(--ink); font-weight: 500; }
+  .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
   .way { border: 1px solid var(--line); padding: 22px; background: var(--bg); }
   .way .t { font-family: var(--display); font-size: 14px; color: var(--ink); letter-spacing: -.01em; }
   .way .t .badge { font-size: 10px; padding: 2px 8px; margin-left: 8px; letter-spacing: .08em; text-transform: uppercase; }
-  .way.cf .badge { background: rgba(116,230,160,.16); color: var(--green); }
-  .way.self .badge { background: rgba(116,230,160,.14); color: var(--green); }
+  .way.direct .badge { background: rgba(116,230,160,.16); color: var(--green); }
+  .way.tunnel .badge { background: rgba(255,180,84,.16); color: var(--amber); }
   .way p { color: var(--dim); font-size: 13px; margin-top: 10px; }
+  .way p b { color: var(--ink); font-weight: 500; }
+  .way p code { color: var(--green); font-family: var(--mono); }
 
   /* commands */
   .cmds { margin-top: 24px; border: 1px solid var(--line); background: #0d0f0b; padding: 24px 26px; }
@@ -346,7 +350,7 @@
       <a href="https://www.npmjs.com/package/handmux" class="gh-link" aria-label="npm" title="npm">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456l-.01 10.382H5.113z"/></svg>
       </a>
-      <a href="https://github.com/yuanyuanzijin/handmux" class="gh-link" aria-label="GitHub" title="GitHub">
+      <a href="https://github.com/handmux/handmux" class="gh-link" aria-label="GitHub" title="GitHub">
         <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       </a>
       <div class="lang-drop" id="langDrop">
@@ -420,25 +424,6 @@
     </div>
   </section>
 
-  <section id="start">
-    <div class="h2" data-i18n="start.h2">get going · 2 minutes</div>
-    <p class="lead" data-i18n="start.lead">Two things on your computer — and if you already use <b>tmux</b>, you're basically set. Your phone needs nothing but a browser.</p>
-    <div class="cmds">
-<pre data-i18n="start.body"><i># 1 · do you have the basics? (run on your computer)</i>
-node -v     <i># need Node ≥ 18   → nodejs.org</i>
-tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
-
-<i># 2 · install once, then run it</i>
-<b>npm i -g handmux</b>
-<b>handmux hooks install</b>    <i># wire Claude Code / Codex → phone pings when a pane needs you</i>
-<b>handmux start</b>            <i># local / same wifi — nothing exposed</i>
-
-<i># 3 · scan the QR it prints → you're on your phone, driving your real terminal</i>
-<i># reach it from anywhere: </i><b>handmux start --tunnel cloudflare</b><i>  → a public link</i></pre>
-    </div>
-    <p class="lead" data-i18n="start.notif">Want it to <b>ping your phone</b> when a pane needs you? Open the <b>inbox</b> on your phone and tap once to turn it on — no extra command to run.</p>
-    <p class="lead" data-i18n="start.win">On <b>Windows</b>? handmux drives tmux (Unix-only), so run it inside <b>WSL2</b> — <a href="docs.html#windows">WSL2 setup →</a></p>
-  </section>
 
   <section id="claude">
     <div class="h2" data-i18n="claude.h2">the best companion for Claude Code &amp; Codex</div>
@@ -471,10 +456,8 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       </div>
       <div class="claude-points">
         <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p1.h">Pinged when it needs you</h4><p data-i18n="claude.p1.p">A push the instant a pane hits a permission prompt, a plan approval, or finishes — even with the tab closed. No more babysitting a screen. One <code>handmux hooks install</code> wires it up.</p></div></div>
-        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p2.h">Every agent at a glance</h4><p data-i18n="claude.p2.p">An inbox of your Claude panes, each tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Jump straight to the one that's blocked.</p></div></div>
-        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p3.h">Approve with your thumb</h4><p data-i18n="claude.p3.p">Answer permission prompts and plan approvals right from the phone — it's driving the real keys, so a tap is a real keystroke.</p></div></div>
-        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p4.h">Talk to it</h4><p data-i18n="claude.p4.p">Voice input to fire off the next prompt, hands-free, from wherever you are.</p></div></div>
-      </div>
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p2.h">Who's busy, who's waiting — one glance</h4><p data-i18n="claude.p2.p">One inbox lines up every coding agent — <b>Claude Code</b>, <b>Codex</b> — each pane tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Tap the blocked one and you're there.</p></div></div>
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p3.h">Approve with your thumb</h4><p data-i18n="claude.p3.p">Answer permission prompts and plan approvals right from the phone — it's driving the real keys, so a tap is a real keystroke.</p></div></div>      </div>
     </div>
   </section>
 
@@ -482,9 +465,14 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
     <div class="h2" data-i18n="sig.h2">signature features</div>
     <div class="sig">
       <div class="sig-item">
+        <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.fast">up in a minute</span></div>
+        <h3 data-i18n="sig.quick.h">One command — and it's running</h3>
+        <p data-i18n="sig.quick.p">Install with a <b>single command</b>, run it, scan the QR — about a minute later you're driving your terminal from your phone. Already have Node and tmux? There's nothing else to set up.</p>
+      </div>
+      <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s1.h">Zero install — with a native-app feel</h3>
-        <p data-i18n="sig.s1.p">No App Store, no client, no iOS lock-in — open the link in your phone's browser and Add to Home Screen. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike — <b>Chrome</b> or <b>Safari</b> recommended.</p>
+        <p data-i18n="sig.s1.p">No App Store, no client, no iOS lock-in — open the link in your phone's browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -493,13 +481,13 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
-        <h3 data-i18n="sig.s3.h">Agent usage, on a ledger</h3>
+        <h3 data-i18n="sig.s3.h">Agent usage, always in view</h3>
         <p data-i18n="sig.s3.p">See <b>Claude</b>'s 5-hour and weekly limit bars with reset countdowns, plus <b>Codex</b>'s quota ring — read from local files on the host, no account login or API calls. A time marker shows whether you're burning slower or faster than the clock.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
-        <h3 data-i18n="sig.s4.h">Command / chat modes — your quick-bar, your keys</h3>
-        <p data-i18n="sig.s4.p">One bottom bar, two modes: command mode types straight into the terminal, chat mode talks to the agent. Common commands and keys (ESC, Tab, Ctrl+C) ship as presets, ready to go — then customize freely: saved commands split global or per-window, and key combos (⌃⇧⌥ + a base key, e.g. Ctrl+C) fire real terminal keys on a tap. Reorder and edit it all in a ⚙ sheet.</p>
+        <h3 data-i18n="sig.s4.h">A deeply-tuned keyboard for the terminal</h3>
+        <p data-i18n="sig.s4.p">Typing into a terminal is the hard part on a phone — so handmux built an input system for it. Two modes fit two scenarios: <b>command mode</b> types straight into the terminal, with preset ESC/Tab/Ctrl+C and key combos (⌃⇧⌥ + a base key — one tap fires a real keystroke); <b>chat mode</b> talks to the agent in natural language. Save common commands global or per-window, reorder and edit it all in a ⚙ sheet.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -509,7 +497,7 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span><span class="sig-badge cfg" data-i18n="sig.badge_dyn">live service · setup</span></div>
         <h3 data-i18n="sig.s6.h">Preview your work, anywhere</h3>
-        <p data-i18n="sig.s6.p">Preview a static site straight from a folder — that works out of the box. Or preview a live service by port, rendered on your phone with routing, API and HMR intact, in a phone or desktop viewport. The live-service side needs a preview domain configured once.</p>
+        <p data-i18n="sig.s6.p">Preview a static site straight from a folder — that works out of the box. Or preview a live service by port, rendered on your phone with routing, API and live reload (HMR) intact, in a phone or desktop viewport. The live-service side needs a preview domain configured once.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -518,8 +506,13 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.cfg">needs setup</span></div>
-        <h3 data-i18n="sig.s8.h">Reach it anywhere — zero-config or self-hosted</h3>
-        <p data-i18n="sig.s8.p">By default it stays LAN-only, nothing exposed. When you want to reach it from anywhere, <code>handmux setup</code> wires a tunnel: a Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, or a reverse tunnel to your own VPS — the self-hosted path stays usable where Cloudflare's edge is unreliable.</p>
+        <h3 data-i18n="sig.s8.h">Reach it anywhere — direct, zero-config, or self-hosted</h3>
+        <p data-i18n="sig.s8.p">LAN-only by default, nothing exposed. Already have a public address? No tunnel needed — reach it directly. Otherwise <code>handmux setup</code> wires one: a Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, or a tunnel to your own server — the self-hosted path stays usable where Cloudflare is unreliable.</p>
+      </div>
+      <div class="sig-item">
+        <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.free">free · open-source</span></div>
+        <h3 data-i18n="sig.sec.h">Free, open-source, no relay</h3>
+        <p data-i18n="sig.sec.p">handmux is fully open-source (AGPL-3.0) and free — there's nothing to pay for. It also runs <b>no servers</b>: many similar tools pass your session through their cloud, handmux doesn't — no cloud, no account, no middleman. Your data travels straight between your computer and your phone.</p>
       </div>
     </div>
     <div class="notes">
@@ -530,6 +523,7 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
         <li data-i18n="sig.n3"><b>Built for flaky networks</b>: reconnect with backoff, a connection-lost banner, an offline page, polling that pauses when hidden — plus a reflow-safe cursor and drag-to-select copy.</li>
         <li data-i18n="sig.n4"><b>Image &amp; GIF viewer</b>: open any image, screenshot or GIF the terminal throws up — pinch-zoom, save to photos, share out, GIFs play inline.</li>
         <li data-i18n="sig.n5"><b>Starts at login</b>: <code>handmux service install</code> registers launchd / systemd so the whole thing comes back after reboot.</li>
+        <li data-i18n="sig.n6"><b>Catch every idea the moment it strikes</b>: a per-window idea/to-do list — jot one by voice, then drop it straight into the prompt.</li>
       </ul>
     </div>
   </section>
@@ -555,14 +549,15 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
         <div class="node-s" data-i18n="how.n3.s"><code>handmux start</code></div>
       </div>
     </div>
+    <p class="how-lead" data-i18n="how.lead">One command and it's running on your computer — <b>LAN-only by default</b>, nothing exposed. To reach it from anywhere, the only question is: does your machine already have a public address?</p>
     <div class="ways">
-      <div class="way cf">
-        <div class="t" data-i18n="how.cf.t">cloudflare<span class="badge">zero-config</span></div>
-        <p data-i18n="how.cf.p">One outbound connection to Cloudflare's edge hands you a public <code>https</code> link. No ports to open, no IP, no certs. Great to start in seconds.</p>
+      <div class="way direct">
+        <div class="t" data-i18n="how.direct.t">already public<span class="badge">no tunnel</span></div>
+        <p data-i18n="how.direct.p">Cloud box, public IP, or a forwarded port? Then you need <b>no tunnel at all</b> — <code>handmux start</code> already listens on your machine; reach it at your own address. Add your domain + TLS in front and it's the fastest, most private path: nothing sits in between, not even Cloudflare.</p>
       </div>
-      <div class="way self">
-        <div class="t" data-i18n="how.self.t">self-hosted<span class="badge">your domain</span></div>
-        <p data-i18n="how.self.p">A reverse tunnel to your own VPS with your domain and TLS — stable, fully yours, and works where Cloudflare's edge is unreliable.</p>
+      <div class="way tunnel">
+        <div class="t" data-i18n="how.tunnel.t">need an entrance<span class="badge">pick one</span></div>
+        <p data-i18n="how.tunnel.p">No public address? Open a tunnel — pick one:<br><b>cloudflare</b> — easiest: Cloudflare (a big CDN provider) gives your machine a public link for free, zero-config, up in seconds; its public nodes can be slow or unreliable in some regions.<br><b>cloudflare-named</b> — same, but on your own domain — steadier.<br><b>ssh self-hosted</b> — routes through your own server instead, not depending on Cloudflare at all.</p>
       </div>
     </div>
   </section>
@@ -583,6 +578,16 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
     </div>
   </section>
 
+  <section id="start">
+    <div class="h2" data-i18n="start.h2">get going · about a minute</div>
+    <p class="lead" data-i18n="start.lead">Two things on your computer — <b>Node</b> and <b>tmux</b> — and your phone needs nothing but a browser. Then one command:</p>
+    <div class="cmds">
+<pre data-i18n="start.body"><b>npm i -g handmux</b>   <i># install once</i>
+<b>handmux start</b>       <i># run it, then scan the QR it prints — you're on your phone</i></pre>
+    </div>
+    <p class="lead" data-i18n="start.more">That's the whole thing. Prerequisites, phone pings, tunnels, Windows/WSL2 — <a href="docs.html#quickstart">the full guide is in the docs →</a></p>
+  </section>
+
 </main>
 
 <footer>
@@ -590,7 +595,7 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
     <span>handmux</span>
     <span class="sep" style="color:var(--faint)">·</span>
     <span data-i18n="footer.req">needs Node ≥ 18 &amp; tmux ≥ 3.0</span>
-    <a class="ml" href="https://github.com/yuanyuanzijin/handmux">github →</a>
+    <a class="ml" href="https://github.com/handmux/handmux">github →</a>
     <a href="https://www.npmjs.com/package/handmux">npm →</a>
     <span>AGPL-3.0</span>
   </div>
@@ -613,44 +618,48 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       'see.lead': 'No mockup — real panes, right on your phone: say what you need and <b>Claude Code</b> writes the doc, it pings you when it needs you, and you review the git repo and each agent\'s usage — all with your thumb.',
       'see.cap1': 'Just say what you need — <b>Claude Code</b> writes the doc for you, and when it\'s done you tap the <b>filename</b> to preview it.',
       'see.cap2': 'It <b>pings you</b> the moment it needs you — and you can review the <b>git</b> repo and each agent\'s <b>usage</b>.',
-      'start.h2': 'get going · 2 minutes',
-      'start.lead': "Two things on your computer — and if you already use <b>tmux</b>, you're basically set. Your phone needs nothing but a browser.",
-      'start.body': "<i># 1 · do you have the basics? (run on your computer)</i>\nnode -v     <i># need Node ≥ 18   → nodejs.org</i>\ntmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>\n\n<i># 2 · install once, then run it</i>\n<b>npm i -g handmux</b>\n<b>handmux hooks install</b>    <i># wire Claude Code / Codex → phone pings when a pane needs you</i>\n<b>handmux start</b>            <i># local / same wifi — nothing exposed</i>\n\n<i># 3 · scan the QR it prints → you're on your phone, driving your real terminal</i>\n<i># reach it from anywhere: </i><b>handmux start --tunnel cloudflare</b><i>  → a public link</i>",
-      'start.notif': 'Want it to <b>ping your phone</b> when a pane needs you? Two steps: run <code>handmux hooks install</code> on your computer to wire the agent, then open the <b>inbox</b> on your phone and tap once to turn push on.',
-      'start.win': 'On <b>Windows</b>? handmux drives tmux (Unix-only), so run it inside <b>WSL2</b> — <a href="docs.html#windows">WSL2 setup →</a>',
+      'start.h2': 'get going · about a minute',
+      'start.lead': "Two things on your computer — <b>Node</b> and <b>tmux</b> — and your phone needs nothing but a browser. Then one command:",
+      'start.body': "<b>npm i -g handmux</b>   <i># install once</i>\n<b>handmux start</b>       <i># run it, then scan the QR it prints — you're on your phone</i>",
+      'start.more': 'That\'s the whole thing. Prerequisites, phone pings, tunnels, Windows/WSL2 — <a href="docs.html#quickstart">the full guide is in the docs →</a>',
       'claude.h2': 'the best companion for Claude Code &amp; Codex',
       'claude.lead': 'It drives <b>any</b> agent or TUI — and it goes furthest with <b>Claude Code</b> and <b>Codex</b>: it knows the moment a pane needs you.',
       'claude.ibx.title': 'Inbox',
       'claude.ibx.sw': 'Running', 'claude.ibx.sd': 'Completed', 'claude.ibx.sn': 'Needs you',
       'claude.ibx.m1': 'vite build — compiling…', 'claude.ibx.m2': 'Allow <code>git push origin main</code>?', 'claude.ibx.m3': '12 passed, 0 failed',
       'claude.p1.h': 'Pinged when it needs you', 'claude.p1.p': 'A push the instant a pane hits a permission prompt, a plan approval, or finishes — even with the tab closed. No more babysitting a screen. One <code>handmux hooks install</code> wires it up.',
-      'claude.p2.h': 'Every agent at a glance', 'claude.p2.p': 'An inbox of every coding agent — <b>Claude Code</b>, <b>Codex</b> — each pane tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Jump straight to the one that’s blocked.',
+      'claude.p2.h': 'Who\'s busy, who\'s waiting — one glance', 'claude.p2.p': 'One inbox lines up every coding agent — <b>Claude Code</b>, <b>Codex</b> — each pane tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Tap the blocked one and you’re there.',
       'claude.p3.h': 'Approve with your thumb', 'claude.p3.p': "Answer permission prompts and plan approvals right from the phone — it's driving the real keys, so a tap is a real keystroke.",
-      'claude.p4.h': 'Talk to it', 'claude.p4.p': 'Voice input to fire off the next prompt, hands-free, from wherever you are.',
       'sig.h2': 'signature features',
       'sig.on': 'on by default', 'sig.cfg': 'needs setup', 'sig.badge_dyn': 'live service · setup',
-      'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': 'No App Store, no client, no iOS lock-in — open the link in your phone\'s browser and Add to Home Screen. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike — <b>Chrome</b> or <b>Safari</b> recommended.',
+      'sig.fast': 'up in a minute',
+      'sig.quick.h': 'One command — and it\'s running', 'sig.quick.p': 'Install with a <b>single command</b>, run it, scan the QR — about a minute later you\'re driving your terminal from your phone. Already have Node and tmux? There\'s nothing else to set up.',
+      'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': 'No App Store, no client, no iOS lock-in — open the link in your phone\'s browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.',
+      'sig.free': 'free · open-source',
+      'sig.sec.h': 'Free, open-source, no relay', 'sig.sec.p': 'handmux is fully open-source (AGPL-3.0) and free — there\'s nothing to pay for. It also runs <b>no servers</b>: many similar tools pass your session through their cloud, handmux doesn\'t — no cloud, no account, no middleman. Your data travels straight between your computer and your phone.',
       'sig.s2.h': 'One live session, two screens', 'sig.s2.p': 'Your phone drives the very tmux on your desk — not an SSH session you spun up from the phone, the <b>same live panes</b>. Run commands, open vim, any TUI, any agent. Step away mid-build and pick it up from your thumb, exact same state.',
-      'sig.s3.h': 'Agent usage, on a ledger', 'sig.s3.p': 'See <b>Claude</b>\'s 5-hour and weekly limit bars with reset countdowns, plus <b>Codex</b>\'s quota ring — read from local files on the host, no account login or API calls. A time marker shows whether you\'re burning slower or faster than the clock.',
-      'sig.s4.h': 'Command / chat modes — your quick-bar, your keys', 'sig.s4.p': 'One bottom bar, two modes: command mode types straight into the terminal, chat mode talks to the agent. Common commands and keys (ESC, Tab, Ctrl+C) ship as presets, ready to go — then customize freely: saved commands split global or per-window, and key combos (⌃⇧⌥ + a base key, e.g. Ctrl+C) fire real terminal keys on a tap. Reorder and edit it all in a ⚙ sheet.',
+      'sig.s3.h': 'Agent usage, always in view', 'sig.s3.p': 'See <b>Claude</b>\'s 5-hour and weekly limit bars with reset countdowns, plus <b>Codex</b>\'s quota ring — read from local files on the host, no account login or API calls. A time marker shows whether you\'re burning slower or faster than the clock.',
+      'sig.s4.h': 'A deeply-tuned keyboard for the terminal', 'sig.s4.p': 'Typing into a terminal is the hard part on a phone — so handmux built an input system for it. Two modes fit two scenarios: <b>command mode</b> types straight into the terminal, with preset ESC/Tab/Ctrl+C and key combos (⌃⇧⌥ + a base key — one tap fires a real keystroke); <b>chat mode</b> talks to the agent in natural language. Save common commands global or per-window, reorder and edit it all in a ⚙ sheet.',
       'sig.s5.h': 'A git client in your hand', 'sig.s5.p': 'Not just a diff — a VS&nbsp;Code-style git panel: working changes, commit history, any branch, tap for a full-screen colored diff. Multi-repo tabs, read-only, never touches your tree.',
-      'sig.s6.h': 'Preview your work, anywhere', 'sig.s6.p': 'Preview a static site straight from a folder — that works out of the box. Or preview a live service by port, rendered on your phone with routing, API and HMR intact, in a phone or desktop viewport. The live-service side needs a preview domain configured once.',
+      'sig.s6.h': 'Preview your work, anywhere', 'sig.s6.p': 'Preview a static site straight from a folder — that works out of the box. Or preview a live service by port, rendered on your phone with routing, API and live reload (HMR) intact, in a phone or desktop viewport. The live-service side needs a preview domain configured once.',
       'sig.s7.h': 'Docs you can read — or hear — and files both ways', 'sig.s7.p': 'Tap any path in the terminal to open it: Markdown rendered, font zoom, and <b>read-aloud</b> with sentence-by-sentence highlight. Move files both ways too — upload from the chat box (multi-select, path auto-filled, filtered to supported types), download with a tap, share straight in, copy any absolute path.',
-      'sig.s8.h': 'Reach it anywhere — zero-config or self-hosted', 'sig.s8.p': 'By default it stays LAN-only, nothing exposed. When you want to reach it from anywhere, <code>handmux setup</code> wires a tunnel: a Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, or a reverse tunnel to your own VPS — the self-hosted path stays usable where Cloudflare\'s edge is unreliable.',
+      'sig.s8.h': 'Reach it anywhere — direct, zero-config, or self-hosted', 'sig.s8.p': 'LAN-only by default, nothing exposed. Already have a public address? No tunnel needed — reach it directly. Otherwise <code>handmux setup</code> wires one: a Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, or a tunnel to your own server — the self-hosted path stays usable where Cloudflare is unreliable.',
       'sig.notes.h': 'good to know',
       'sig.n1': '<b>Voice input</b> (optional): add iFlytek credentials and chat mode turns your speech into text — fire off the next prompt hands-free.',
       'sig.n2': '<b>Update notice</b>: handmux checks for a newer release about once an hour and lights a dot on the settings gear — a nudge to run <code>handmux update</code> on your computer.',
       'sig.n3': '<b>Built for flaky networks</b>: reconnect with backoff, a connection-lost banner, an offline page, polling that pauses when hidden — plus a reflow-safe cursor and drag-to-select copy.',
       'sig.n4': '<b>Image &amp; GIF viewer</b>: open any image, screenshot or GIF the terminal throws up — pinch-zoom, save to photos, share out, GIFs play inline.',
       'sig.n5': '<b>Starts at login</b>: <code>handmux service install</code> registers launchd / systemd so the whole thing comes back after reboot.',
+      'sig.n6': '<b>Catch every idea the moment it strikes</b>: a per-window idea/to-do list — jot one by voice, then drop it straight into the prompt.',
       'how.h2': 'how it works',
       'how.n1.t': 'Your phone', 'how.n1.s': 'no app · add to home screen', 'how.hop1': 'https',
       'how.n2.t': 'Tunnel', 'how.n2.s': 'we start it for you · or your own', 'how.hop2': 'reverse',
       'how.n3.t': 'Your machine', 'how.n3.s': '<code>handmux start</code>',
-      'how.cf.t': 'cloudflare<span class="badge">zero-config</span>',
-      'how.cf.p': "One outbound connection to Cloudflare's edge hands you a public <code>https</code> link. No ports to open, no IP, no certs. Great to start in seconds.",
-      'how.self.t': 'self-hosted<span class="badge">your domain</span>',
-      'how.self.p': "A reverse tunnel to your own VPS with your domain and TLS — stable, fully yours, and works where Cloudflare's edge is unreliable.",
+      'how.lead': "One command and it's running on your computer — <b>LAN-only by default</b>, nothing exposed. To reach it from anywhere, the only question is: does your machine already have a public address?",
+      'how.direct.t': 'already public<span class="badge">no tunnel</span>',
+      'how.direct.p': "Cloud box, public IP, or a forwarded port? Then you need <b>no tunnel at all</b> — <code>handmux start</code> already listens on your machine; reach it at your own address. Add your domain + TLS in front and it's the fastest, most private path: nothing sits in between, not even Cloudflare.",
+      'how.tunnel.t': 'need an entrance<span class="badge">pick one</span>',
+      'how.tunnel.p': "No public address? Open a tunnel — pick one:<br><b>cloudflare</b> — easiest: Cloudflare (a big CDN provider) gives your machine a public link for free, zero-config, up in seconds; its public nodes can be slow or unreliable in some regions.<br><b>cloudflare-named</b> — same, but on your own domain — steadier.<br><b>ssh self-hosted</b> — routes through your own server instead, not depending on Cloudflare at all.",
       'cli.h2': 'the whole cli',
       'cli.body': '<b>handmux start</b> [flags]                 <i># run it — LAN-only by default, no config needed</i>\n<b>handmux setup</b>                         <i># configure tunnel / name / notifications (saved; re-run to change)</i>\n<b>handmux hooks install</b>                 <i># wire Claude Code / Codex → inbox lights up + phone pings</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see the live URL</i>\n<b>handmux logs</b> [--follow]              <i># tail the supervisor log</i>\n<b>handmux config</b>                        <i># show effective config + where each value came from</i>\n<b>handmux update</b>                        <i># upgrade to the latest (the app nudges you when one\'s out)</i>\n<b>handmux service install</b>               <i># start at login</i>\n\n<i># flags (one-run overrides):</i> --tunnel none|cloudflare|cloudflare-named|ssh  --port  --token  --config',
       'footer.req': 'needs Node ≥ 18 &amp; tmux ≥ 3.0',
@@ -670,44 +679,48 @@ tmux -V     <i># need tmux ≥ 3.0  → brew install tmux / apt install tmux</i>
       'see.lead': '不是效果图——真实的 pane,就在你手机上:说出需求,<b>Claude Code</b> 帮你写文档;需要你时推送叫你,你还能审查 Git 仓库和各智能体的用量——全用拇指。',
       'see.cap1': '说出你的需求,<b>Claude</b> 帮你把文档写好;完成后点一下<b>文件名</b>就能预览。',
       'see.cap2': '需要你时<b>推送</b>叫你——你还能审查 <b>Git</b> 仓库和各智能体的<b>用量</b>。',
-      'start.h2': '上手 · 2 分钟',
-      'start.lead': '电脑上准备两样东西——如果你本来就用 <b>tmux</b>,基本就齐了。手机端只要一个浏览器。',
-      'start.body': '<i># 1 · 先看看基础够不够(在电脑上跑)</i>\nnode -v     <i># 需要 Node ≥ 18   → nodejs.org</i>\ntmux -V     <i># 需要 tmux ≥ 3.0  → brew install tmux / apt install tmux</i>\n\n<i># 2 · 装一次,然后跑起来</i>\n<b>npm i -g handmux</b>\n<b>handmux hooks install</b>    <i># 挂上 Claude Code / Codex → pane 要你拍板时推到手机</i>\n<b>handmux start</b>            <i># 仅本机 / 同一 wifi —— 不对外暴露</i>\n\n<i># 3 · 扫它打印的二维码 → 手机上就连上你真实的终端了</i>\n<i># 想从任何地方连:</i><b>handmux start --tunnel cloudflare</b><i>  → 一个公网链接</i>',
-      'start.notif': '想让它在某个 pane <b>需要你时推送到手机</b>?两步:电脑上跑 <code>handmux hooks install</code> 挂上 agent,再在手机<b>收件箱</b>点一下开启推送。',
-      'start.win': '用 <b>Windows</b>?handmux 靠 tmux 驱动(只有 Unix 版),所以装进 <b>WSL2</b> 里跑 — <a href="docs.html#windows">WSL2 安装 →</a>',
+      'start.h2': '上手 · 大约一分钟',
+      'start.lead': '电脑上准备两样东西——<b>Node</b> 和 <b>tmux</b>——手机端只要一个浏览器。然后一条命令:',
+      'start.body': '<b>npm i -g handmux</b>   <i># 装一次</i>\n<b>handmux start</b>       <i># 跑起来,扫它打印的二维码 —— 手机上就连上了</i>',
+      'start.more': '就这么多。基础环境、手机推送、隧道、Windows/WSL2 —— <a href="docs.html#quickstart">完整指南都在文档里 →</a>',
       'claude.h2': 'Claude Code 和 Codex 的最佳搭档',
       'claude.lead': '什么智能体、什么 TUI 都能带;而配上 <b>Claude Code</b> 和 <b>Codex</b> 最到位:哪个 pane 该你出手了,它当场就知道。',
       'claude.ibx.title': '收件箱',
       'claude.ibx.sw': '进行中', 'claude.ibx.sd': '已完成', 'claude.ibx.sn': '需要你',
       'claude.ibx.m1': 'vite 构建中…', 'claude.ibx.m2': '允许执行 <code>git push origin main</code>?', 'claude.ibx.m3': '12 通过,0 失败',
       'claude.p1.h': '需要你,就推给你', 'claude.p1.p': 'pane 一弹授权、要你批计划、或者干完了,立刻推到手机上,哪怕你早把标签页关了。再不用守着屏幕干等。电脑上一条 <code>handmux hooks install</code> 就挂上了。',
-      'claude.p2.h': '哪个在忙,一眼看全', 'claude.p2.p': '一个收件箱把你所有 coding agent(<b>Claude Code</b>、<b>Codex</b>)的 pane 排好,每个都标着 <span style="color:var(--blue)">进行中</span> · <span style="color:var(--amber)">需要你</span> · <span style="color:var(--green)">已完成</span>。哪个卡住了,点一下直接过去。',
+      'claude.p2.h': '谁在忙、谁等你,一屏看全', 'claude.p2.p': '一个收件箱把你所有 coding agent(<b>Claude Code</b>、<b>Codex</b>)排成一屏,每个 pane 都标着 <span style="color:var(--blue)">进行中</span> · <span style="color:var(--amber)">需要你</span> · <span style="color:var(--green)">已完成</span>——哪个卡住,点一下直达。',
       'claude.p3.h': '拇指点一下就批', 'claude.p3.p': '授权、批计划,在手机上直接点;手机敲的就是真实按键,你点一下,就等于在键盘上敲了一下。',
-      'claude.p4.h': '张嘴就能发', 'claude.p4.p': '下一条 prompt 直接说出来,手都不用动,人在哪都能发。',
       'sig.h2': '特色功能',
       'sig.on': '默认开启', 'sig.cfg': '需配置', 'sig.badge_dyn': '在线服务 · 需配置',
-      'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '不下 App、不装客户端、不锁 iOS——手机浏览器点开链接,「添加到主屏」即可。全屏运行的 PWA,<b>基本就是个原生 App</b>,iPhone、安卓都一样——建议用 <b>Chrome</b> 或 <b>Safari</b>。',
+      'sig.fast': '一分钟上手',
+      'sig.quick.h': '一条命令,就启动了', 'sig.quick.p': '<b>一条命令</b>装好、跑起来、扫码——大约一分钟,你就在手机上操作自己的终端了。已经有 Node 和 tmux 的话,别的什么都不用配。',
+      'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '不下 App、不装客户端、不锁 iOS——手机浏览器点开链接,「<b>添加到主屏</b>」即可。全屏运行的 PWA,<b>基本就是个原生 App</b>,iPhone、安卓都一样。在 iPhone 上,推送也靠它——加到主屏后,pane 一有情况 handmux 就能推到你手机。建议用 <b>Safari</b>(iOS)或 <b>Chrome</b>。',
+      'sig.free': '免费 · 开源',
+      'sig.sec.h': '完全免费 · 开源 · 不经过我们', 'sig.sec.p': 'handmux 完全开源(AGPL-3.0)、免费——没有任何收费项。而且它<b>不跑任何服务器</b>:很多同类工具会把你的会话经它们的云服务器中转,handmux 不会——没有云、没有账号、没有中间人。数据只在你的电脑和你的手机之间直接走。',
       'sig.s2.h': '同一个实时会话,两块屏', 'sig.s2.p': '手机连的就是你电脑上那个 tmux 本身——不是你从手机新开的 SSH,而是<b>同一批实时 pane</b>。跑命令、开 vim、任何 TUI、任何 agent;干到一半起身,掏出手机原样接着干,状态一点不差。',
-      'sig.s3.h': 'Agent 用量,一本台账', 'sig.s3.p': '一眼看 <b>Claude</b> 的 5 小时 / 本周额度进度条 + 重置倒计时,还有 <b>Codex</b> 的额度环——全读主机本地文件,不登录账号、不调 API。进度条上还有条时间竖线,烧得比时钟快还是慢一目了然。',
-      'sig.s4.h': '命令 / 聊天双模式,快捷条与组合键随你定', 'sig.s4.p': '底部一栏两种模式:命令模式直接敲进终端,聊天模式发给 agent。常用命令和 ESC/Tab/Ctrl+C 等按键都预置好、开箱即用;还能随便自定义——常用命令分全局或按窗口,组合键(⌃⇧⌥ + 一个基键,如 Ctrl+C)点一下直发真实按键。全在 ⚙ 面板里拖拽排序、点按即改。',
+      'sig.s3.h': 'Agent 用量,一眼可见', 'sig.s3.p': '一眼看 <b>Claude</b> 的 5 小时 / 本周额度进度条 + 重置倒计时,还有 <b>Codex</b> 的额度环——全读主机本地文件,不登录账号、不调 API。进度条上还有条时间竖线,烧得比时钟快还是慢一目了然。',
+      'sig.s4.h': '为手机深度打磨的键盘操作', 'sig.s4.p': '在手机上敲终端本是最难的一环,handmux 为此深度打磨了一套输入操作。两种模式适配不同场景:<b>命令模式</b>直接敲进终端,配上预置的 ESC/Tab/Ctrl+C 和组合键(⌃⇧⌥ + 基键,点一下直发真实按键);<b>聊天模式</b>用自然语言发给 agent。常用命令还能分全局或按窗口保存,全在 ⚙ 面板里拖拽排序、点按即改。',
       'sig.s5.h': '一只手掌握的 Git 客户端', 'sig.s5.p': '不止是 diff——一块 VS&nbsp;Code 那样的 git 面板:工作区改动、提交历史、随便哪个分支,点开就是全屏彩色 diff。多仓库分页、只读,绝不动你的工作区。',
-      'sig.s6.h': '随处预览你的作品', 'sig.s6.p': '挑个文件夹直接预览静态站点——开箱即用;或者按端口预览正跑着的服务,手机上带路由、API、HMR 一起渲染,手机 / 桌面视口随切。在线服务这条需要先配一次预览域名。',
+      'sig.s6.h': '随处预览你的作品', 'sig.s6.p': '挑个文件夹直接预览静态站点——开箱即用;或者按端口预览正跑着的服务,手机上带路由、API、热更新(HMR)一起渲染,手机 / 桌面视口随切。在线服务这条需要先配一次预览域名。',
       'sig.s7.h': '文档能读也能听 · 文件随手双向传', 'sig.s7.p': '终端里的路径点一下就打开:Markdown 排好版、字号能缩放,还能一句一句高亮<b>念给你听</b>。文件也能双向传——聊天框里上传(多选、路径自动填、只挑支持的类型)、下载一点即得、从别的 App 分享进来、绝对路径随手复制。',
-      'sig.s8.h': '从任何地方连:零配置或自托管', 'sig.s8.p': '默认只走局域网,什么都不暴露。想从任何地方连,<code>handmux setup</code> 一条命令配好隧道:Cloudflare 快速隧道零配置就通、Cloudflare 命名域名,或反向隧道接到你自己的 VPS——自托管这条在 Cloudflare 边缘不给力的地方照样能用。',
+      'sig.s8.h': '从任何地方连:直连、零配置或自托管', 'sig.s8.p': '默认只走局域网,什么都不暴露。电脑本来就有公网?那不用隧道,直接连。否则 <code>handmux setup</code> 一条命令配好:Cloudflare 快速隧道零配置就通、Cloudflare 命名域名,或接到你自己服务器的隧道——自托管这条在 Cloudflare 不稳定的地方照样能用。',
       'sig.notes.h': '补充说明',
-      'sig.n1': '<b>语音输入</b>(可选):配上讯飞密钥,聊天模式就能把你说的话转成文字,下一条 prompt 张嘴就发。',
+      'sig.n1': '<b>语音输入</b>(可选):配上讯飞密钥,聊天模式就能把你说的话转成文字,下一条 prompt 说完就发、手不用动。',
       'sig.n2': '<b>版本更新提示</b>:大约每小时自查一次,有新版就在设置齿轮上亮个点,提醒你到电脑上跑 <code>handmux update</code>。',
       'sig.n3': '<b>专治弱网</b>:断了退避重连、掉线横幅、离线兜底页、切走暂停轮询,再加上不乱跳的光标和拖动选中复制。',
       'sig.n4': '<b>图片 &amp; GIF 查看器</b>:终端里蹦出来的图片、截图、GIF 点开就看——双指缩放、存相册、分享出去,GIF 还能动。',
       'sig.n5': '<b>开机自启</b>:<code>handmux service install</code> 注册 launchd / systemd,机器重启后整套自己回来。',
+      'sig.n6': '<b>随想随记,不错过任何点子</b>:每个窗口一份想法清单——灵感一冒就记下,能语音速记,一点就填进输入框。',
       'how.h2': '它怎么跑起来',
       'how.n1.t': '你的手机', 'how.n1.s': '免装 App · 可加桌面', 'how.hop1': 'https',
       'how.n2.t': '隧道', 'how.n2.s': '帮你起好,或用你自己的', 'how.hop2': '反向',
       'how.n3.t': '你的机器', 'how.n3.s': '<code>handmux start</code>',
-      'how.cf.t': 'cloudflare<span class="badge">零配置</span>',
-      'how.cf.p': '往 Cloudflare 边缘拉一条出站连接,就换来一个公网 <code>https</code> 链接。不用开端口、不用公网 IP、不用证书,几秒就起。',
-      'how.self.t': '自托管<span class="badge">你的域名</span>',
-      'how.self.p': '反向隧道接到你自己的 VPS,用你的域名、你的 TLS:稳、全归你,Cloudflare 边缘不给力的地方照样能用。',
+      'how.lead': '一条命令,它就在你电脑上跑起来——<b>默认只在局域网</b>,什么都不暴露。想在外面任何地方都能开,只需回答一个问题:你的电脑已经有公网地址了吗?',
+      'how.direct.t': '已有公网<span class="badge">免隧道</span>',
+      'how.direct.p': '云主机、公网 IP,或者已经做了端口转发?那<b>根本不用隧道</b>——<code>handmux start</code> 本来就在你机器上监听,手机直接连你自己的地址就行。前面套上你的域名 + TLS,这就是最快、最私密的一条:中间什么都不经过,连 Cloudflare 都不经过。',
+      'how.tunnel.t': '需要入口<span class="badge">三选一</span>',
+      'how.tunnel.p': '没有公网?给它开条隧道,三选一:<br><b>cloudflare</b>——最省事:借 Cloudflare(全球 CDN 大厂)免费给你机器一个公网链接,零配置几秒就通;但它的公共节点<b>在国内经常不稳定</b>。<br><b>cloudflare-named</b>——同样借 Cloudflare,但绑你自己的域名,更稳。<br><b>ssh 自建</b>——改走你自己的服务器,完全不靠 Cloudflare,<b>国内网络首选</b>。',
       'cli.h2': '完整命令行',
       'cli.body': '<b>handmux start</b> [flags]                 <i># 直接跑,默认只走局域网,零配置</i>\n<b>handmux setup</b>                         <i># 配隧道 / 名称 / 通知(存盘;想改再跑一次)</i>\n<b>handmux hooks install</b>                 <i># 挂上 Claude Code / Codex → 收件箱亮起 + 手机推送</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># 起停 + 看当前地址</i>\n<b>handmux logs</b> [--follow]              <i># 看 supervisor 日志</i>\n<b>handmux config</b>                        <i># 打印生效配置,以及每个值从哪来</i>\n<b>handmux update</b>                        <i># 升级到最新版(有新版时 App 会提示你)</i>\n<b>handmux service install</b>               <i># 开机自启</i>\n\n<i># 参数(只对这一次生效):</i> --tunnel none|cloudflare|cloudflare-named|ssh  --port  --token  --config',
       'footer.req': '需要 Node ≥ 18、tmux ≥ 3.0',
