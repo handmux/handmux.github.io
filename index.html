@@ -21,6 +21,8 @@
 <meta name="theme-color" content="#0a0b09">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="icon-192.png">
+<!-- Preload the brand wordmark font so it paints in Fredoka from the first frame (no fallback flash). -->
+<link rel="preload" as="font" type="font/woff2" href="fonts/Fredoka-500.woff2" crossorigin>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
   :root {
@@ -87,7 +89,13 @@
   .tag { background: var(--green); color: #07140c; padding: 2px 9px; font-weight: 800;
     font-family: var(--display); letter-spacing: -.02em; font-size: 13px; }
   .statusbar .brand { display: inline-flex; align-items: center; gap: 9px; }
-  .statusbar .logo { width: 34px; height: 34px; display: block; flex: none; }
+  .statusbar .logo { width: 34px; height: 34px; display: block; flex: none; border-radius: 8px; }
+  /* Two-tone rounded wordmark (hand = warm white, mux = teal→green). Self-hosted Fredoka (single-story
+     a, rounded) so it looks the same on every platform. */
+  .statusbar .wordmark { font-family: "Fredoka", ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+    font-weight: 500; font-size: 21px; letter-spacing: 0; line-height: 1; color: #f1f4ee; }
+  .statusbar .wordmark .mux { background: linear-gradient(95deg, #7cf0d6, #33d69a);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .statusbar .sep { color: var(--faint); }
   .statusbar .host { color: var(--dim); }
   .statusbar nav { margin-left: auto; display: flex; gap: 18px; align-items: center; }
@@ -332,6 +340,8 @@
   footer { border-top: 1px solid var(--line); margin-top: 30px; }
   footer .inner { padding: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; color: var(--faint); font-size: 12.5px; }
   footer a { color: var(--dim); text-decoration: none; } footer a:hover { color: var(--green); }
+  footer .fwm { font-family: "Fredoka", ui-rounded, system-ui, sans-serif; font-weight: 500; font-size: 14px; letter-spacing: 0; color: #c2c5b8; }
+  footer .fwm span { background: linear-gradient(95deg, #7cf0d6, #33d69a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   footer .ml { margin-left: auto; }
 
   @media (max-width: 1040px) {
@@ -351,7 +361,7 @@
 
 <div class="statusbar">
   <div class="inner">
-    <span class="brand"><img class="logo" src="logo-mark.svg" width="34" height="34" alt="handmux logo"><span class="tag">handmux</span></span>
+    <span class="brand"><img class="logo" src="logo-mark.png" width="34" height="34" alt="handmux logo"><span class="wordmark">hand<span class="mux">mux</span></span></span>
     <a class="nav-docs" href="docs.html" data-i18n="nav.docs">docs</a>
     <nav>
       <a href="https://www.npmjs.com/package/handmux" class="gh-link" aria-label="npm" title="npm">
@@ -615,7 +625,7 @@
 
 <footer>
   <div class="inner wrap">
-    <span>handmux</span>
+    <span class="fwm">hand<span>mux</span></span>
     <span class="sep" style="color:var(--faint)">·</span>
     <span data-i18n="footer.req">needs Node ≥ 18 &amp; tmux ≥ 3.0</span>
     <a class="ml" href="https://github.com/handmux/handmux">github →</a>
