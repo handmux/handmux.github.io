@@ -202,6 +202,7 @@ em { font-style: italic; color: var(--ink); }
     <div class="nav-grp">
       <span class="nav-grp-label" data-i18n="g.cmds">Commands</span>
       <a class="nav-link" href="#cmd-start"><code>start</code></a>
+      <a class="nav-link" href="#cmd-open"><code>open</code></a>
       <a class="nav-link" href="#cmd-setup"><code>setup</code></a>
       <a class="nav-link" href="#cmd-control"><code>stop · restart · status</code></a>
       <a class="nav-link" href="#cmd-logs"><code>logs</code></a>
@@ -219,11 +220,17 @@ em { font-style: italic; color: var(--ink); }
       <a class="nav-link sub" href="#tunnel-cloudflare"><code>cloudflare</code></a>
       <a class="nav-link sub" href="#tunnel-cloudflare-named"><code>cloudflare-named</code></a>
       <a class="nav-link sub" href="#tunnel-ssh"><code>ssh</code></a>
+      <a class="nav-link sub" href="#tunnel-natapp"><code>natapp</code></a>
+      <a class="nav-link sub" href="#tunnel-cpolar"><code>cpolar</code></a>
       <a class="nav-link" href="#env-vars" data-i18n="l.env">Env variables</a>
     </div>
     <div class="nav-grp">
       <span class="nav-grp-label" data-i18n="g.int">Integrations</span>
       <a class="nav-link" href="#claude-code">Claude Code</a>
+    </div>
+    <div class="nav-grp">
+      <span class="nav-grp-label" data-i18n="g.comm">Community</span>
+      <a class="nav-link" href="#feedback" data-i18n="l.feedback">Feedback</a>
     </div>
   </nav>
 
@@ -304,14 +311,22 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
       <div class="note"><p><b data-i18n="s.note-b">Note:</b> <span data-i18n="s.note">flags are one-run overrides. To make a change stick, run <code>handmux setup</code> or edit <code>~/.handmux/config.json</code>.</span></p></div>
     </section>
 
+    <!-- CMD: OPEN -->
+    <section id="cmd-open">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux open</span><span class="cmd-args">&lt;session&gt;</span></div></h2>
+      <p data-i18n="op.p1">A friendly wrapper around tmux's create/attach: attaches the named session, <strong>creating it first if it doesn't exist</strong>. Run inside tmux, it refuses with a hint (don't nest tmux in tmux). Its main job is the reverse hand-off — a session you created <strong>from the phone</strong> is one command away on the computer.</p>
+      <div class="cb"><pre><b>handmux open myproj</b>    <i data-i18n="op.c1"># attach session "myproj" — created on the spot if missing</i></pre></div>
+      <div class="note"><p><b data-i18n="op.note-b">Note:</b> <span data-i18n="op.note">it never starts or stops the handmux server — it's purely the tmux-side shortcut (≈ <code>tmux new -A -s</code>, minus the incantation).</span></p></div>
+    </section>
+
     <!-- CMD: SETUP -->
     <section id="cmd-setup">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux setup</span></div></h2>
-      <p data-i18n="su.p1">Interactive wizard: language, app name, tunnel type — a new user defaults to the zero-config Cloudflare <strong>quick tunnel</strong> — plus optional push-notification and voice-input credentials. Writes <code>~/.handmux/config.json</code>; re-run any time.</p>
+      <p data-i18n="su.p1">An interactive <strong>menu hub</strong> — arrow to any setting and edit just that: connection (tunnel), app name, port, push-notification &amp; voice-input credentials, and the CLI language. A new user starts on <strong>Direct</strong> (no tunnel) with the cursor on <em>Save &amp; start</em> (it reads <em>Save &amp; restart</em> when handmux is already running, applying the change on the spot). Writes <code>~/.handmux/config.json</code>; re-run any time to change anything.</p>
       <p data-i18n="su.p2">When it's done it also offers to:</p>
       <ul>
         <li data-i18n="su.li1">Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications</li>
-        <li data-i18n="su.li2"><strong>Start handmux</strong> right away</li>
+        <li data-i18n="su.li2">Set up the <strong>usage capturer</strong> — feeds the phone's Claude 5-hour / weekly quota bars</li>
       </ul>
       <div class="cb"><pre><b>handmux setup</b>                        <i data-i18n="su.c1"># interactive — walks through all options</i>
 <b>handmux setup --config ~/work.json</b>   <i data-i18n="su.c2"># write to a custom config file</i></pre></div>
@@ -387,13 +402,13 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
     <!-- FLAGS -->
     <section id="flags">
       <h2 data-i18n="fl.h2">Flags</h2>
-      <p data-i18n="fl.p1">Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>.</p>
+      <p data-i18n="fl.p1">Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>. Run <code>handmux help flags</code> for this list plus each flag's matching env var right in your terminal.</p>
 
       <h3 data-i18n="fl.general">General</h3>
       <table class="tbl">
         <thead><tr><th data-i18n="th.flag">Flag</th><th data-i18n="th.desc">Description</th><th data-i18n="th.def">Default</th></tr></thead>
         <tbody>
-          <tr><td>--tunnel</td><td data-i18n="fl.tunnel"><code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code></td><td><code>none</code></td></tr>
+          <tr><td>--tunnel</td><td data-i18n="fl.tunnel"><code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code> · <code>natapp</code> · <code>cpolar</code></td><td><code>none</code></td></tr>
           <tr><td>--port</td><td data-i18n="fl.port">Server listen port</td><td><code>19999</code></td></tr>
           <tr><td>--host</td><td data-i18n="fl.host">Server bind address</td><td><code>0.0.0.0</code></td></tr>
           <tr><td>--token</td><td data-i18n="fl.token">Auth token (random 8-char token generated if unset)</td><td data-i18n="fl.token-d">generated</td></tr>
@@ -424,6 +439,16 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
           <tr><td>--cf-tunnel-name</td><td data-i18n="fl.cf-name">Tunnel name in your Cloudflare dashboard</td><td><code>handmux</code></td></tr>
         </tbody>
       </table>
+
+      <h3 data-i18n="fl.natapp-h">natapp / cpolar flags <span class="dim-badge" data-i18n="fl.natapp-note">only with --tunnel natapp / cpolar</span></h3>
+      <table class="tbl">
+        <thead><tr><th data-i18n="th.flag">Flag</th><th data-i18n="th.desc">Description</th><th data-i18n="th.def">Default</th></tr></thead>
+        <tbody>
+          <tr><td>--authtoken</td><td data-i18n="fl.authtoken">Provider authtoken from <code>natapp.cn</code> / <code>cpolar.com</code> — required</td><td>—</td></tr>
+          <tr><td>--public-url</td><td data-i18n="fl.natapp-pub">Your reserved/fixed domain (bare host is fine); omit for a free temporary one</td><td data-i18n="fl.natapp-pub-d">temporary</td></tr>
+          <tr><td>--cpolar-region</td><td data-i18n="fl.cpolar-region">cpolar edge region, e.g. <code>cn</code> for mainland — cpolar only</td><td>—</td></tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- CONFIG FILE -->
@@ -432,7 +457,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
       <p data-i18n="cj.p1">handmux reads <code>~/.handmux/config.json</code> on every <code>start</code>. Created and maintained by <code>handmux setup</code>; you can also edit it directly. Pass <code>--config PATH</code> to use a different file.</p>
       <div class="cb"><pre><i data-i18n="cj.comment">// ~/.handmux/config.json (written by `handmux setup`)</i>
 {
-  <span class="k">"tunnel"</span>:        <span class="u">"cloudflare"</span>,     <i data-i18n="cj.f.tun">// "none"|"cloudflare"|"cloudflare-named"|"ssh"</i>
+  <span class="k">"tunnel"</span>:        <span class="u">"cloudflare"</span>,     <i data-i18n="cj.f.tun">// "none"|"cloudflare"|"cloudflare-named"|"ssh"|"natapp"|"cpolar"</i>
   <span class="k">"port"</span>:          <span class="u">19999</span>,            <i data-i18n="cj.f.port">// server port</i>
   <span class="k">"host"</span>:          <span class="u">"0.0.0.0"</span>,        <i data-i18n="cj.f.host">// bind address</i>
   <span class="k">"name"</span>:          <span class="u">"My Box"</span>,         <i data-i18n="cj.f.name">// browser tab title (null = default)</i>
@@ -448,6 +473,11 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
   <span class="k">"cfHostname"</span>:    <span class="u">"handmux.example.com"</span>,
   <span class="k">"cfTunnelName"</span>:  <span class="u">"handmux"</span>,
 
+  <i data-i18n="cj.natapp">// natapp / cpolar — only read when tunnel = "natapp" or "cpolar"</i>
+  <span class="k">"authtoken"</span>:     <span class="u">"your-provider-token"</span>,
+  <span class="k">"publicUrl"</span>:     <span class="u">"https://your.natapp.cc"</span>,   <i data-i18n="cj.natapp-pub">// reserved domain — omit for a temporary one</i>
+  <span class="k">"cpolarRegion"</span>:  <span class="u">"cn"</span>,               <i data-i18n="cj.natapp-region">// cpolar only, optional</i>
+
   <i data-i18n="cj.push">// Web Push — VAPID keys added by `handmux setup` when you enable notifications</i>
   <span class="k">"vapid"</span>: { <span class="k">"public"</span>: <span class="u">"…"</span>, <span class="k">"private"</span>: <span class="u">"…"</span>, <span class="k">"subject"</span>: <span class="u">"mailto:you@example.com"</span> },
 
@@ -459,19 +489,19 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
     <!-- TUNNELS -->
     <section id="tunnels">
       <h2 data-i18n="tn.h2">Tunnels</h2>
-      <p data-i18n="tn.p">Four modes for making the server reachable. Pick one per run with <code>--tunnel</code>, or set it permanently with <code>handmux setup</code>.</p>
+      <p data-i18n="tn.p">Ways to make the server reachable. Pick one per run with <code>--tunnel</code>, or set it permanently with <code>handmux setup</code>. Every tunnel runs on <strong>your own free third-party account</strong> — handmux only wires it up and operates no relay of its own.</p>
     </section>
 
     <section id="tunnel-none">
       <h3><code>--tunnel none</code> <span class="dim-badge" data-i18n="tn.none.badge">(default)</span></h3>
-      <p data-i18n="tn.none.p1">No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi. If your machine already has a public IP or domain, <code>none</code> is all you need — add <code>--public-url</code> to advertise that address, no tunnel required.</p>
+      <p data-i18n="tn.none.p1">No tunnel — the phone reaches your machine directly at its own address. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL, so it's ideal when phone and computer share the same Wi-Fi. But direct isn't LAN-only: if your machine already has a public IP or domain, <code>none</code> is all you need — add <code>--public-url</code> to advertise that address, no tunnel required. This is the most private path — nothing sits in between.</p>
     </section>
 
     <section id="tunnel-cloudflare">
       <h3><code>--tunnel cloudflare</code> <span class="badge" data-i18n="tn.cf.badge">zero-config</span></h3>
       <p data-i18n="tn.cf.p1">One outbound connection to Cloudflare's edge gives you a random public <code>https://xxx.trycloudflare.com</code> URL. No account, no port forwarding, no TLS setup. <code>cloudflared</code> is auto-downloaded to <code>~/.handmux/</code> on first use.</p>
       <div class="cb"><pre><b>handmux start --tunnel cloudflare</b></pre></div>
-      <div class="note"><p><b data-i18n="tn.cf.note-b">Note:</b> <span data-i18n="tn.cf.note">the hostname is random and changes every restart — and Cloudflare's public edge can be unstable or unreliable in some regions (e.g. mainland China). For a stable URL, or reliable access there, use <code>cloudflare-named</code> or <code>ssh</code>.</span></p></div>
+      <div class="note"><p><b data-i18n="tn.cf.note-b">Note:</b> <span data-i18n="tn.cf.note">the hostname is random and changes every restart — and Cloudflare's public edge can be unstable or unreliable in some regions (e.g. mainland China). For a stable URL use <code>cloudflare-named</code>; for reliable access inside mainland China use <code>natapp</code> / <code>cpolar</code> (or self-hosted <code>ssh</code>).</span></p></div>
     </section>
 
     <section id="tunnel-cloudflare-named">
@@ -483,7 +513,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
 
     <section id="tunnel-ssh">
       <h3><code>--tunnel ssh</code> <span class="badge" data-i18n="tn.ssh.badge">your server</span></h3>
-      <p data-i18n="tn.ssh.p1">Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable, fully under your control, and works where Cloudflare is unreliable (e.g. mainland China).</p>
+      <p data-i18n="tn.ssh.p1">Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable and fully under your control — the pick when you already run a server. (No server? For mainland China, <code>natapp</code> / <code>cpolar</code> below need only a free account.)</p>
       <p data-i18n="tn.ssh.p2">Requires <strong>passwordless SSH</strong> to the target. If not configured, <code>handmux start</code> offers to set it up interactively, or run <code>tunlite setup-key user@host</code> yourself.</p>
       <div class="cb"><pre><b>handmux start --tunnel ssh --ssh-host user@vps.example.com</b>
 
@@ -494,6 +524,27 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
 <i data-i18n="tn.ssh.c3"># through a bastion / jump host:</i>
 <b>handmux start --tunnel ssh --ssh-host user@inner \
   --ssh-jump user@bastion.example.com</b></pre></div>
+    </section>
+
+    <section id="tunnel-natapp">
+      <h3><code>--tunnel natapp</code> <span class="badge" data-i18n="tn.natapp.badge">mainland China</span></h3>
+      <p data-i18n="tn.natapp.p1">A domestic tunnel via <a href="https://natapp.cn" target="_blank" rel="noopener">natapp.cn</a> — a good pick when Cloudflare's public edge is unreliable inside mainland China. It runs on <strong>your own free natapp account</strong>: sign up, create a tunnel, and copy its <code>authtoken</code>.</p>
+      <p data-i18n="tn.natapp.p2">Omit <code>--public-url</code> for a free temporary domain, or pass your <strong>reserved domain</strong> as <code>--public-url</code> for a stable one. natapp's client is login-gated, so install it once from natapp.cn into <code>~/.handmux/bin/</code>.</p>
+      <div class="cb"><pre><b>handmux start --tunnel natapp --authtoken YOUR_TOKEN</b>
+
+<i data-i18n="tn.natapp.c2"># with a reserved domain:</i>
+<b>handmux start --tunnel natapp --authtoken YOUR_TOKEN --public-url https://your.natapp.cc</b></pre></div>
+    </section>
+
+    <section id="tunnel-cpolar">
+      <h3><code>--tunnel cpolar</code> <span class="badge" data-i18n="tn.cpolar.badge">mainland China</span></h3>
+      <p data-i18n="tn.cpolar.p1">Another domestic tunnel via <a href="https://cpolar.com" target="_blank" rel="noopener">cpolar.com</a>, same idea as natapp. It runs on <strong>your own free cpolar account</strong>, and its client <strong>auto-downloads</strong> to <code>~/.handmux/bin/</code> on first use.</p>
+      <p data-i18n="tn.cpolar.p2">Omit <code>--public-url</code> for a free temporary domain, or pass your reserved domain as <code>--public-url</code>. Optionally add <code>--cpolar-region cn</code> for a mainland edge.</p>
+      <div class="cb"><pre><b>handmux start --tunnel cpolar --authtoken YOUR_TOKEN</b>
+
+<i data-i18n="tn.cpolar.c2"># reserved domain + mainland region:</i>
+<b>handmux start --tunnel cpolar --authtoken YOUR_TOKEN \
+  --public-url https://your.cpolar.top --cpolar-region cn</b></pre></div>
     </section>
 
     <!-- ENV VARS -->
@@ -514,6 +565,8 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
           <tr><td class="amber">HANDMUX_SSH_JUMP</td><td data-i18n="ev.jump">SSH bastion</td><td>--ssh-jump</td></tr>
           <tr><td class="amber">HANDMUX_CF_HOSTNAME</td><td data-i18n="ev.cf-host">Cloudflare named tunnel hostname</td><td>--cf-hostname</td></tr>
           <tr><td class="amber">HANDMUX_CF_TUNNEL_NAME</td><td data-i18n="ev.cf-name">Cloudflare tunnel name</td><td>--cf-tunnel-name</td></tr>
+          <tr><td class="amber">HANDMUX_AUTHTOKEN</td><td data-i18n="ev.authtoken">natapp / cpolar authtoken</td><td>--authtoken</td></tr>
+          <tr><td class="amber">HANDMUX_CPOLAR_REGION</td><td data-i18n="ev.cpolar-region">cpolar edge region</td><td>--cpolar-region</td></tr>
         </tbody>
       </table>
     </section>
@@ -541,6 +594,12 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
       <p data-i18n="cc.p4">To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell in the app to subscribe the device.</p>
     </section>
 
+    <section id="feedback">
+      <h2 data-i18n="fb.h2">Feedback</h2>
+      <p data-i18n="fb.p1">Bugs and feature requests go to <a href="https://github.com/handmux/handmux/issues"><strong>GitHub Issues</strong></a> — that's the channel that actually gets tracked; Chinese or English both welcome.</p>
+      <p data-i18n="fb.p2">Users in China can also join the <a href="index.html#community"><strong>WeChat user group</strong></a> for quick feedback and tips.</p>
+    </section>
+
   </div>
 </div>
 
@@ -548,7 +607,10 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
 const I18N = {
   en: {
     'nav.home':'home','nav.docs':'docs',
-    'g.start':'Getting started','g.cmds':'Commands','g.ref':'Reference','g.int':'Integrations',
+    'g.start':'Getting started','g.cmds':'Commands','g.ref':'Reference','g.int':'Integrations','g.comm':'Community','l.feedback':'Feedback',
+    'fb.h2':'Feedback',
+    'fb.p1':'Bugs and feature requests go to <a href="https://github.com/handmux/handmux/issues"><strong>GitHub Issues</strong></a> — that\'s the channel that actually gets tracked; Chinese or English both welcome.',
+    'fb.p2':'Users in China can also join the <a href="index.html#community"><strong>WeChat user group</strong></a> for quick feedback and tips.',
     'l.quickstart':'Quick start','l.a2hs':'Add to Home Screen','l.req':'Requirements','l.flags':'Flags','l.cfgfile':'Config file','l.tunnels':'Tunnels','l.env':'Env variables',
     'page.eyebrow':'CLI Reference','page.h1':'Documentation',
     'page.lead':'Complete reference for the <code>handmux</code> CLI. Install once, configure once with <code>handmux setup</code>, run forever.',
@@ -580,10 +642,14 @@ const I18N = {
     's.c1':'# LAN-only — nothing exposed to the internet','s.c2':'# public https URL (random Cloudflare hostname)',
     's.c3':'# listen on port 8080 instead of 19999','s.c4':'# foreground mode — Ctrl-C to stop','s.c5':'# custom browser tab / home-screen name',
     's.note-b':'Note:','s.note':'flags are one-run overrides. To make a change stick, run <code>handmux setup</code> or edit <code>~/.handmux/config.json</code>.',
-    'su.p1':'Interactive wizard: language, app name, tunnel type — a new user defaults to the zero-config Cloudflare <strong>quick tunnel</strong> — plus optional push-notification and voice-input credentials. Writes <code>~/.handmux/config.json</code>; re-run any time.',
+    'op.p1':'A friendly wrapper around tmux\'s create/attach: attaches the named session, <strong>creating it first if it doesn\'t exist</strong>. Run inside tmux, it refuses with a hint (don\'t nest tmux in tmux). Its main job is the reverse hand-off — a session you created <strong>from the phone</strong> is one command away on the computer.',
+    'op.c1':'# attach session "myproj" — created on the spot if missing',
+    'op.note-b':'Note:',
+    'op.note':'it never starts or stops the handmux server — it\'s purely the tmux-side shortcut (≈ <code>tmux new -A -s</code>, minus the incantation).',
+    'su.p1':'An interactive <strong>menu hub</strong> — arrow to any setting and edit just that: connection (tunnel), app name, port, push-notification &amp; voice-input credentials, and the CLI language. A new user starts on <strong>Direct</strong> (no tunnel) with the cursor on <em>Save &amp; start</em> (it reads <em>Save &amp; restart</em> when handmux is already running, applying the change on the spot). Writes <code>~/.handmux/config.json</code>; re-run any time to change anything.',
     'su.p2':"When it's done it also offers to:",
     'su.li1':'Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications',
-    'su.li2':'<strong>Start handmux</strong> right away',
+    'su.li2':'Set up the <strong>usage capturer</strong> — feeds the phone\'s Claude 5-hour / weekly quota bars',
     'su.c1':'# interactive — walks through all options','su.c2':'# write to a custom config file',
     'ct.p':'Control the running handmux process.',
     'ct.c1':'# SIGTERM to supervisor — server + tunnel exit cleanly',
@@ -605,9 +671,9 @@ const I18N = {
     'sv.linux':'<strong>Linux:</strong> systemd user unit in <code>~/.config/systemd/user/</code>',
     'sv.c1':'# bake current config into a login item','sv.c2':'# override tunnel for the autostart','sv.c3':'# remove the login item',
     'sv.note-b':'Note:','sv.note':'the service bakes the config at install time. After changing <code>~/.handmux/config.json</code>, re-run <code>handmux service install</code> to update it.',
-    'fl.h2':'Flags','fl.p1':'Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>.',
+    'fl.h2':'Flags','fl.p1':'Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>. Run <code>handmux help flags</code> for this list plus each flag\'s matching env var right in your terminal.',
     'fl.general':'General',
-    'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code>',
+    'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code> · <code>natapp</code> · <code>cpolar</code>',
     'fl.port':'Server listen port','fl.host':'Server bind address',
     'fl.token':'Auth token (random 8-char token generated if unset)','fl.token-d':'generated',
     'fl.name':'App name in browser tab and home-screen icon',
@@ -623,20 +689,34 @@ const I18N = {
     'cj.h2':'Config file',
     'cj.p1':'handmux reads <code>~/.handmux/config.json</code> on every <code>start</code>. Created and maintained by <code>handmux setup</code>; you can also edit it directly. Pass <code>--config PATH</code> to use a different file.',
     'cj.comment':'// ~/.handmux/config.json (written by `handmux setup`)',
-    'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"','cj.f.port':'// server port','cj.f.host':'// bind address',
+    'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"|"natapp"|"cpolar"','cj.f.port':'// server port','cj.f.host':'// bind address',
     'cj.f.name':'// browser tab title (null = default)','cj.f.token':'// omit to regenerate on every start','cj.f.pub':'// override printed URL (optional)',
     'cj.ssh':'// SSH tunnel — only read when tunnel = "ssh"','cj.cf':'// Cloudflare named tunnel — only read when tunnel = "cloudflare-named"',
     'cj.push':'// Web Push — VAPID keys added by `handmux setup` when you enable notifications',
     'cj.voice':'// Voice input — Xfyun credentials added by `handmux setup`',
-    'tn.h2':'Tunnels','tn.p':'Four modes for making the server reachable. Pick one per run with <code>--tunnel</code>, or set permanently with <code>handmux setup</code>.',
-    'tn.none.badge':'(default)','tn.none.p1':'No exposure — reachable only on your LAN. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL. Ideal when your phone and computer share the same WiFi. If your machine already has a public IP or domain, <code>none</code> is all you need — add <code>--public-url</code> to advertise that address, no tunnel required.',
+    'tn.h2':'Tunnels','tn.p':'Ways to make the server reachable. Pick one per run with <code>--tunnel</code>, or set it permanently with <code>handmux setup</code>. Every tunnel runs on <strong>your own free third-party account</strong> — handmux only wires it up and operates no relay of its own.',
+    'tn.none.badge':'(default)','tn.none.p1':'No tunnel — the phone reaches your machine directly at its own address. Prints a LAN URL (<code>http://192.168.x.x:19999/…</code>) and local URL, so it\'s ideal when phone and computer share the same Wi-Fi. But direct isn\'t LAN-only: if your machine already has a public IP or domain, <code>none</code> is all you need — add <code>--public-url</code> to advertise that address, no tunnel required. This is the most private path — nothing sits in between.',
     'tn.cf.badge':'zero-config','tn.cf.p1':'One outbound connection to Cloudflare\'s edge gives you a random public <code>https://xxx.trycloudflare.com</code> URL. No account, no port forwarding, no TLS setup. <code>cloudflared</code> is auto-downloaded to <code>~/.handmux/</code> on first use.',
-    'tn.cf.note-b':'Note:','tn.cf.note':'the hostname is random and changes every restart — and Cloudflare\'s public edge can be unstable or unreliable in some regions (e.g. mainland China). For a stable URL, or reliable access there, use <code>cloudflare-named</code> or <code>ssh</code>.',
+    'tn.cf.note-b':'Note:','tn.cf.note':'the hostname is random and changes every restart — and Cloudflare\'s public edge can be unstable or unreliable in some regions (e.g. mainland China). For a stable URL use <code>cloudflare-named</code>; for reliable access inside mainland China use <code>natapp</code> / <code>cpolar</code> (or self-hosted <code>ssh</code>).',
     'tn.cfn.badge':'stable domain','tn.cfn.p1':'A permanent Cloudflare Tunnel on your own domain, e.g. <code>https://handmux.example.com</code>. Requires a Cloudflare account and a domain on Cloudflare DNS.',
     'tn.cfn.p2':'Run <code>handmux setup</code> and pick <em>cloudflare-named</em> — it walks you through creating the tunnel, setting the DNS CNAME, and saving credentials.',
-    'tn.ssh.badge':'your server','tn.ssh.p1':'Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable, fully under your control, and works where Cloudflare is unreliable (e.g. mainland China).',
+    'tn.ssh.badge':'your server','tn.ssh.p1':'Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable and fully under your control — the pick when you already run a server. (No server? For mainland China, <code>natapp</code> / <code>cpolar</code> below need only a free account.)',
     'tn.ssh.p2':'Requires <strong>passwordless SSH</strong> to the target. If not configured, <code>handmux start</code> offers to set it up interactively, or run <code>tunlite setup-key user@host</code> yourself.',
     'tn.ssh.c2':'# with a custom remote port + explicit public URL:','tn.ssh.c3':'# through a bastion / jump host:',
+    'fl.natapp-h':'natapp / cpolar flags','fl.natapp-note':'only with --tunnel natapp / cpolar',
+    'fl.authtoken':'Provider authtoken from <code>natapp.cn</code> / <code>cpolar.com</code> — required',
+    'fl.natapp-pub':'Your reserved/fixed domain (bare host is fine); omit for a free temporary one','fl.natapp-pub-d':'temporary',
+    'fl.cpolar-region':'cpolar edge region, e.g. <code>cn</code> for mainland — cpolar only',
+    'cj.natapp':'// natapp / cpolar — only read when tunnel = "natapp" or "cpolar"','cj.natapp-pub':'// reserved domain — omit for a temporary one','cj.natapp-region':'// cpolar only, optional',
+    'tn.natapp.badge':'mainland China',
+    'tn.natapp.p1':'A domestic tunnel via <a href="https://natapp.cn" target="_blank" rel="noopener">natapp.cn</a> — a good pick when Cloudflare\'s public edge is unreliable inside mainland China. It runs on <strong>your own free natapp account</strong>: sign up, create a tunnel, and copy its <code>authtoken</code>.',
+    'tn.natapp.p2':'Omit <code>--public-url</code> for a free temporary domain, or pass your <strong>reserved domain</strong> as <code>--public-url</code> for a stable one. natapp\'s client is login-gated, so install it once from natapp.cn into <code>~/.handmux/bin/</code>.',
+    'tn.natapp.c2':'# with a reserved domain:',
+    'tn.cpolar.badge':'mainland China',
+    'tn.cpolar.p1':'Another domestic tunnel via <a href="https://cpolar.com" target="_blank" rel="noopener">cpolar.com</a>, same idea as natapp. It runs on <strong>your own free cpolar account</strong>, and its client <strong>auto-downloads</strong> to <code>~/.handmux/bin/</code> on first use.',
+    'tn.cpolar.p2':'Omit <code>--public-url</code> for a free temporary domain, or pass your reserved domain as <code>--public-url</code>. Optionally add <code>--cpolar-region cn</code> for a mainland edge.',
+    'tn.cpolar.c2':'# reserved domain + mainland region:',
+    'ev.authtoken':'natapp / cpolar authtoken','ev.cpolar-region':'cpolar edge region',
     'ev.h2':'Environment variables','ev.p':'Lower-priority alternative to flags — useful in scripts or containers. Sit below flags and the config file in resolution order.',
     'ev.port':'Server port','ev.host':'Bind address','ev.token':'Auth token','ev.name':'App name',
     'ev.pub':'Override advertised URL','ev.preview':'Wildcard subdomain for site previews',
@@ -653,7 +733,10 @@ const I18N = {
   },
   zh: {
     'nav.home':'首页','nav.docs':'文档',
-    'g.start':'上手','g.cmds':'命令','g.ref':'参考','g.int':'集成',
+    'g.start':'上手','g.cmds':'命令','g.ref':'参考','g.int':'集成','g.comm':'社区','l.feedback':'反馈',
+    'fb.h2':'反馈',
+    'fb.p1':'bug 和功能建议请发 <a href="https://github.com/handmux/handmux/issues"><strong>GitHub Issues</strong></a>——这是真正会被跟踪处理的渠道,中英文都行。',
+    'fb.p2':'国内用户也可以加入<a href="index.html#community"><strong>用户微信群</strong></a>,反馈直达、用法交流。',
     'l.quickstart':'快速开始','l.a2hs':'添加到主屏','l.req':'环境要求','l.flags':'参数','l.cfgfile':'配置文件','l.tunnels':'隧道','l.env':'环境变量',
     'page.eyebrow':'CLI 参考','page.h1':'文档',
     'page.lead':'<code>handmux</code> CLI 完整参考。装一次、<code>handmux setup</code> 配一次，之后让它跑着就好。',
@@ -685,10 +768,14 @@ const I18N = {
     's.c1':'# 仅局域网 — 不对外网暴露','s.c2':'# 公网 https URL（Cloudflare 随机主机名）',
     's.c3':'# 用 8080 端口替代默认的 19999','s.c4':'# 前台运行，Ctrl-C 停止','s.c5':'# 自定义浏览器标签页/主屏名称',
     's.note-b':'注意：','s.note':'参数只是本次覆盖，不会持久化。要永久生效，运行 <code>handmux setup</code> 或直接编辑 <code>~/.handmux/config.json</code>。',
-    'su.p1':'交互式向导：语言、应用名称、隧道类型——新用户默认零配置的 Cloudflare <strong>快速隧道</strong>——外加可选的推送通知与语音输入凭证。写入 <code>~/.handmux/config.json</code>，随时可重跑。',
+    'op.p1':'对 tmux 新建/接入命令的友好包装：接入指定会话，<strong>不存在则先创建</strong>。在 tmux 里运行时会拒绝并给出提示（不要在 tmux 里嵌套 tmux）。它的主要用途是反向接力——<strong>手机上新建的</strong>会话，电脑上一条命令即可接管。',
+    'op.c1':'# 接入会话 "myproj"——不存在则当场创建',
+    'op.note-b':'注意：',
+    'op.note':'它绝不启动或停止 handmux 服务——纯粹是 tmux 侧的快捷方式（≈ <code>tmux new -A -s</code>，省去咒语）。',
+    'su.p1':'一个交互式<strong>菜单中枢</strong>——方向键选中哪项就只改哪项：连接（隧道）、应用名称、端口、推送通知与语音输入凭证、命令行语言。新用户默认落在<strong>直连</strong>（不开隧道），光标停在<em>保存并启动</em>上（已在运行时这行显示<em>保存并重启</em>，改动即刻生效）。写入 <code>~/.handmux/config.json</code>，随时可重跑修改。',
     'su.p2':'配完后它还会问你要不要：',
     'su.li1':'为 Claude Code / Codex 安装<strong>收件箱 hooks</strong>——开启收件箱和推送通知',
-    'su.li2':'立即<strong>启动 handmux</strong>',
+    'su.li2':'配置<strong>用量采集器</strong>——为手机端的 Claude 5 小时 / 每周额度条供数',
     'su.c1':'# 交互式，一步步引导','su.c2':'# 写到自定义配置文件',
     'ct.p':'控制正在运行的 handmux 进程。',
     'ct.c1':'# 给 supervisor 发 SIGTERM，服务器和隧道干净退出',
@@ -710,9 +797,9 @@ const I18N = {
     'sv.linux':'<strong>Linux：</strong>在 <code>~/.config/systemd/user/</code> 创建 systemd 用户 unit',
     'sv.c1':'# 将当前配置写进登录项','sv.c2':'# 覆盖自启时的隧道','sv.c3':'# 移除登录项',
     'sv.note-b':'注意：','sv.note':'service 在安装时将配置固化。修改 <code>~/.handmux/config.json</code> 后需重跑 <code>handmux service install</code> 更新。',
-    'fl.h2':'参数','fl.p1':'参数是本次运行的覆盖，不会持久化。解析优先级：<strong>参数 &gt; 配置文件 &gt; 环境变量 &gt; 内置默认值</strong>。',
+    'fl.h2':'参数','fl.p1':'参数是本次运行的覆盖，不会持久化。解析优先级：<strong>参数 &gt; 配置文件 &gt; 环境变量 &gt; 内置默认值</strong>。在终端跑 <code>handmux help flags</code> 可看这份列表及每个参数对应的环境变量。',
     'fl.general':'通用',
-    'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code>',
+    'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code> · <code>natapp</code> · <code>cpolar</code>',
     'fl.port':'服务器监听端口','fl.host':'服务器绑定地址',
     'fl.token':'认证 token（未设置时每次启动随机生成 8 位）','fl.token-d':'随机生成',
     'fl.name':'浏览器标签页和主屏图标名称',
@@ -728,20 +815,34 @@ const I18N = {
     'cj.h2':'配置文件',
     'cj.p1':'每次 <code>start</code> 都会读取 <code>~/.handmux/config.json</code>，由 <code>handmux setup</code> 创建和维护，也可直接手动编辑。用 <code>--config PATH</code> 使用其他文件。',
     'cj.comment':'// ~/.handmux/config.json（由 `handmux setup` 生成）',
-    'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"','cj.f.port':'// 服务器端口','cj.f.host':'// 绑定地址',
+    'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"|"natapp"|"cpolar"','cj.f.port':'// 服务器端口','cj.f.host':'// 绑定地址',
     'cj.f.name':'// 浏览器标签页标题（null = 默认）','cj.f.token':'// 不填则每次启动重新生成','cj.f.pub':'// 覆盖打印的 URL（可选）',
     'cj.ssh':'// SSH 隧道——仅在 tunnel = "ssh" 时读取','cj.cf':'// Cloudflare 命名隧道——仅在 tunnel = "cloudflare-named" 时读取',
     'cj.push':'// Web Push——启用通知时由 `handmux setup` 填入的 VAPID 密钥',
     'cj.voice':'// 语音输入——由 `handmux setup` 填入的讯飞凭证',
-    'tn.h2':'隧道','tn.p':'四种让服务器对外可访问的方式。用 <code>--tunnel</code> 临时切换，或通过 <code>handmux setup</code> 永久配置。',
-    'tn.none.badge':'（默认）','tn.none.p1':'不对外暴露——只在局域网可访问。打印局域网 URL（<code>http://192.168.x.x:19999/…</code>）和本地 URL。手机和电脑同一 WiFi 时使用。如果你的电脑本身就有公网 IP 或域名，用 <code>none</code> 就够了——加上 <code>--public-url</code> 告知外网地址即可，不需要隧道。',
+    'tn.h2':'隧道','tn.p':'让服务器对外可访问的几种方式。用 <code>--tunnel</code> 临时切换，或通过 <code>handmux setup</code> 永久配置。每条隧道都跑在<strong>你自己的免费第三方账号</strong>上，handmux 只负责接通、自身不设中转。',
+    'tn.none.badge':'（默认）','tn.none.p1':'不开隧道——手机直接连你电脑自己的地址。会打印局域网 URL（<code>http://192.168.x.x:19999/…</code>）和本地 URL，手机与电脑同一 Wi-Fi 时最方便。但"直连"并不限于局域网：电脑本身就有公网 IP 或域名时，用 <code>none</code> 就够了——加上 <code>--public-url</code> 告知外网地址即可，不需要隧道。这也是最私密的一条：中间什么都不经过。',
     'tn.cf.badge':'零配置','tn.cf.p1':'向 Cloudflare 边缘拉一条出站连接，获得随机公网 <code>https://xxx.trycloudflare.com</code> URL。不需要账号，不用开端口，不用配 TLS。首次使用自动下载 <code>cloudflared</code> 到 <code>~/.handmux/</code>。',
-    'tn.cf.note-b':'注意：','tn.cf.note':'主机名随机，每次重启都会变；而且 Cloudflare 公共边缘在部分地区（如中国大陆）可能不稳定。需要固定 URL、或在这些地区稳定访问，请用 <code>cloudflare-named</code> 或 <code>ssh</code>。',
+    'tn.cf.note-b':'注意：','tn.cf.note':'主机名随机，每次重启都会变；而且 Cloudflare 公共边缘在部分地区（如中国大陆）可能不稳定。需要固定 URL 请用 <code>cloudflare-named</code>；要在中国大陆稳定访问，请用 <code>natapp</code> / <code>cpolar</code>（或自建 <code>ssh</code>）。',
     'tn.cfn.badge':'稳定域名','tn.cfn.p1':'用自己域名建立永久 Cloudflare 命名隧道，如 <code>https://handmux.example.com</code>。需要 Cloudflare 账号和接入 Cloudflare DNS 的域名。',
     'tn.cfn.p2':'运行 <code>handmux setup</code> 选 <em>cloudflare-named</em>——向导引导你创建隧道、设置 DNS CNAME 并保存凭证。',
-    'tn.ssh.badge':'你的服务器','tn.ssh.p1':'通过 <code>tunlite</code> 向自己的 VPS 建立反向 SSH 隧道。稳定、完全可控，在 Cloudflare 不稳定的地区（如中国大陆）也能正常使用。',
+    'tn.ssh.badge':'你的服务器','tn.ssh.p1':'通过 <code>tunlite</code> 向自己的 VPS 建立反向 SSH 隧道。稳定、完全可控——已有服务器时的首选。（没有服务器？中国大陆用下面的 <code>natapp</code> / <code>cpolar</code> 即可，只要一个免费账号。）',
     'tn.ssh.p2':'需要对目标主机配好<strong>免密 SSH</strong>。未配置时 <code>handmux start</code> 会提示交互式设置，或手动执行 <code>tunlite setup-key user@host</code>。',
     'tn.ssh.c2':'# 自定义远端端口并指定公网 URL：','tn.ssh.c3':'# 通过跳板机/堡垒机：',
+    'fl.natapp-h':'natapp / cpolar 参数','fl.natapp-note':'仅在 --tunnel natapp / cpolar 时',
+    'fl.authtoken':'来自 <code>natapp.cn</code> / <code>cpolar.com</code> 的 authtoken——必填',
+    'fl.natapp-pub':'你的固定/保留域名（裸主机名也行）；留空则用免费临时域名','fl.natapp-pub-d':'临时',
+    'fl.cpolar-region':'cpolar 边缘区域，如 <code>cn</code>（大陆）——仅 cpolar',
+    'cj.natapp':'// natapp / cpolar——仅在 tunnel = "natapp" 或 "cpolar" 时读取','cj.natapp-pub':'// 保留域名——留空则用临时域名','cj.natapp-region':'// 仅 cpolar，可选',
+    'tn.natapp.badge':'中国大陆',
+    'tn.natapp.p1':'通过 <a href="https://natapp.cn" target="_blank" rel="noopener">natapp.cn</a> 的国内隧道——Cloudflare 公共边缘在大陆不稳定时的好选择。它跑在<strong>你自己的免费 natapp 账号</strong>上：注册、新建一条隧道、复制它的 <code>authtoken</code>。',
+    'tn.natapp.p2':'留空 <code>--public-url</code> 用免费临时域名；把你的<strong>保留域名</strong>填进 <code>--public-url</code> 则得到固定地址。natapp 客户端需登录下载，请先从 natapp.cn 装一次到 <code>~/.handmux/bin/</code>。',
+    'tn.natapp.c2':'# 使用保留域名：',
+    'tn.cpolar.badge':'中国大陆',
+    'tn.cpolar.p1':'通过 <a href="https://cpolar.com" target="_blank" rel="noopener">cpolar.com</a> 的另一条国内隧道，思路和 natapp 一样。它跑在<strong>你自己的免费 cpolar 账号</strong>上，客户端首次使用会<strong>自动下载</strong>到 <code>~/.handmux/bin/</code>。',
+    'tn.cpolar.p2':'留空 <code>--public-url</code> 用免费临时域名，或把保留域名填进 <code>--public-url</code>。可选加 <code>--cpolar-region cn</code> 走大陆边缘。',
+    'tn.cpolar.c2':'# 保留域名 + 大陆区域：',
+    'ev.authtoken':'natapp / cpolar 的 authtoken','ev.cpolar-region':'cpolar 边缘区域',
     'ev.h2':'环境变量','ev.p':'参数的低优先级替代方案——适合脚本或容器。优先级低于参数和配置文件。',
     'ev.port':'服务器端口','ev.host':'绑定地址','ev.token':'认证 token','ev.name':'应用名称',
     'ev.pub':'覆盖广播的 URL','ev.preview':'网站预览的通配符子域名',
