@@ -827,9 +827,18 @@
   // no /zh route — an unconditional redirect turned those into a blank page.
   if (PAGE_LANG === 'en' && pref !== 'en' && location.hostname === 'handmux.com' &&
       (pref === 'zh' || (navigator.language || '').toLowerCase().startsWith('zh'))) {
-    location.replace('zh');
+    location.replace('zh' + location.search + location.hash); // keep deep links (e.g. #community) across the zh hop
   }
   applyLang(PAGE_LANG);
+
+  // Deep links (#community etc.): the browser's own anchor jump happens before the big GIFs above have
+  // a height (and before applyLang swaps copy), so the target drifts away as the page settles. Re-jump
+  // once everything has loaded; 'instant' so the correction doesn't read as a second animation.
+  if (location.hash) {
+    window.addEventListener('load', () => {
+      document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'instant', block: 'start' });
+    });
+  }
 
   // copy-to-clipboard on the install command (localized hint)
   const btn = document.getElementById('install');
