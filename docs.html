@@ -113,6 +113,15 @@ em { font-style: italic; color: var(--ink); }
 .cb pre .u { color: var(--ink); }
 .cb pre .k { color: var(--green); }
 .cb pre .a { color: var(--amber); }
+/* install-method tabs (npm / Homebrew) */
+.qs-install { margin: 14px 0; }
+.qs-install .qs-c { display: block; font-family: var(--mono); font-size: 12.5px; color: var(--faint); margin-bottom: 8px; }
+.pm-tabs { display: inline-flex; gap: 4px; padding: 3px; margin-bottom: 8px; border: 1px solid var(--line); background: var(--bg-2); border-radius: 9px; }
+.pm-tab { font-family: var(--mono); font-size: 12.5px; line-height: 1; color: var(--dim); background: transparent; border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer; transition: background .15s, color .15s; }
+.pm-tab:hover { color: var(--ink); }
+.pm-tab[aria-selected="true"] { background: var(--bg); color: var(--green); box-shadow: inset 0 0 0 1px var(--green-deep); }
+.qs-install .cb { margin-top: 0; }
+.pm-panel[hidden] { display: none; }
 
 /* table */
 .tbl { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12.5px; }
@@ -251,12 +260,19 @@ em { font-style: italic; color: var(--ink); }
       <p data-i18n="qs.p">Three steps. If you already have <code>tmux</code>, step one is done.</p>
       <div class="cb"><pre><i data-i18n="qs.c1"># 1 — check prerequisites</i>
 node -v   <i data-i18n="qs.n1"># need Node ≥ 18  →  nodejs.org</i>
-tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i>
+tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></pre></div>
 
-<i data-i18n="qs.c2"># 2 — install</i>
-<b>npm i -g handmux</b>
+      <div class="qs-install">
+        <i class="qs-c" data-i18n="qs.c2"># 2 — install</i>
+        <div class="pm-tabs" role="tablist" aria-label="install method">
+          <button class="pm-tab" role="tab" aria-selected="true" data-pm="npm">npm</button>
+          <button class="pm-tab" role="tab" aria-selected="false" data-pm="brew">Homebrew</button>
+        </div>
+        <div class="cb pm-panel" data-pm="npm"><pre><b>npm i -g handmux</b></pre></div>
+        <div class="cb pm-panel" data-pm="brew" hidden><pre><b>brew install handmux/tap/handmux</b>   <i data-i18n="qs.c2b"># macOS · Linux (if you already use Homebrew)</i></pre></div>
+      </div>
 
-<i data-i18n="qs.c3"># 3 — run (LAN-only by default, zero config)</i>
+      <div class="cb"><pre><i data-i18n="qs.c3"># 3 — run (LAN-only by default, zero config)</i>
 <b>handmux start</b>
 
 <i data-i18n="qs.c4"># reach it from anywhere:</i>
@@ -748,7 +764,7 @@ const I18N = {
     'page.lead':'<code>handmux</code> CLI 完整参考。装一次、<code>handmux setup</code> 配一次，之后让它跑着就好。',
     'qs.h2':'快速开始','qs.p':'三步跑起来。已在用 <code>tmux</code> 的话，第一步算完成了。',
     'qs.c1':'# 1 — 检查基础环境','qs.n1':'# 需要 Node ≥ 18  →  nodejs.org','qs.n2':'# 需要 tmux ≥ 3.0  →  brew install tmux',
-    'qs.c2':'# 2 — 安装','qs.c3':'# 3 — 跑起来（默认仅局域网，零配置）','qs.c4':'# 从任何地方连：',
+    'qs.c2':'# 2 — 安装','qs.c2b':'# macOS · Linux（若你已在用 Homebrew）','qs.c3':'# 3 — 跑起来（默认仅局域网，零配置）','qs.c4':'# 从任何地方连：',
     'a2h.h2':'添加到主屏',
     'a2h.p':'handmux 以 PWA 运行——把它添加到主屏,就能像原生 App 一样全屏打开。在 iPhone 上,这也是收到推送的前提,pane 需要你时才能推到手机。',
     'a2h.ios-h':'iPhone / iPad —— Safari',
@@ -916,6 +932,15 @@ const obs = new IntersectionObserver(entries => {
   });
 }, { rootMargin: '-10% 0px -80% 0px' });
 secs.forEach(s => obs.observe(s));
+
+// install-method tabs (npm / Homebrew)
+document.querySelectorAll('.qs-install .pm-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const box = tab.closest('.qs-install');
+    box.querySelectorAll('.pm-tab').forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+    box.querySelectorAll('.pm-panel').forEach(p => { p.hidden = p.dataset.pm !== tab.dataset.pm; });
+  });
+});
 </script>
 </body>
 </html>

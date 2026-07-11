@@ -141,6 +141,15 @@
   .cta .then { flex-basis: 100%; margin: 2px 0 -4px; color: var(--dim); font-size: 13.5px; }
   .cta .then code { font-family: var(--mono); color: var(--green); }
   .cta .then .arr { color: var(--faint); }
+  /* install-method tabs (npm / Homebrew) */
+  .pm-tabs { flex-basis: 100%; display: inline-flex; gap: 4px; padding: 3px; margin-bottom: 10px;
+    border: 1px solid var(--line); background: var(--bg-2); border-radius: 9px; width: max-content; }
+  .pm-tab { font-family: var(--mono); font-size: 13px; line-height: 1; color: var(--dim);
+    background: transparent; border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer;
+    transition: background .15s, color .15s; }
+  .pm-tab:hover { color: var(--ink); }
+  .pm-tab[aria-selected="true"] { background: var(--bg); color: var(--green); box-shadow: inset 0 0 0 1px var(--green-deep); }
+  .install .cmd { color: var(--ink); }
 
   /* terminal window mock */
   .term { background: linear-gradient(180deg, var(--bg-1), #0d0f0b); border: 1px solid var(--line);
@@ -353,6 +362,15 @@
     .term .body { overflow-x: auto; }
     .term .body::before { content: none; }
   }
+  @media (max-width: 620px) {
+    /* long commands (e.g. brew install handmux/tap/handmux) must not wrap, centre or overflow:
+       full-width chip, command left-aligned on one line (scrolls on very narrow screens), COPY pinned right. */
+    .install { width: 100%; box-sizing: border-box; font-size: 13px; }
+    .install > span:first-child { min-width: 0; overflow-x: auto; white-space: nowrap;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .install > span:first-child::-webkit-scrollbar { display: none; }
+    .install .copyhint { flex: none; }
+  }
 </style>
 </head>
 <body>
@@ -392,8 +410,12 @@
       <p class="lede" data-i18n="hero.lede"><b>Not just a terminal — a mobile vibe-coding cockpit.</b> Built on tmux: one command on your computer, scan a QR, and your live session, Claude Code, git and previews are all in your hand — creativity ready wherever you are.</p>
       <p class="sub" data-i18n="hero.sub">Step away from your desk and the work doesn't stop. handmux drives your <b style="color:var(--green);font-weight:500">real tmux panes</b>, so the agent keeps running while you're on the train, in a queue, on the couch — pick up exactly where you left off. <b>No app to install — open the link in your phone's browser and you're in.</b> Works with <b>Claude Code</b>, Codex, aider, any shell — and it pings your phone the moment a pane needs you.</p>
       <div class="cta">
+        <div class="pm-tabs" role="tablist" aria-label="install method">
+          <button class="pm-tab" role="tab" aria-selected="true" data-cmd="npm i -g handmux">npm</button>
+          <button class="pm-tab" role="tab" aria-selected="false" data-cmd="brew install handmux/tap/handmux">Homebrew</button>
+        </div>
         <button class="install" id="install" aria-label="copy install command">
-          <span><span class="dollar">$</span>&nbsp;npm i -g handmux</span>
+          <span><span class="dollar">$</span>&nbsp;<span class="cmd">npm i -g handmux</span></span>
           <span class="copyhint" data-i18n="cta.copy">copy</span>
         </button>
         <div class="then" data-i18n="cta.then">then <code>handmux start</code> <span class="arr">→</span> scan the QR to hop on your phone</div>
@@ -843,8 +865,17 @@
   // copy-to-clipboard on the install command (localized hint)
   const btn = document.getElementById('install');
   const hint = btn.querySelector('.copyhint');
+  const cmdEl = btn.querySelector('.cmd');
+  // install-method tabs (npm / Homebrew) — swap the shown & copied command
+  document.querySelectorAll('.pm-tabs .pm-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      tab.parentNode.querySelectorAll('.pm-tab').forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+      cmdEl.textContent = tab.dataset.cmd;
+      btn.classList.remove('copied'); hint.textContent = I18N[curLang]['copy.idle'];
+    });
+  });
   btn.addEventListener('click', async () => {
-    const text = 'npm i -g handmux';
+    const text = cmdEl.textContent;
     const ok = () => {
       btn.classList.add('copied'); hint.textContent = I18N[curLang]['copy.done'];
       setTimeout(() => { btn.classList.remove('copied'); hint.textContent = I18N[curLang]['copy.idle']; }, 1800);
