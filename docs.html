@@ -616,6 +616,40 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <p data-i18n="cc.p4">To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell in the app to subscribe the device.</p>
     </section>
 
+    <!-- SCRIPT PUSH -->
+    <section id="script-push">
+      <h2 data-i18n="sp.h2">Script push</h2>
+      <p data-i18n="sp.p1">Send a push notification to your phone from any script, CI step, or build hook — runs on your computer against the already-running handmux server (loopback + local server token, no config, no remote endpoint). Web Push must be configured first via <code>handmux setup</code>.</p>
+
+      <div class="cb"><pre><b>handmux push</b> &lt;title&gt; &lt;body&gt; [options]
+
+<i data-i18n="sp.c1"># notify all devices</i>
+<b>handmux push "构建完成" "耗时 3m12s"</b>
+
+<i data-i18n="sp.c2"># target a specific tmux session</i>
+<b>handmux push "Build done" "Took 3m12s" --session myproj</b>
+
+<i data-i18n="sp.c3"># target a specific device by key</i>
+<b>handmux push "Done" "All tests passed" --device abc123</b></pre></div>
+
+      <h3 data-i18n="sp.flags-h">Flags</h3>
+      <table>
+        <thead><tr><th data-i18n="th.flag">Flag</th><th data-i18n="th.desc">Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>--session &lt;name&gt;</code></td><td data-i18n="sp.fl.session">Target devices subscribed to this tmux session (repeatable; comma-separated OK). Mutually exclusive with <code>--device</code>.</td></tr>
+          <tr><td><code>--device &lt;key&gt;</code></td><td data-i18n="sp.fl.device">Target a specific device by its key (repeatable; comma-separated OK). Mutually exclusive with <code>--session</code>.</td></tr>
+          <tr><td><code>--tag &lt;T&gt;</code></td><td data-i18n="sp.fl.tag">Notification tag — collapses duplicate notifications.</td></tr>
+          <tr><td><code>--url &lt;U&gt;</code></td><td data-i18n="sp.fl.url">URL to open when the notification is tapped.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-i18n="sp.key-h">Device key</h3>
+      <p data-i18n="sp.key-p">The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device.</p>
+
+      <h3 data-i18n="sp.rel-h">Reliability</h3>
+      <p data-i18n="sp.rel-p">Web Push is best-effort — delivery is not guaranteed in real time. For delivery-critical alerts use a dedicated messaging app (WeChat, Slack, etc.).</p>
+    </section>
+
     <section id="feedback">
       <h2 data-i18n="fb.h2">Feedback</h2>
       <p data-i18n="fb.p1">Bugs and feature requests go to <a href="https://github.com/handmux/handmux/issues"><strong>GitHub Issues</strong></a> — that's the channel that actually gets tracked; Chinese or English both welcome.</p>
@@ -752,6 +786,18 @@ const I18N = {
     'cc.needs':'needs you','cc.n-p':' — permission prompt or plan approval waiting; push sent to your phone',
     'cc.done':'done','cc.d-p':' — task finished; push sent',
     'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
+    'sp.h2':'Script push',
+    'sp.p1':'Send a push notification to your phone from any script, CI step, or build hook — runs on your computer against the already-running handmux server (loopback + local server token, no config, no remote endpoint). Web Push must be configured first via <code>handmux setup</code>.',
+    'sp.c1':'# notify all devices','sp.c2':'# target a specific tmux session','sp.c3':'# target a specific device by key',
+    'sp.flags-h':'Flags',
+    'sp.fl.session':'Target devices subscribed to this tmux session (repeatable; comma-separated OK). Mutually exclusive with <code>--device</code>.',
+    'sp.fl.device':'Target a specific device by its key (repeatable; comma-separated OK). Mutually exclusive with <code>--session</code>.',
+    'sp.fl.tag':'Notification tag — collapses duplicate notifications.',
+    'sp.fl.url':'URL to open when the notification is tapped.',
+    'sp.key-h':'Device key',
+    'sp.key-p':'The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device.',
+    'sp.rel-h':'Reliability',
+    'sp.rel-p':'Web Push is best-effort — delivery is not guaranteed in real time. For delivery-critical alerts use a dedicated messaging app (WeChat, Slack, etc.).',
   },
   zh: {
     'nav.home':'首页','nav.docs':'文档',
@@ -878,6 +924,18 @@ const I18N = {
     'cc.needs':'需要你','cc.n-p':'——有授权提示或计划待批准，推送已发到手机',
     'cc.done':'已完成','cc.d-p':'——任务结束，推送已发',
     'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
+    'sp.h2':'脚本推送',
+    'sp.p1':'在脚本、CI 步骤或构建钩子中推送通知到手机——在你的电脑上直接对正在运行的 handmux 服务器执行（回环 + 本地服务器 token，无需配置，无远端端点）。需先通过 <code>handmux setup</code> 配置 Web Push。',
+    'sp.c1':'# 推送到全部设备','sp.c2':'# 仅推送到指定 tmux 会话','sp.c3':'# 仅推送到指定设备 key',
+    'sp.flags-h':'参数',
+    'sp.fl.session':'仅推送到订阅了该 tmux 会话的设备（可重复，支持逗号分隔）。与 <code>--device</code> 互斥。',
+    'sp.fl.device':'仅推送到指定 key 的设备（可重复，支持逗号分隔）。与 <code>--session</code> 互斥。',
+    'sp.fl.tag':'通知标签——合并同类通知。',
+    'sp.fl.url':'点通知后打开的 URL。',
+    'sp.key-h':'设备 key',
+    'sp.key-p':'设备 key 在手机 App 的<strong>设置 → 脚本推送</strong>中查看。它是寻址标识符，不是密钥——安全边界是本地服务器 token。用 <code>--device &lt;key&gt;</code> 指定单台设备。',
+    'sp.rel-h':'可靠性',
+    'sp.rel-p':'Web Push 属于尽力投递，不保证实时送达。有投递强要求的告警请使用专用 IM（微信、钉钉等）。',
   }
 };
 

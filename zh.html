@@ -548,6 +548,11 @@
         <p data-i18n="sig.s8.p">No tunnel by default — the phone connects straight to your own computer, nothing exposed. Already have a public address? No tunnel needed — reach it directly. Otherwise <code>handmux setup</code> wires one on your own free account: a Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, <b>natapp / cpolar</b> for mainland China, or a tunnel to your own server.</p>
       </div>
       <div class="sig-item">
+        <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.cfg">needs setup</span></div>
+        <h3 data-i18n="sig.sp.h">Script push — notify your phone from a script</h3>
+        <p data-i18n="sig.sp.p">Run <code>handmux push "Build done" "Took 3m12s"</code> from any script or CI step on your computer and your phone gets the push. Target all devices, a specific tmux session, or a single device by key. The command hits the local server directly — no config, no remote endpoint.</p>
+      </div>
+      <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.free">free · open-source</span></div>
         <h3 data-i18n="sig.sec.h">Free, open-source, no relay</h3>
         <p data-i18n="sig.sec.p">handmux is fully open-source (AGPL-3.0) and free — nothing to pay for. And it runs <b>no relay of its own</b>: many similar tools route your session through their cloud; handmux doesn't — no cloud, no handmux account, no middleman, and your data goes straight between your computer and phone. Reaching it from outside stays just as clean: several tunnel providers are <b>built in</b> (Cloudflare · natapp · cpolar · your own SSH), so it's one easy step on <b>your own</b> free account — even then, handmux runs no pipe of its own.</p>
@@ -696,6 +701,7 @@
       'sig.fast': 'up in a minute',
       'sig.quick.h': 'One command — and it\'s running', 'sig.quick.p': 'Install with a <b>single command</b>, run it, scan the QR — about a minute later you\'re driving your terminal from your phone. Already have Node and tmux? There\'s nothing else to set up.',
       'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': 'No App Store, no client, no iOS lock-in — open the link in your phone\'s browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.',
+      'sig.sp.h': 'Script push — notify your phone from a script', 'sig.sp.p': 'Run <code>handmux push "Build done" "Took 3m12s"</code> from any script or CI step on your computer and your phone gets the push. Target all devices, a specific tmux session, or a single device by key. The command hits the local server directly — no config, no remote endpoint.',
       'sig.free': 'free · open-source',
       'sig.sec.h': 'Free, open-source, no relay', 'sig.sec.p': 'handmux is fully open-source (AGPL-3.0) and free — nothing to pay for. And it runs <b>no relay of its own</b>: many similar tools route your session through their cloud; handmux doesn\'t — no cloud, no handmux account, no middleman, and your data goes straight between your computer and phone. Reaching it from outside stays just as clean: several tunnel providers are <b>built in</b> (Cloudflare · natapp · cpolar · your own SSH), so it\'s one easy step on <b>your own</b> free account — even then, handmux runs no pipe of its own.',
       'sig.s3.h': 'Agent usage, always in view', 'sig.s3.p': 'See <b>Claude</b>\'s 5-hour and weekly limit bars with reset countdowns, plus <b>Codex</b>\'s quota ring — read from local files on the host, no account login or API calls. A time marker shows whether you\'re burning slower or faster than the clock.',
@@ -763,6 +769,7 @@
       'sig.fast': '一分钟上手',
       'sig.quick.h': '一条命令,就启动了', 'sig.quick.p': '<b>一条命令</b>装好、跑起来、扫码——大约一分钟,你就在手机上操作自己的终端了。已经有 Node 和 tmux 的话,别的什么都不用配。',
       'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '不下 App、不装客户端、不锁 iOS——手机浏览器点开链接,「<b>添加到主屏</b>」即可。全屏运行的 PWA,<b>基本就是个原生 App</b>,iPhone、安卓都一样。在 iPhone 上,推送也靠它——加到主屏后,pane 一有情况 handmux 就能推到你手机。建议用 <b>Safari</b>(iOS)或 <b>Chrome</b>。',
+      'sig.sp.h': '脚本推送——从脚本推消息到手机', 'sig.sp.p': '在电脑的脚本或 CI 步骤里跑 <code>handmux push "构建完成" "耗时 3m12s"</code>,手机就收到推送。可指定全部设备、某个 tmux 会话或某台设备 key。命令直接打本地服务器——无需配置,无远端端点。',
       'sig.free': '免费 · 开源',
       'sig.sec.h': '完全免费 · 开源 · 不经过我们', 'sig.sec.p': 'handmux 完全开源(AGPL-3.0)、免费——没有任何收费项。而且它<b>自身不设中转</b>:很多同类工具会把你的会话经它们的云服务器转发,handmux 不会——没有云、没有 handmux 账号、没有中间人,数据只在你的电脑和手机之间直接走。想从外网连也一样干净:<b>内置</b>了多家隧道供应商(Cloudflare · natapp · cpolar · 你自己的 SSH),用<b>你自己</b>的免费账号一步开启即可——即便如此,handmux 依然不经手任何流量。',
       'sig.s3.h': 'Agent 用量,一眼可见', 'sig.s3.p': '一眼看 <b>Claude</b> 的 5 小时 / 本周额度进度条 + 重置倒计时,还有 <b>Codex</b> 的额度环——全读主机本地文件,不登录账号、不调 API。进度条上还有条时间竖线,烧得比时钟快还是慢一目了然。',
