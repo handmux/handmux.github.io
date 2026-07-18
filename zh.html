@@ -289,6 +289,24 @@
   .notes li code { color: var(--green); font-family: var(--mono); }
   @media (max-width: 1040px) { .sig { grid-template-columns: 1fr; } }
 
+  /* comparison table — handmux vs wrapper apps vs the official app */
+  .cmp-wrap { margin-top: 26px; border: 1px solid var(--line); overflow-x: auto; }
+  .cmp { width: 100%; min-width: 780px; border-collapse: collapse; font-size: 13px; line-height: 1.55; }
+  .cmp th, .cmp td { text-align: left; vertical-align: top; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+  .cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: none; }
+  .cmp thead th { font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: .04em; color: var(--dim); background: var(--bg-1); }
+  .cmp thead th.hm { color: var(--green); }
+  .cmp td.hm, .cmp thead th.hm { background: rgba(116,230,160,.055); }
+  .cmp tbody th { font-weight: 500; color: var(--ink); font-size: 12.5px; width: 150px; }
+  .cmp td { color: var(--dim); }
+  .cmp td.hm { color: var(--ink); }
+  .cmp td b { color: var(--ink); font-weight: 500; }
+  .cmp .mk { font-family: var(--display); font-weight: 700; }
+  .cmp .mk.ok { color: var(--green); }
+  .cmp .mk.warn { color: var(--amber); }
+  .cmp-note { margin-top: 12px; font-size: 12px; color: var(--faint); max-width: 76ch; }
+  .cmp-note a { color: var(--dim); }
+
   /* how it works */
   .flow { margin-top: 26px; display: flex; align-items: stretch; }
   .node { flex: 1; border: 1px solid var(--line); background: linear-gradient(180deg, var(--bg-1), var(--bg));
@@ -499,6 +517,69 @@
     </div>
   </section>
 
+  <section id="compare">
+    <div class="h2" data-i18n="cmp.h2">how handmux compares</div>
+    <p class="lead" data-i18n="cmp.lead">Same job — driving Claude Code from your phone — three very different architectures. And the architecture decides whose cloud your session crosses, and whether your subscription is safe.</p>
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead>
+          <tr><th></th><th class="hm">handmux</th><th>Happy</th><th data-i18n="cmp.th.of">Claude app (official)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th data-i18n="cmp.r1.h">Your Claude subscription</th>
+            <td class="hm"><span class="mk ok">✓</span> <span data-i18n="cmp.r1.hm">Fully within Anthropic's terms — you run the official Claude Code yourself in a real terminal; handmux is just a window onto that session.</span></td>
+            <td><span class="mk warn">!</span> <span data-i18n="cmp.r1.hp">At risk — it wraps Claude Code as a third-party harness; Anthropic's 2026 policy limits subscription OAuth to first-party clients and is banning such harnesses in waves (enforcement began April 2026).</span></td>
+            <td><span class="mk ok">✓</span> <span data-i18n="cmp.r1.of">First-party.</span></td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r2.h">Agents it can drive</th>
+            <td class="hm"><span data-i18n="cmp.r2.hm"><b>Claude Code · Codex</b> — plus any terminal agent or TUI: if it runs in a terminal, handmux drives it.</span></td>
+            <td data-i18n="cmp.r2.hp">Claude Code &amp; Codex only.</td>
+            <td data-i18n="cmp.r2.of">Claude only.</td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r3.h">What you install</th>
+            <td class="hm"><span data-i18n="cmp.r3.hm">Nothing — a web app; add to Home Screen for a full-screen PWA.</span></td>
+            <td data-i18n="cmp.r3.hp">A native app, plus a wrapper CLI on your computer.</td>
+            <td data-i18n="cmp.r3.of">A native app.</td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r4.h">Data path</th>
+            <td class="hm"><span data-i18n="cmp.r4.hm">Phone ↔ your computer — no middleman, no handmux account.</span></td>
+            <td data-i18n="cmp.r4.hp">Relayed through Happy's cloud (end-to-end encrypted).</td>
+            <td data-i18n="cmp.r4.of">Relayed through Anthropic's cloud.</td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r5.h">Same session as your PC</th>
+            <td class="hm"><span class="mk ok">✓</span> <span data-i18n="cmp.r5.hm">The same live tmux pane — close the laptop, keep going.</span></td>
+            <td data-i18n="cmp.r5.hp">A wrapped session — restarted in remote mode when you take over from the phone.</td>
+            <td data-i18n="cmp.r5.of">Remote Control via cloud relay.</td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r6.h">Beyond the agent</th>
+            <td class="hm"><span data-i18n="cmp.r6.hm">The full terminal — git, shells, editors, anything in the pane.</span></td>
+            <td data-i18n="cmp.r6.hp">Agent sessions only.</td>
+            <td data-i18n="cmp.r6.of">Claude only.</td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r7.h">Coding companions</th>
+            <td class="hm"><span data-i18n="cmp.r7.hm">A full cockpit: a git client with colored diffs, one-tap localhost previews, a doc reader with read-aloud, two-way file transfer, per-window idea lists.</span></td>
+            <td data-i18n="cmp.r7.hp">—</td>
+            <td data-i18n="cmp.r7.of">—</td>
+          </tr>
+          <tr>
+            <th data-i18n="cmp.r8.h">Reachable in mainland China</th>
+            <td class="hm"><span class="mk ok">✓</span> <span data-i18n="cmp.r8.hm">Self-hosted — direct connect, or a tunnel on your own account (incl. natapp / cpolar).</span></td>
+            <td data-i18n="cmp.r8.hp">Relay hosted abroad.</td>
+            <td data-i18n="cmp.r8.of">Effectively unusable.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cmp-note" data-i18n="cmp.note">Happy's own README lists Claude Code &amp; Codex as its two supported agents. Anthropic's credential policy: subscription OAuth tokens are licensed for first-party clients only — see <a href="https://code.claude.com/docs/en/legal-and-compliance">Anthropic's legal docs</a>.</p>
+  </section>
+
   <section id="signature">
     <div class="h2" data-i18n="sig.h2">signature features</div>
     <div class="sig">
@@ -511,6 +592,11 @@
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s1.h">Zero install — with a native-app feel</h3>
         <p data-i18n="sig.s1.p">No App Store, no client, no iOS lock-in — open the link in your phone's browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.</p>
+      </div>
+      <div class="sig-item">
+        <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.exp">experimental · opt-in</span></div>
+        <h3 data-i18n="sig.lens.h">Chat view — the session as a conversation</h3>
+        <p data-i18n="sig.lens.p">Flip a Claude pane from terminal to <b>chat</b>: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. Experimental — may be unstable: turn it on in <b>Settings</b>, then switch views from the window bar.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -701,8 +787,22 @@
       'claude.p1.h': 'Pinged when it needs you', 'claude.p1.p': 'A push the instant a pane hits a permission prompt, a plan approval, or finishes — even with the tab closed. No more babysitting a screen. One <code>handmux hooks install</code> wires it up.',
       'claude.p2.h': 'Who\'s busy, who\'s waiting — one glance', 'claude.p2.p': 'One inbox lines up every coding agent — <b>Claude Code</b>, <b>Codex</b> — each pane tagged <span style="color:var(--blue)">working</span> · <span style="color:var(--amber)">needs you</span> · <span style="color:var(--green)">done</span>. Tap the blocked one and you’re there.',
       'claude.p3.h': 'Approve with your thumb', 'claude.p3.p': "Answer permission prompts and plan approvals right from the phone — it's driving the real keys, so a tap is a real keystroke.",
+      'cmp.h2': 'how handmux compares',
+      'cmp.lead': 'Same job — driving Claude Code from your phone — three very different architectures. And the architecture decides whose cloud your session crosses, and whether your subscription is safe.',
+      'cmp.th.of': 'Claude app (official)',
+      'cmp.r1.h': 'Your Claude subscription', 'cmp.r1.hm': "Fully within Anthropic's terms — you run the official Claude Code yourself in a real terminal; handmux is just a window onto that session.", 'cmp.r1.hp': "At risk — it wraps Claude Code as a third-party harness; Anthropic's 2026 policy limits subscription OAuth to first-party clients and is banning such harnesses in waves (enforcement began April 2026).", 'cmp.r1.of': 'First-party.',
+      'cmp.r2.h': 'Agents it can drive', 'cmp.r2.hm': '<b>Claude Code · Codex</b> — plus any terminal agent or TUI: if it runs in a terminal, handmux drives it.', 'cmp.r2.hp': 'Claude Code &amp; Codex only.', 'cmp.r2.of': 'Claude only.',
+      'cmp.r3.h': 'What you install', 'cmp.r3.hm': 'Nothing — a web app; add to Home Screen for a full-screen PWA.', 'cmp.r3.hp': 'A native app, plus a wrapper CLI on your computer.', 'cmp.r3.of': 'A native app.',
+      'cmp.r4.h': 'Data path', 'cmp.r4.hm': 'Phone ↔ your computer — no middleman, no handmux account.', 'cmp.r4.hp': "Relayed through Happy's cloud (end-to-end encrypted).", 'cmp.r4.of': "Relayed through Anthropic's cloud.",
+      'cmp.r5.h': 'Same session as your PC', 'cmp.r5.hm': 'The same live tmux pane — close the laptop, keep going.', 'cmp.r5.hp': 'A wrapped session — restarted in remote mode when you take over from the phone.', 'cmp.r5.of': 'Remote Control via cloud relay.',
+      'cmp.r6.h': 'Beyond the agent', 'cmp.r6.hm': 'The full terminal — git, shells, editors, anything in the pane.', 'cmp.r6.hp': 'Agent sessions only.', 'cmp.r6.of': 'Claude only.',
+      'cmp.r7.h': 'Coding companions', 'cmp.r7.hm': 'A full cockpit: a git client with colored diffs, one-tap localhost previews, a doc reader with read-aloud, two-way file transfer, per-window idea lists.', 'cmp.r7.hp': '—', 'cmp.r7.of': '—',
+      'cmp.r8.h': 'Reachable in mainland China', 'cmp.r8.hm': 'Self-hosted — direct connect, or a tunnel on your own account (incl. natapp / cpolar).', 'cmp.r8.hp': 'Relay hosted abroad.', 'cmp.r8.of': 'Effectively unusable.',
+      'cmp.note': 'Happy\'s own README lists Claude Code &amp; Codex as its two supported agents. Anthropic\'s credential policy: subscription OAuth tokens are licensed for first-party clients only — see <a href="https://code.claude.com/docs/en/legal-and-compliance">Anthropic\'s legal docs</a>.',
       'sig.h2': 'signature features',
       'sig.on': 'on by default', 'sig.cfg': 'needs setup', 'sig.badge_dyn': 'live service · setup',
+      'sig.exp': 'experimental · opt-in',
+      'sig.lens.h': 'Chat view — the session as a conversation', 'sig.lens.p': 'Flip a Claude pane from terminal to <b>chat</b>: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. Experimental — may be unstable: turn it on in <b>Settings</b>, then switch views from the window bar.',
       'sig.fast': 'up in a minute',
       'sig.quick.h': 'One command — and it\'s running', 'sig.quick.p': 'Install with a <b>single command</b>, run it, scan the QR — about a minute later you\'re driving your terminal from your phone. Already have Node and tmux? There\'s nothing else to set up.',
       'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': 'No App Store, no client, no iOS lock-in — open the link in your phone\'s browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.',
@@ -770,8 +870,22 @@
       'claude.p1.h': '需要你,就推给你', 'claude.p1.p': 'pane 一弹授权、要你批计划、或者干完了,立刻推到手机上,哪怕你早把标签页关了。再不用守着屏幕干等。电脑上一条 <code>handmux hooks install</code> 就挂上了。',
       'claude.p2.h': '谁在忙、谁等你,一屏看全', 'claude.p2.p': '一个收件箱把你所有 coding agent(<b>Claude Code</b>、<b>Codex</b>)排成一屏,每个 pane 都标着 <span style="color:var(--blue)">进行中</span> · <span style="color:var(--amber)">需要你</span> · <span style="color:var(--green)">已完成</span>——哪个卡住,点一下直达。',
       'claude.p3.h': '拇指点一下就批', 'claude.p3.p': '授权、批计划,在手机上直接点;手机敲的就是真实按键,你点一下,就等于在键盘上敲了一下。',
+      'cmp.h2': '和同类比一比',
+      'cmp.lead': '同样是「在手机上驱动 Claude Code」,三条截然不同的技术路线——路线决定你的会话经过谁的云,也决定你的订阅安不安全。',
+      'cmp.th.of': 'Claude 官方 App',
+      'cmp.r1.h': '你的 Claude 订阅', 'cmp.r1.hm': '完全合规——你自己在真实终端里跑官方 Claude Code,handmux 只是这个会话的一扇窗。', 'cmp.r1.hp': '有风险——它把 Claude Code 包装成第三方 harness;Anthropic 2026 新规把订阅 OAuth 限定在官方客户端,正分批封禁此类工具(2026 年 4 月已开始执行)。', 'cmp.r1.of': '官方出品。',
+      'cmp.r2.h': '能驱动哪些 agent', 'cmp.r2.hm': '<b>Claude Code · Codex</b>——以及任意终端 agent 或 TUI:终端里能跑的,handmux 都能驱动。', 'cmp.r2.hp': '仅 Claude Code 和 Codex。', 'cmp.r2.of': '仅 Claude。',
+      'cmp.r3.h': '要装什么', 'cmp.r3.hm': '什么都不装——一个网页,加到主屏就是全屏 PWA。', 'cmp.r3.hp': '原生 App,外加电脑上的包装 CLI。', 'cmp.r3.of': '原生 App。',
+      'cmp.r4.h': '数据路径', 'cmp.r4.hm': '手机直连你的电脑——没有中转,也不需要 handmux 账号。', 'cmp.r4.hp': '经 Happy 云端 relay 中转(端到端加密)。', 'cmp.r4.of': '经 Anthropic 云中继。',
+      'cmp.r5.h': '和电脑同一会话', 'cmp.r5.hm': '同一个真实 tmux pane——合上电脑,接着干。', 'cmp.r5.hp': '包装会话——手机接管时以远程模式重启。', 'cmp.r5.of': 'Remote Control,经云中继。',
+      'cmp.r6.h': 'agent 之外', 'cmp.r6.hm': '完整终端——git、shell、编辑器,pane 里的一切。', 'cmp.r6.hp': '只有 agent 会话。', 'cmp.r6.of': '只有 Claude。',
+      'cmp.r7.h': '编码配套工具', 'cmp.r7.hm': '一整套驾驶舱:git 客户端(彩色 diff)、localhost 一键预览、文档阅读与朗读、文件双向互传、随想随记的想法清单。', 'cmp.r7.hp': '—', 'cmp.r7.of': '—',
+      'cmp.r8.h': '国内可用', 'cmp.r8.hm': '自托管——直连,或你自己账号的隧道(含 natapp / cpolar)。', 'cmp.r8.hp': 'relay 在境外。', 'cmp.r8.of': '基本不可用。',
+      'cmp.note': 'Happy 官方 README 列出的支持 agent 为 Claude Code 与 Codex 两款。Anthropic 凭证政策:订阅 OAuth 仅限官方客户端使用——见 <a href="https://code.claude.com/docs/en/legal-and-compliance">Anthropic 官方说明</a>。',
       'sig.h2': '特色功能',
       'sig.on': '默认开启', 'sig.cfg': '需配置', 'sig.badge_dyn': '在线服务 · 需配置',
+      'sig.exp': '实验性 · 需手动开启',
+      'sig.lens.h': '对话视图——把会话当成聊天', 'sig.lens.p': '把 Claude 的 pane 从终端切到<b>对话</b>:气泡 + Markdown 正文、带彩色 diff 的工具卡、点按即答的问题卡、暖色配色。实验性功能,可能不稳定:在<b>设置</b>里开启后,从窗口栏切换视图。',
       'sig.fast': '一分钟上手',
       'sig.quick.h': '一条命令,就启动了', 'sig.quick.p': '<b>一条命令</b>装好、跑起来、扫码——大约一分钟,你就在手机上操作自己的终端了。已经有 Node 和 tmux 的话,别的什么都不用配。',
       'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '不下 App、不装客户端、不锁 iOS——手机浏览器点开链接,「<b>添加到主屏</b>」即可。全屏运行的 PWA,<b>基本就是个原生 App</b>,iPhone、安卓都一样。在 iPhone 上,推送也靠它——加到主屏后,pane 一有情况 handmux 就能推到你手机。建议用 <b>Safari</b>(iOS)或 <b>Chrome</b>。',
