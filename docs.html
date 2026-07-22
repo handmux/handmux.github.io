@@ -236,7 +236,9 @@ em { font-style: italic; color: var(--ink); }
       <span class="nav-grp-label" data-i18n="g.cmds">Commands</span>
       <a class="nav-link" href="#cmd-start"><code>start</code></a>
       <a class="nav-link" href="#cmd-open"><code>open</code></a>
+      <a class="nav-link" href="#cmd-restore"><code>restore</code></a>
       <a class="nav-link" href="#cmd-setup"><code>setup</code></a>
+      <a class="nav-link" href="#cmd-shortcuts"><code>shortcuts</code></a>
       <a class="nav-link" href="#cmd-control"><code>stop · restart · status</code></a>
       <a class="nav-link" href="#cmd-logs"><code>logs</code></a>
       <a class="nav-link" href="#cmd-config"><code>config</code></a>
@@ -359,6 +361,22 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <div class="note"><p><b data-i18n="op.note-b">Note:</b> <span data-i18n="op.note">it never starts or stops the handmux server — it's purely the tmux-side shortcut (≈ <code>tmux new -A -s</code>, minus the incantation).</span></p></div>
     </section>
 
+    <!-- CMD: RESTORE -->
+    <section id="cmd-restore">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux restore</span><span class="cmd-args">[options]</span></div></h2>
+      <p data-i18n="rs.p1">handmux silently maintains two redundant copies of the latest tmux workspace metadata. Ordinary changes and deletions handmux can confirm update that current state; a selectable checkpoint is archived only when the computer or tmux environment changes. If the final tmux session disappears outside handmux, it cannot distinguish a deliberate deletion from a crash, so it retains the last state and offers recovery immediately without waiting for a new tmux server or session. Every checkpoint from the latest 24 hours is kept; older history is then trimmed to the newest 10, while the latest valid checkpoint never expires just because of age.</p>
+      <p data-i18n="rs.p2">Restore is additive and idempotent: it never stops, renames, replaces, or changes the topology of a current session. A conflicting name becomes <code>name-restored</code>, then <code>name-restored-2</code>. The phone offers the latest unfinished checkpoint for one hour after restart (and opens it directly when tmux is empty); ignoring it suppresses that checkpoint only on that phone. Completion reports the actual sessions, windows, and panes restored without automatically opening or binding them; binding remains an explicit per-phone choice. The CLI stays available after the phone prompt expires.</p>
+      <div class="cb"><pre><b>handmux restore --dry-run</b>                         <i data-i18n="rs.c1"># preview the latest plan</i>
+<b>handmux restore</b>                                  <i data-i18n="rs.c2"># restore; TTY picker, otherwise latest</i>
+<b>handmux restore --list</b>                           <i data-i18n="rs.c3"># list retained checkpoints</i>
+<b>handmux restore --checkpoint latest</b>              <i data-i18n="rs.c4"># explicitly choose the latest checkpoint</i>
+<b>handmux restore --checkpoint &lt;id&gt; --session api</b>  <i data-i18n="rs.c5"># restore one original session</i></pre></div>
+      <p data-i18n="rs.select">With no explicit checkpoint, one usable checkpoint is selected directly; several checkpoints open a newest-first picker only when stdin/stdout are a TTY, while scripts and SSH non-interactive runs use the latest. <code>--checkpoint</code> skips the picker. <code>--session</code> is repeatable, <code>--dry-run</code> combines with checkpoint/session filters, and <code>--list</code> is used alone.</p>
+      <p data-i18n="rs.p3">Windows, linked windows, panes, working directories and layouts are rebuilt where they can be represented safely. Only verified Claude Code / Codex panes are resumed from persisted agent session IDs. Ordinary panes reopen as shells in their saved directories: commands, arbitrary processes and terminal scrollback are never replayed.</p>
+      <div class="note"><p><b data-i18n="rs.privacy-b">Privacy:</b> <span data-i18n="rs.privacy">metadata is stored under <code>~/.handmux/workspaces/</code> and may include paths, tmux names/layout and agent session IDs, but not pane output.</span></p></div>
+      <div class="note"><p><b data-i18n="rs.verify-b">Verification boundary:</b> <span data-i18n="rs.verify">the restart, boot-identity and tmux-generation scenarios are tested with real tmux inside isolated Docker containers; the current computer was not restarted. Host-specific macOS launchd timing and WSL/full-host reboot timing still need platform verification.</span></p></div>
+    </section>
+
     <!-- CMD: SETUP -->
     <section id="cmd-setup">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux setup</span></div></h2>
@@ -372,15 +390,24 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
 <b>handmux setup --config ~/work.json</b>   <i data-i18n="su.c2"># write to a custom config file</i></pre></div>
     </section>
 
+    <!-- CMD: SHORTCUTS -->
+    <section id="cmd-shortcuts">
+      <h2><div class="cmd-sig"><span class="cmd-name">handmux shortcuts</span></div></h2>
+      <p data-i18n="sh.p1">Shared quick items for command and chat modes. Both defaults include Ctrl+C. The phone editor shows the effective quick-bar order, can interleave shared and phone-local items, and can remove a shared item from this device only with immediate undo. Adding a local item confirms success and returns to the list.</p>
+      <div class="cb"><pre><b>handmux shortcuts</b>                        <i data-i18n="sh.c1"># edit ~/.handmux/config.json</i>
+<b>handmux shortcuts --config ~/work.json</b> <i data-i18n="sh.c2"># edit a custom config file</i></pre></div>
+      <div class="note"><p><b data-i18n="sh.note-b">Apply changes:</b> <span data-i18n="sh.note">changes apply to a running server immediately. The phone reloads config items whenever it returns to the foreground, so switch back after saving—no restart or polling required.</span></p></div>
+    </section>
+
     <!-- CMD: CONTROL -->
     <section id="cmd-control">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux stop</span><span class="cmd-args">·</span><span class="cmd-name">restart</span><span class="cmd-args">·</span><span class="cmd-name">status</span></div></h2>
-      <p data-i18n="ct.p">Control the running handmux process.</p>
-      <div class="cb"><pre><b>handmux stop</b>       <i data-i18n="ct.c1"># SIGTERM to supervisor — server + tunnel exit cleanly</i>
-<b>handmux restart</b>    <i data-i18n="ct.c2"># stop, wait 600 ms, start again with the same config</i>
-<b>handmux status</b>     <i data-i18n="ct.c3"># show running state, live URL, token</i></pre></div>
+      <p data-i18n="ct.p">Control the running handmux process. Lifecycle commands are serialized; status warns with PIDs when stale/duplicate supervisors exist, and stop/restart reap every copy before continuing.</p>
+      <div class="cb"><pre><b>handmux stop</b>       <i data-i18n="ct.c1"># stop server + tunnel cleanly</i>
+<b>handmux restart</b>    <i data-i18n="ct.c2"># restart the same manual or managed service</i>
+<b>handmux status</b>     <i data-i18n="ct.c3"># show running version, live URL, token</i></pre></div>
       <h3 data-i18n="ct.out">Example status output</h3>
-      <div class="cb"><pre><span class="k">●</span> handmux running
+      <div class="cb"><pre><span class="k">●</span> handmux 0.x.y running
   tunnel   cloudflare   ·   pid 21352
   🌐 open   https://elementary-incidents.trycloudflare.com
   💻 local  localhost:19999
@@ -436,7 +463,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <div class="cb"><pre><b>handmux service install</b>                        <i data-i18n="sv.c1"># bake current config into a login item</i>
 <b>handmux service install --tunnel cloudflare</b>    <i data-i18n="sv.c2"># override tunnel for the autostart</i>
 <b>handmux service uninstall</b>                      <i data-i18n="sv.c3"># remove the login item</i></pre></div>
-      <div class="note"><p><b data-i18n="sv.note-b">Note:</b> <span data-i18n="sv.note">the service bakes the config at install time. After changing <code>~/.handmux/config.json</code>, re-run <code>handmux service install</code> to update it.</span></p></div>
+      <div class="note"><p><b data-i18n="sv.note-b">Note:</b> <span data-i18n="sv.note">install first replaces any manual instance with this service. Afterwards normal start / stop / restart control that same service, so upgrades never launch a second copy. Restart (or start while stopped) refreshes its baked config and executable path; stop keeps autostart registered for the next login.</span></p></div>
     </section>
 
     <!-- FLAGS -->
@@ -503,6 +530,19 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
   <span class="k">"name"</span>:          <span class="u">"My Box"</span>,         <i data-i18n="cj.f.name">// browser tab title (null = default)</i>
   <span class="k">"token"</span>:         <span class="u">"your-secret"</span>,    <i data-i18n="cj.f.token">// omit to regenerate on every start</i>
   <span class="k">"publicUrl"</span>:     <span class="u">"https://…"</span>,      <i data-i18n="cj.f.pub">// override printed URL (optional)</i>
+
+  <i data-i18n="cj.shortcuts">// Shared across devices; each phone can reorder or remove locally; text declares Enter behavior</i>
+  <span class="k">"shortcuts"</span>: {
+    <span class="k">"command"</span>: [
+      { <span class="k">"type"</span>: <span class="u">"key"</span>, <span class="k">"key"</span>: <span class="u">"C-c"</span>, <span class="k">"label"</span>: <span class="u">"Ctrl+C"</span> },
+      { <span class="k">"type"</span>: <span class="u">"text"</span>, <span class="k">"text"</span>: <span class="u">"git status"</span>, <span class="k">"enter"</span>: <span class="u">false</span> }
+    ],
+    <span class="k">"chat"</span>: [
+      { <span class="k">"type"</span>: <span class="u">"key"</span>, <span class="k">"key"</span>: <span class="u">"C-c"</span>, <span class="k">"label"</span>: <span class="u">"Ctrl+C"</span> },
+      { <span class="k">"type"</span>: <span class="u">"key"</span>, <span class="k">"key"</span>: <span class="u">"Escape"</span>, <span class="k">"label"</span>: <span class="u">"Esc"</span> },
+      { <span class="k">"type"</span>: <span class="u">"text"</span>, <span class="k">"text"</span>: <span class="u">"ok"</span>, <span class="k">"enter"</span>: <span class="u">true</span> }
+    ]
+  },
 
   <i data-i18n="cj.ssh">// SSH tunnel — only read when tunnel = "ssh"</i>
   <span class="k">"sshHost"</span>:       <span class="u">"user@vps.example.com"</span>,
@@ -721,7 +761,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
           <tr><td><code>--session &lt;name&gt;</code></td><td data-i18n="sp.fl.session">Target devices subscribed to this tmux session (repeatable; comma-separated OK). Mutually exclusive with <code>--device</code>.</td></tr>
           <tr><td><code>--device &lt;key&gt;</code></td><td data-i18n="sp.fl.device">Target a specific device by its key (repeatable; comma-separated OK). Mutually exclusive with <code>--session</code>.</td></tr>
           <tr><td><code>--tag &lt;T&gt;</code></td><td data-i18n="sp.fl.tag">Notification tag — collapses duplicate notifications.</td></tr>
-          <tr><td><code>--url &lt;U&gt;</code></td><td data-i18n="sp.fl.url">URL to open when the notification is tapped.</td></tr>
+          <tr><td><code>--url &lt;U&gt;</code></td><td data-i18n="sp.fl.url">HTTP(S) URL or same-origin relative path to open when the notification is tapped.</td></tr>
         </tbody>
       </table>
 
@@ -784,15 +824,25 @@ const I18N = {
     'op.c1':'# attach session "myproj" — created on the spot if missing',
     'op.note-b':'Note:',
     'op.note':'it never starts or stops the handmux server — it\'s purely the tmux-side shortcut (≈ <code>tmux new -A -s</code>, minus the incantation).',
+    'rs.p1':'handmux silently maintains two redundant copies of the latest tmux workspace metadata. Ordinary changes and deletions handmux can confirm update that current state; a selectable checkpoint is archived only when the computer or tmux environment changes. If the final tmux session disappears outside handmux, it cannot distinguish a deliberate deletion from a crash, so it retains the last state and offers recovery immediately without waiting for a new tmux server or session. Every checkpoint from the latest 24 hours is kept; older history is then trimmed to the newest 10, while the latest valid checkpoint never expires just because of age.',
+    'rs.p2':'Restore is additive and idempotent: it never stops, renames, replaces, or changes the topology of a current session. A conflicting name becomes <code>name-restored</code>, then <code>name-restored-2</code>. The phone offers the latest unfinished checkpoint for one hour after restart (and opens it directly when tmux is empty); ignoring it suppresses that checkpoint only on that phone. Completion reports the actual sessions, windows, and panes restored without automatically opening or binding them; binding remains an explicit per-phone choice. The CLI stays available after the phone prompt expires.',
+    'rs.c1':'# preview the latest plan','rs.c2':'# restore; TTY picker, otherwise latest','rs.c3':'# list retained checkpoints','rs.c4':'# explicitly choose the latest checkpoint','rs.c5':'# restore one original session',
+    'rs.select':'With no explicit checkpoint, one usable checkpoint is selected directly; several checkpoints open a newest-first picker only when stdin/stdout are a TTY, while scripts and SSH non-interactive runs use the latest. <code>--checkpoint</code> skips the picker. <code>--session</code> is repeatable, <code>--dry-run</code> combines with checkpoint/session filters, and <code>--list</code> is used alone.',
+    'rs.p3':'Windows, linked windows, panes, working directories and layouts are rebuilt where they can be represented safely. Only verified Claude Code / Codex panes are resumed from persisted agent session IDs. Ordinary panes reopen as shells in their saved directories: commands, arbitrary processes and terminal scrollback are never replayed.',
+    'rs.privacy-b':'Privacy:','rs.privacy':'metadata is stored under <code>~/.handmux/workspaces/</code> and may include paths, tmux names/layout and agent session IDs, but not pane output.',
+    'rs.verify-b':'Verification boundary:','rs.verify':'the restart, boot-identity and tmux-generation scenarios are tested with real tmux inside isolated Docker containers; the current computer was not restarted. Host-specific macOS launchd timing and WSL/full-host reboot timing still need platform verification.',
     'su.p1':'An interactive <strong>menu hub</strong> — arrow to any setting and edit just that: connection (tunnel), app name, port, push-notification &amp; voice-input credentials, and the CLI language. A new user starts on <strong>Direct</strong> (no tunnel) with the cursor on <em>Save &amp; start</em> (it reads <em>Save &amp; restart</em> when handmux is already running, applying the change on the spot). Writes <code>~/.handmux/config.json</code>; re-run any time to change anything.',
     'su.p2':"When it's done it also offers to:",
     'su.li1':'Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications',
     'su.li2':'Set up the <strong>usage capturer</strong> — feeds the phone\'s Claude 5-hour / weekly quota bars',
     'su.c1':'# interactive — walks through all options','su.c2':'# write to a custom config file',
-    'ct.p':'Control the running handmux process.',
-    'ct.c1':'# SIGTERM to supervisor — server + tunnel exit cleanly',
-    'ct.c2':'# stop, wait 600 ms, start again with the same config',
-    'ct.c3':'# show running state, live URL, token','ct.out':'Example status output',
+    'sh.p1':'Shared quick items for command and chat modes. Both defaults include Ctrl+C. The phone editor shows the effective quick-bar order, can interleave shared and phone-local items, and can remove a shared item from this device only with immediate undo. Adding a local item confirms success and returns to the list.',
+    'sh.c1':'# edit ~/.handmux/config.json','sh.c2':'# edit a custom config file',
+    'sh.note-b':'Apply changes:','sh.note':'changes apply to a running server immediately. The phone reloads config items whenever it returns to the foreground, so switch back after saving—no restart or polling required.',
+    'ct.p':'Control the running handmux process. Lifecycle commands are serialized; status warns with PIDs when stale/duplicate supervisors exist, and stop/restart reap every copy before continuing.',
+    'ct.c1':'# stop server + tunnel cleanly',
+    'ct.c2':'# restart the same manual or managed service',
+    'ct.c3':'# show running version, live URL, token','ct.out':'Example status output',
     'lo.p':'View the supervisor log at <code>~/.handmux/handmux.log</code>.',
     'lo.c1':'# last 200 lines','lo.c2':'# stream live (tail -f)','lo.c3':'# last 50 lines',
     'cf.p1':'Print the effective config that would be used on next <code>start</code>, with each value\'s origin: <strong>flag</strong> (this run), <strong>file</strong> (path shown), <strong>env</strong>, or <strong>default</strong>. Secrets are masked; push / voice credentials shown as <em>on</em> or <em>off</em>.',
@@ -808,7 +858,7 @@ const I18N = {
     'sv.mac':'<strong>macOS:</strong> launchd plist in <code>~/Library/LaunchAgents/</code>',
     'sv.linux':'<strong>Linux:</strong> systemd user unit in <code>~/.config/systemd/user/</code>',
     'sv.c1':'# bake current config into a login item','sv.c2':'# override tunnel for the autostart','sv.c3':'# remove the login item',
-    'sv.note-b':'Note:','sv.note':'the service bakes the config at install time. After changing <code>~/.handmux/config.json</code>, re-run <code>handmux service install</code> to update it.',
+    'sv.note-b':'Note:','sv.note':'install first replaces any manual instance with this service. Afterwards normal start / stop / restart control that same service, so upgrades never launch a second copy. Restart (or start while stopped) refreshes its baked config and executable path; stop keeps autostart registered for the next login.',
     'fl.h2':'Flags','fl.p1':'Flags are one-run overrides — never persisted. Resolution order: <strong>flag &gt; config file &gt; env var &gt; built-in default</strong>. Run <code>handmux help flags</code> for this list plus each flag\'s matching env var right in your terminal.',
     'fl.general':'General',
     'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code> · <code>natapp</code> · <code>cpolar</code>',
@@ -816,7 +866,7 @@ const I18N = {
     'fl.token':'Auth token (random 8-char token generated if unset)','fl.token-d':'generated',
     'fl.name':'App name in browser tab and home-screen icon',
     'fl.pub-url':'Override the URL printed and in the QR. Works with any tunnel including <code>none</code>','fl.pub-url-d':'from tunnel',
-    'fl.preview':'Wildcard subdomain for dynamic site previews','fl.off':'off',
+    'fl.preview':'Base domain for dynamic previews (e.g. preview.example.com; no https:// or *.)','fl.off':'off',
     'fl.fg':'Stay in foreground; Ctrl-C to stop','fl.noqr':'Skip the QR code',
     'fl.cfg':'Use this JSON file instead of <code>~/.handmux/config.json</code>',
     'fl.ssh-h':'SSH tunnel flags','fl.ssh-note':'only with --tunnel ssh',
@@ -827,6 +877,7 @@ const I18N = {
     'cj.h2':'Config file',
     'cj.p1':'handmux reads <code>~/.handmux/config.json</code> on every <code>start</code>. Created and maintained by <code>handmux setup</code>; you can also edit it directly. Pass <code>--config PATH</code> to use a different file.',
     'cj.comment':'// ~/.handmux/config.json (written by `handmux setup`)',
+    'cj.shortcuts':'// Shared across devices; each phone can reorder or remove locally; text declares Enter behavior',
     'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"|"natapp"|"cpolar"','cj.f.port':'// server port','cj.f.host':'// bind address',
     'cj.f.name':'// browser tab title (null = default)','cj.f.token':'// omit to regenerate on every start','cj.f.pub':'// override printed URL (optional)',
     'cj.ssh':'// SSH tunnel — only read when tunnel = "ssh"','cj.cf':'// Cloudflare named tunnel — only read when tunnel = "cloudflare-named"',
@@ -857,7 +908,7 @@ const I18N = {
     'ev.authtoken':'natapp / cpolar authtoken','ev.cpolar-region':'cpolar edge region',
     'ev.h2':'Environment variables','ev.p':'Lower-priority alternative to flags — useful in scripts or containers. Sit below flags and the config file in resolution order.',
     'ev.port':'Server port','ev.host':'Bind address','ev.token':'Auth token','ev.name':'App name',
-    'ev.pub':'Override advertised URL','ev.preview':'Wildcard subdomain for site previews',
+    'ev.pub':'Override advertised URL','ev.preview':'Base domain for dynamic previews (e.g. preview.example.com)',
     'ev.ssh-host':'SSH tunnel target','ev.rport':'Port on the SSH host','ev.jump':'SSH bastion',
     'ev.cf-host':'Cloudflare named tunnel hostname','ev.cf-name':'Cloudflare tunnel name','th.flag':'Flag',
     'cc.p1':'handmux drives any agent or TUI — and with Claude Code it goes furthest. Lifecycle hooks report each pane\'s state (working · needs you · done) to handmux in real time, powering the inbox and push notifications.',
@@ -889,7 +940,7 @@ const I18N = {
     'sp.fl.session':'Target devices subscribed to this tmux session (repeatable; comma-separated OK). Mutually exclusive with <code>--device</code>.',
     'sp.fl.device':'Target a specific device by its key (repeatable; comma-separated OK). Mutually exclusive with <code>--session</code>.',
     'sp.fl.tag':'Notification tag — collapses duplicate notifications.',
-    'sp.fl.url':'URL to open when the notification is tapped.',
+    'sp.fl.url':'HTTP(S) URL or same-origin relative path to open when the notification is tapped.',
     'sp.key-h':'Device key',
     'sp.key-p':'The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device.',
     'sp.rel-h':'Reliability',
@@ -936,15 +987,25 @@ const I18N = {
     'op.c1':'# 接入会话 "myproj"——不存在则当场创建',
     'op.note-b':'注意：',
     'op.note':'它绝不启动或停止 handmux 服务——纯粹是 tmux 侧的快捷方式（≈ <code>tmux new -A -s</code>，省去咒语）。',
+    'rs.p1':'handmux 会静默维护最新 tmux 工作区元数据的两份容灾副本。日常变动和 handmux 能确认的主动删除只更新当前状态；只有电脑或 tmux 环境换代时才归档可选择的 checkpoint。若最后一个 tmux 会话在 handmux 外消失，无法区分主动删除与崩溃，handmux 会保留最后状态并立即提供恢复，无需等待新 tmux server 或 session 出现。最近 24 小时内的全部保留；更早历史再裁到最新 10 份，最新有效 checkpoint 不会只因过期而消失。',
+    'rs.p2':'恢复是只新增、可重复执行的：不会停止、改名、替换或改变当前会话的拓扑；只有当前存在同名会话时才依次改为 <code>name-restored</code>、<code>name-restored-2</code>。重启后一小时内，手机会提示最新且尚未恢复完的 checkpoint（tmux 为空时直接弹窗）；忽略后只在这台手机上不再提示。完成后汇总实际恢复的会话、窗口和窗格，但不会自动打开或绑定；是否绑定由每台手机自行选择。手机提示过期后，CLI 仍一直可用。',
+    'rs.c1':'# 预览最新恢复计划','rs.c2':'# 恢复；TTY 交互选择，非 TTY 用最新','rs.c3':'# 列出保留的 checkpoint','rs.c4':'# 明确选择最新 checkpoint','rs.c5':'# 只恢复一个原始会话',
+    'rs.select':'未显式指定 checkpoint 时：只有一份则直接选中；有多份且 stdin/stdout 是 TTY 时按新到旧交互选择，脚本或 SSH 非交互运行则使用最新一份。<code>--checkpoint</code> 跳过选择；<code>--session</code> 可重复；<code>--dry-run</code> 可与 checkpoint/session 过滤组合；<code>--list</code> 独占使用。',
+    'rs.p3':'在安全可表达的范围内重建窗口、linked window、窗格、工作目录和布局。只有经过验证的 Claude Code / Codex pane 会用已持久化的 agent session ID 续接。普通 pane 只在原目录打开 shell：不会重放命令、任意进程或终端输出。',
+    'rs.privacy-b':'隐私：','rs.privacy':'元数据保存在 <code>~/.handmux/workspaces/</code>，可能包含路径、tmux 名称/布局和 agent session ID，但不包含 pane 输出。',
+    'rs.verify-b':'验证边界：','rs.verify':'重启、boot identity 与 tmux generation 场景均在隔离 Docker 容器中用真实 tmux 验证，没有重启当前电脑。macOS launchd 的主机时序、WSL / 整机真实重启时序仍需对应平台验证。',
     'su.p1':'一个交互式<strong>菜单中枢</strong>——方向键选中哪项就只改哪项：连接（隧道）、应用名称、端口、推送通知与语音输入凭证、命令行语言。新用户默认落在<strong>直连</strong>（不开隧道），光标停在<em>保存并启动</em>上（已在运行时这行显示<em>保存并重启</em>，改动即刻生效）。写入 <code>~/.handmux/config.json</code>，随时可重跑修改。',
     'su.p2':'配完后它还会问你要不要：',
     'su.li1':'为 Claude Code / Codex 安装<strong>收件箱 hooks</strong>——开启收件箱和推送通知',
     'su.li2':'配置<strong>用量采集器</strong>——为手机端的 Claude 5 小时 / 每周额度条供数',
     'su.c1':'# 交互式，一步步引导','su.c2':'# 写到自定义配置文件',
-    'ct.p':'控制正在运行的 handmux 进程。',
-    'ct.c1':'# 给 supervisor 发 SIGTERM，服务器和隧道干净退出',
-    'ct.c2':'# 停止，等 600 ms，再用同样配置重启',
-    'ct.c3':'# 显示运行状态、当前 URL、token','ct.out':'status 输出示例',
+    'sh.p1':'命令 / 聊天模式共享常用项，两种默认配置都含 Ctrl+C。手机编辑器按快捷栏实际顺序统一显示共享与本机项，可自由混排，也可只从本机移除共享项并即时撤销。本机新增成功后会明确提示并直接返回列表。',
+    'sh.c1':'# 编辑 ~/.handmux/config.json','sh.c2':'# 编辑指定配置文件',
+    'sh.note-b':'应用修改：','sh.note':'修改会立即应用到正在运行的 server。手机端每次回到前台时自动读取配置项，保存后切回手机即可，无需重启或轮询。',
+    'ct.p':'控制正在运行的 handmux 进程。启停命令会串行执行；发现未登记/重复 supervisor 时，status 会列出 PID，stop/restart 会先回收全部副本再继续。',
+    'ct.c1':'# 干净停止 server 与隧道',
+    'ct.c2':'# 重启同一个手动进程或托管服务',
+    'ct.c3':'# 显示运行版本、当前 URL、token','ct.out':'status 输出示例',
     'lo.p':'查看 <code>~/.handmux/handmux.log</code> 的 supervisor 日志。',
     'lo.c1':'# 最后 200 行','lo.c2':'# 实时流式输出（tail -f）','lo.c3':'# 最后 50 行',
     'cf.p1':'打印下次 <code>start</code> 生效的配置，以及每个值的来源：<strong>flag</strong>（本次运行）、<strong>file</strong>（文件路径）、<strong>env</strong> 或 <strong>default</strong>。Token 被掩码；推送/语音凭证仅显示 <em>on</em>/<em>off</em>。',
@@ -960,7 +1021,7 @@ const I18N = {
     'sv.mac':'<strong>macOS：</strong>在 <code>~/Library/LaunchAgents/</code> 创建 launchd plist',
     'sv.linux':'<strong>Linux：</strong>在 <code>~/.config/systemd/user/</code> 创建 systemd 用户 unit',
     'sv.c1':'# 将当前配置写进登录项','sv.c2':'# 覆盖自启时的隧道','sv.c3':'# 移除登录项',
-    'sv.note-b':'注意：','sv.note':'service 在安装时将配置固化。修改 <code>~/.handmux/config.json</code> 后需重跑 <code>handmux service install</code> 更新。',
+    'sv.note-b':'注意：','sv.note':'安装时会先用托管服务替换已有手动实例；之后普通 start / stop / restart 始终控制同一个服务，升级也不会另起一份。restart（或已停止时再 start）会刷新固化配置和可执行路径；stop 只停止本次运行，仍保留下次登录自启。',
     'fl.h2':'参数','fl.p1':'参数是本次运行的覆盖，不会持久化。解析优先级：<strong>参数 &gt; 配置文件 &gt; 环境变量 &gt; 内置默认值</strong>。在终端跑 <code>handmux help flags</code> 可看这份列表及每个参数对应的环境变量。',
     'fl.general':'通用',
     'fl.tunnel':'<code>none</code> · <code>cloudflare</code> · <code>cloudflare-named</code> · <code>ssh</code> · <code>natapp</code> · <code>cpolar</code>',
@@ -968,7 +1029,7 @@ const I18N = {
     'fl.token':'认证 token（未设置时每次启动随机生成 8 位）','fl.token-d':'随机生成',
     'fl.name':'浏览器标签页和主屏图标名称',
     'fl.pub-url':'覆盖打印和二维码里的 URL，适用于任何隧道（包括 <code>none</code>）','fl.pub-url-d':'从隧道推导',
-    'fl.preview':'动态网站预览的通配符子域名','fl.off':'关闭',
+    'fl.preview':'动态预览的裸域名（如 preview.example.com；不填 https:// 或 *.）','fl.off':'关闭',
     'fl.fg':'在前台运行，Ctrl-C 停止','fl.noqr':'不打印二维码',
     'fl.cfg':'使用此 JSON 文件替代 <code>~/.handmux/config.json</code>',
     'fl.ssh-h':'SSH 隧道参数','fl.ssh-note':'仅在 --tunnel ssh 时使用',
@@ -979,6 +1040,7 @@ const I18N = {
     'cj.h2':'配置文件',
     'cj.p1':'每次 <code>start</code> 都会读取 <code>~/.handmux/config.json</code>，由 <code>handmux setup</code> 创建和维护，也可直接手动编辑。用 <code>--config PATH</code> 使用其他文件。',
     'cj.comment':'// ~/.handmux/config.json（由 `handmux setup` 生成）',
+    'cj.shortcuts':'// 所有设备共享；每台手机可在本机排序或移除；文字必须明确是否回车',
     'cj.f.tun':'// "none"|"cloudflare"|"cloudflare-named"|"ssh"|"natapp"|"cpolar"','cj.f.port':'// 服务器端口','cj.f.host':'// 绑定地址',
     'cj.f.name':'// 浏览器标签页标题（null = 默认）','cj.f.token':'// 不填则每次启动重新生成','cj.f.pub':'// 覆盖打印的 URL（可选）',
     'cj.ssh':'// SSH 隧道——仅在 tunnel = "ssh" 时读取','cj.cf':'// Cloudflare 命名隧道——仅在 tunnel = "cloudflare-named" 时读取',
@@ -1009,7 +1071,7 @@ const I18N = {
     'ev.authtoken':'natapp / cpolar 的 authtoken','ev.cpolar-region':'cpolar 边缘区域',
     'ev.h2':'环境变量','ev.p':'参数的低优先级替代方案——适合脚本或容器。优先级低于参数和配置文件。',
     'ev.port':'服务器端口','ev.host':'绑定地址','ev.token':'认证 token','ev.name':'应用名称',
-    'ev.pub':'覆盖广播的 URL','ev.preview':'网站预览的通配符子域名',
+    'ev.pub':'覆盖广播的 URL','ev.preview':'动态预览的裸域名（如 preview.example.com）',
     'ev.ssh-host':'SSH 隧道目标','ev.rport':'SSH 主机上的端口','ev.jump':'SSH 跳板机',
     'ev.cf-host':'Cloudflare 命名隧道主机名','ev.cf-name':'Cloudflare 隧道名称',
     'cc.p1':'handmux 能带任何 agent 或 TUI——配合 Claude Code 时发挥最大价值。生命周期 hooks 实时上报每个 pane 的状态（进行中·需要你·已完成），驱动收件箱和推送通知。',
@@ -1041,7 +1103,7 @@ const I18N = {
     'sp.fl.session':'仅推送到订阅了该 tmux 会话的设备（可重复，支持逗号分隔）。与 <code>--device</code> 互斥。',
     'sp.fl.device':'仅推送到指定 key 的设备（可重复，支持逗号分隔）。与 <code>--session</code> 互斥。',
     'sp.fl.tag':'通知标签——合并同类通知。',
-    'sp.fl.url':'点通知后打开的 URL。',
+    'sp.fl.url':'点通知后打开的 HTTP(S) URL 或站内相对路径。',
     'sp.key-h':'设备 key',
     'sp.key-p':'设备 key 在手机 App 的<strong>设置 → 脚本推送</strong>中查看。它是寻址标识符，不是密钥——安全边界是本地服务器 token。用 <code>--device &lt;key&gt;</code> 指定单台设备。',
     'sp.rel-h':'可靠性',

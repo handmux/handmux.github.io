@@ -595,6 +595,11 @@
         <p data-i18n="sig.s1.p">No App Store, no client, no iOS lock-in — open the link in your phone's browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.</p>
       </div>
       <div class="sig-item">
+        <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
+        <h3 data-i18n="sig.restore.h">Your workspace survives a restart</h3>
+        <p data-i18n="sig.restore.p">handmux silently protects the metadata for your latest tmux workspace. After the computer or tmux restarts, recovery is available even before a new tmux session exists; restore sessions, layouts and safe agent context beside anything you have already created — from the phone or with <code>handmux restore</code>. Existing sessions are never replaced; restored sessions stay hidden on the phone until you choose which ones to bind.</p>
+      </div>
+      <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.exp">experimental · opt-in</span></div>
         <h3 data-i18n="sig.lens.h">Chat view — the session as a conversation</h3>
         <p data-i18n="sig.lens.p">Flip a Claude pane from terminal to <b>chat</b>: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. Experimental — may be unstable: turn it on in <b>Settings</b>, then switch views from the window bar.</p>
@@ -607,7 +612,7 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s4.h">A deeply-tuned keyboard for the terminal</h3>
-        <p data-i18n="sig.s4.p">Typing into a terminal is the hard part on a phone — so handmux built an input system for it. Two modes fit two scenarios: <b>command mode</b> types straight into the terminal, with preset ESC/Tab/Ctrl+C and key combos (⌃⇧⌥ + a base key — one tap fires a real keystroke); <b>chat mode</b> talks to the agent in natural language. Save common commands global or per-window, reorder and edit it all in a ⚙ sheet.</p>
+        <p data-i18n="sig.s4.p">Both command and chat quick bars include Ctrl+C by default. Configure shared key/text items with handmux shortcuts; on each phone, the ⚙ editor shows the real quick-bar order, freely interleaves shared and local items, and can remove a shared item from that device only with immediate undo. Adding a local item confirms success and returns to the list.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -627,7 +632,7 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.badge_dyn">live service · setup</span></div>
         <h3 data-i18n="sig.s6d.h">Preview a live service by port</h3>
-        <p data-i18n="sig.s6d.p">Preview a running dev server by its port — routing, APIs and live reload (HMR) all intact on your phone. This side needs a preview domain (a wildcard subdomain) configured once.</p>
+        <p data-i18n="sig.s6d.p">Preview a running HTTP or HTTPS dev server by its port — routing, APIs and live reload (HMR) all intact on your phone. Set its preview domain once in <code>handmux setup</code>; its wildcard subdomains route to the gateway.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -702,9 +707,10 @@
     <div class="cmds">
 <pre data-i18n="cli.body"><b>handmux start</b> [flags]                 <i># run it — direct (LAN or your public IP) by default, no config</i>
 <b>handmux setup</b>                         <i># configure connection / name / notifications (saved; re-run to change)</i>
+<b>handmux shortcuts</b>                     <i># configure shared command / chat quick items</i>
 <b>handmux open</b> &lt;session&gt;                <i># attach a tmux session on your computer (creates it if missing)</i>
 <b>handmux hooks install</b>                 <i># wire Claude Code / Codex → inbox lights up + phone pings</i>
-<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see the live URL</i>
+<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see version / duplicate PIDs / URL</i>
 <b>handmux logs</b> [--follow]              <i># tail the supervisor log</i>
 <b>handmux config</b>                        <i># show effective config + where each value came from</i>
 <b>handmux update</b>                        <i># upgrade to the latest (the app nudges you when one's out)</i>
@@ -807,15 +813,16 @@
       'sig.fast': 'up in a minute',
       'sig.quick.h': 'One command — and it\'s running', 'sig.quick.p': 'Install with a <b>single command</b>, run it, scan the QR — about a minute later you\'re driving your terminal from your phone. Already have Node and tmux? There\'s nothing else to set up.',
       'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': 'No App Store, no client, no iOS lock-in — open the link in your phone\'s browser and <b>Add to Home Screen</b>. It runs full-screen as a PWA, <b>basically a native app</b> on iPhone or Android alike. On iPhone this is also how push works — added to your home screen, handmux can ping you the moment a pane needs you. <b>Safari</b> (iOS) or <b>Chrome</b> recommended.',
+      'sig.restore.h': 'Your workspace survives a restart', 'sig.restore.p': 'handmux silently protects the metadata for your latest tmux workspace. After the computer or tmux restarts, recovery is available even before a new tmux session exists; restore sessions, layouts and safe agent context beside anything you have already created — from the phone or with <code>handmux restore</code>. Existing sessions are never replaced; restored sessions stay hidden on the phone until you choose which ones to bind.',
       'sig.sp.h': 'Script push — notify your phone from a script', 'sig.sp.p': 'Run <code>handmux push "Build done" "Took 3m12s"</code> from any script or CI step on your computer and your phone gets the push. Target all devices, a specific tmux session, or a single device by key. The command hits the local server directly — no config, no remote endpoint.',
       'sig.free': 'free · open-source',
       'sig.sec.h': 'Free, open-source, no relay', 'sig.sec.p': 'handmux is fully open-source (AGPL-3.0) and free — nothing to pay for. And it runs <b>no relay of its own</b>: many similar tools route your session through their cloud; handmux doesn\'t — no cloud, no handmux account, no middleman, and your data goes straight between your computer and phone. Reaching it from outside stays just as clean: several tunnel providers are <b>built in</b> (Cloudflare · natapp · cpolar · your own SSH), so it\'s one easy step on <b>your own</b> free account — even then, handmux runs no pipe of its own.',
       'sig.s3.h': 'Agent usage, always in view', 'sig.s3.p': 'See <b>Claude</b>\'s 5-hour and weekly limit bars with reset countdowns, plus <b>Codex</b>\'s quota ring — read from local files on the host, no account login or API calls. A time marker shows whether you\'re burning slower or faster than the clock.',
-      'sig.s4.h': 'A deeply-tuned keyboard for the terminal', 'sig.s4.p': 'Typing into a terminal is the hard part on a phone — so handmux built an input system for it. Two modes fit two scenarios: <b>command mode</b> types straight into the terminal, with preset ESC/Tab/Ctrl+C and key combos (⌃⇧⌥ + a base key — one tap fires a real keystroke); <b>chat mode</b> talks to the agent in natural language. Save common commands global or per-window, reorder and edit it all in a ⚙ sheet.',
+      'sig.s4.h': 'A deeply-tuned keyboard for the terminal', 'sig.s4.p': 'Both command and chat quick bars include Ctrl+C by default. Configure shared key/text items with handmux shortcuts; on each phone, the ⚙ editor shows the real quick-bar order, freely interleaves shared and local items, and can remove a shared item from that device only with immediate undo. Adding a local item confirms success and returns to the list.',
       'sig.s5.h': 'A git client in your hand', 'sig.s5.p': 'Not just a diff — a VS&nbsp;Code-style git panel: working changes, commit history, any branch, tap for a full-screen colored diff. Multi-repo tabs, read-only, never touches your tree.',
       'sig.pane.h': 'Split, close, and map panes from your phone', 'sig.pane.p': 'It\'s a <b>real</b> tmux session, so you steer its layout too: a live map of every pane in the window, split one open, close another, and jump between them — all from your thumb, mirrored on the desktop the instant you do it.',
       'sig.s6.h': 'Preview a static site, out of the box', 'sig.s6.p': 'Point handmux at a folder and it serves the static site straight to your phone — zero setup, in a phone or desktop viewport.',
-      'sig.s6d.h': 'Preview a live service by port', 'sig.s6d.p': 'Preview a running dev server by its port — routing, APIs and live reload (HMR) all intact on your phone. This side needs a preview domain (a wildcard subdomain) configured once.',
+      'sig.s6d.h': 'Preview a live service by port', 'sig.s6d.p': 'Preview a running HTTP or HTTPS dev server by its port — routing, APIs and live reload (HMR) all intact on your phone. Set its preview domain once in <code>handmux setup</code>; its wildcard subdomains route to the gateway.',
       'sig.s7.h': 'Docs you can read — or hear — and files both ways', 'sig.s7.p': 'Tap any path in the terminal to open it: Markdown rendered, font zoom, and <b>read-aloud</b> with sentence-by-sentence highlight. Move files both ways too — upload from the chat box (multi-select, path auto-filled, filtered to supported types), download with a tap, share straight in, copy any absolute path.',
       'sig.s8.h': 'Reach it anywhere — direct, zero-config, or self-hosted', 'sig.s8.p': 'No tunnel by default — the phone connects straight to your own computer, nothing exposed. Already have a public address? No tunnel needed — reach it directly. Otherwise <code>handmux setup</code> wires one on your own free account: a Cloudflare quick tunnel for zero-config reach, a named Cloudflare domain, <b>natapp / cpolar</b> for mainland China, or a tunnel to your own server.',
       'sig.notes.h': 'good to know',
@@ -835,7 +842,7 @@
       'how.tunnel.t': 'need an entrance<span class="badge">pick one</span>',
       'how.tunnel.p': "No public address? Open a tunnel — each runs on <b>your own free third-party account</b>; handmux just wires it up and operates no relay of its own:<br><b>cloudflare</b> — easiest: Cloudflare (a big CDN provider) gives your machine a public link for free, zero-config, up in seconds; its public edge can be slow or unreliable in some regions.<br><b>cloudflare-named</b> — same, but on your own domain — steadier.<br><b>natapp / cpolar</b> — domestic providers that stay reachable inside mainland China.<br><b>ssh self-hosted</b> — routes through your own server instead, not depending on any provider.",
       'cli.h2': 'the whole cli',
-      'cli.body': '<b>handmux start</b> [flags]                 <i># run it — direct (LAN or your public IP) by default, no config</i>\n<b>handmux setup</b>                         <i># configure connection / name / notifications (saved; re-run to change)</i>\n<b>handmux open</b> &lt;session&gt;                <i># attach a tmux session on your computer (creates it if missing)</i>\n<b>handmux hooks install</b>                 <i># wire Claude Code / Codex → inbox lights up + phone pings</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see the live URL</i>\n<b>handmux logs</b> [--follow]              <i># tail the supervisor log</i>\n<b>handmux config</b>                        <i># show effective config + where each value came from</i>\n<b>handmux update</b>                        <i># upgrade to the latest (the app nudges you when one\'s out)</i>\n<b>handmux service install</b>               <i># start at login</i>\n\n<i># flags (one-run; full list + env vars in `handmux help flags`):</i> --tunnel none|cloudflare|cloudflare-named|ssh|natapp|cpolar  --port  --token  --config',
+      'cli.body': '<b>handmux start</b> [flags]                 <i># run it — direct (LAN or your public IP) by default, no config</i>\n<b>handmux setup</b>                         <i># configure connection / name / notifications (saved; re-run to change)</i>\n<b>handmux shortcuts</b>                     <i># configure shared command / chat quick items</i>\n<b>handmux open</b> &lt;session&gt;                <i># attach a tmux session on your computer (creates it if missing)</i>\n<b>handmux restore</b> [--dry-run]           <i># restore a saved workspace without changing current sessions</i>\n<b>handmux hooks install</b>                 <i># wire Claude Code / Codex → inbox lights up + phone pings</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># control + see version / duplicate PIDs / URL</i>\n<b>handmux logs</b> [--follow]              <i># tail the supervisor log</i>\n<b>handmux config</b>                        <i># show effective config + where each value came from</i>\n<b>handmux update</b>                        <i># upgrade to the latest (the app nudges you when one\'s out)</i>\n<b>handmux service install</b>               <i># start at login</i>\n\n<i># flags (one-run; full list + env vars in `handmux help flags`):</i> --tunnel none|cloudflare|cloudflare-named|ssh|natapp|cpolar  --port  --token  --config',
       'footer.req': 'needs Node ≥ 18 &amp; tmux ≥ 3.0',
       'copy.idle': 'copy', 'copy.done': 'copied ✓', 'copy.fail': 'select & ⌘C',
     },
@@ -890,15 +897,16 @@
       'sig.fast': '一分钟上手',
       'sig.quick.h': '一条命令,就启动了', 'sig.quick.p': '<b>一条命令</b>装好、跑起来、扫码——大约一分钟,你就在手机上操作自己的终端了。已经有 Node 和 tmux 的话,别的什么都不用配。',
       'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '不下 App、不装客户端、不锁 iOS——手机浏览器点开链接,「<b>添加到主屏</b>」即可。全屏运行的 PWA,<b>基本就是个原生 App</b>,iPhone、安卓都一样。在 iPhone 上,推送也靠它——加到主屏后,pane 一有情况 handmux 就能推到你手机。建议用 <b>Safari</b>(iOS)或 <b>Chrome</b>。',
+      'sig.restore.h': '重启后,工作区还能接着恢复', 'sig.restore.p': 'handmux 会静默保护最新 tmux 工作区所需的元数据。电脑或 tmux 重启后,即使还没有新建 tmux session 也能恢复;从手机或 <code>handmux restore</code> 把会话、布局和可安全续接的 agent 上下文恢复到新建内容旁边,绝不替换现有会话。恢复的会话不会自动显示在手机上,需要时再选择重新绑定。',
       'sig.sp.h': '脚本推送——从脚本推消息到手机', 'sig.sp.p': '在电脑的脚本或 CI 步骤里跑 <code>handmux push "构建完成" "耗时 3m12s"</code>,手机就收到推送。可指定全部设备、某个 tmux 会话或某台设备 key。命令直接打本地服务器——无需配置,无远端端点。',
       'sig.free': '免费 · 开源',
       'sig.sec.h': '完全免费 · 开源 · 不经过我们', 'sig.sec.p': 'handmux 完全开源(AGPL-3.0)、免费——没有任何收费项。而且它<b>自身不设中转</b>:很多同类工具会把你的会话经它们的云服务器转发,handmux 不会——没有云、没有 handmux 账号、没有中间人,数据只在你的电脑和手机之间直接走。想从外网连也一样干净:<b>内置</b>了多家隧道供应商(Cloudflare · natapp · cpolar · 你自己的 SSH),用<b>你自己</b>的免费账号一步开启即可——即便如此,handmux 依然不经手任何流量。',
       'sig.s3.h': 'Agent 用量,一眼可见', 'sig.s3.p': '一眼看 <b>Claude</b> 的 5 小时 / 本周额度进度条 + 重置倒计时,还有 <b>Codex</b> 的额度环——全读主机本地文件,不登录账号、不调 API。进度条上还有条时间竖线,烧得比时钟快还是慢一目了然。',
-      'sig.s4.h': '为手机深度打磨的键盘操作', 'sig.s4.p': '在手机上敲终端本是最难的一环,handmux 为此深度打磨了一套输入操作。两种模式适配不同场景:<b>命令模式</b>直接敲进终端,配上预置的 ESC/Tab/Ctrl+C 和组合键(⌃⇧⌥ + 基键,点一下直发真实按键);<b>聊天模式</b>用自然语言发给 agent。常用命令还能分全局或按窗口保存,全在 ⚙ 面板里拖拽排序、点按即改。',
+      'sig.s4.h': '为手机深度打磨的键盘操作', 'sig.s4.p': '命令 / 聊天快捷栏默认都有 Ctrl+C。用 handmux shortcuts 配置所有设备共享的按键 / 文字项；每台手机的 ⚙ 编辑器按真实快捷栏顺序统一显示共享与本机项，可自由混排，也可只从本机移除共享项并即时撤销。本机新增成功后会明确提示并直接返回列表。',
       'sig.s5.h': '一只手掌握的 Git 客户端', 'sig.s5.p': '不止是 diff——一块 VS&nbsp;Code 那样的 git 面板:工作区改动、提交历史、随便哪个分支,点开就是全屏彩色 diff。多仓库分页、只读,绝不动你的工作区。',
       'sig.pane.h': '分屏、关窗格、看布局——都在手机上', 'sig.pane.p': '既然是<b>真实</b>的 tmux 会话,布局也归你调:一张实时的窗格布局图,拆开一个窗口、关掉另一个窗格、在窗格间跳转——拇指全搞定,电脑那头即时同步。',
       'sig.s6.h': '静态站点预览 · 开箱即用', 'sig.s6.p': '把 handmux 指向一个文件夹,它就把静态站点直接送上你的手机——零配置,手机 / 桌面视口随切。',
-      'sig.s6d.h': '按端口预览在线服务', 'sig.s6d.p': '按端口预览正跑着的服务——路由、API、热更新(HMR)在手机上全保留。这一侧需要先配一次预览域名(一个通配子域名)。',
+      'sig.s6d.h': '按端口预览在线服务', 'sig.s6d.p': '按端口预览正跑着的 HTTP 或 HTTPS 服务——路由、API、热更新(HMR)在手机上全保留。预览域名在 <code>handmux setup</code> 里一次配好，其通配子域名路由到网关即可。',
       'sig.s7.h': '文档能读也能听 · 文件随手双向传', 'sig.s7.p': '终端里的路径点一下就打开:Markdown 排好版、字号能缩放,还能一句一句高亮<b>念给你听</b>。文件也能双向传——聊天框里上传(多选、路径自动填、只挑支持的类型)、下载一点即得、从别的 App 分享进来、绝对路径随手复制。',
       'sig.s8.h': '从任何地方连:直连、零配置或自托管', 'sig.s8.p': '默认不开隧道——手机直连你自己的电脑,什么都不暴露。电脑本来就有公网?那不用隧道,直接连。否则 <code>handmux setup</code> 一条命令配好(用你自己的免费账号):Cloudflare 快速隧道零配置就通、Cloudflare 命名域名、面向大陆的 <b>natapp / cpolar</b>,或接到你自己服务器的隧道。',
       'sig.notes.h': '补充说明',
@@ -918,7 +926,7 @@
       'how.tunnel.t': '需要入口<span class="badge">挑一个</span>',
       'how.tunnel.p': '没有公网?给它开条隧道——每条都跑在<b>你自己的免费第三方账号</b>上,handmux 只负责接通、自身不设中转:<br><b>cloudflare</b>——最省事:借 Cloudflare(全球 CDN 大厂)免费给你机器一个公网链接,零配置几秒就通;但它的公共边缘<b>在国内经常不稳定</b>。<br><b>cloudflare-named</b>——同样借 Cloudflare,但绑你自己的域名,更稳。<br><b>natapp / cpolar</b>——国内厂商,<b>大陆境内可达</b>。<br><b>ssh 自建</b>——改走你自己的服务器,不依赖任何第三方。',
       'cli.h2': '完整命令行',
-      'cli.body': '<b>handmux start</b> [flags]                 <i># 直接跑,默认直连(局域网或本机公网 IP),零配置</i>\n<b>handmux setup</b>                         <i># 配连接 / 名称 / 通知(存盘;想改再跑一次)</i>\n<b>handmux open</b> &lt;会话名&gt;                <i># 在电脑上接入某个 tmux 会话(没有就新建)</i>\n<b>handmux hooks install</b>                 <i># 挂上 Claude Code / Codex → 收件箱亮起 + 手机推送</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># 起停 + 看当前地址</i>\n<b>handmux logs</b> [--follow]              <i># 看 supervisor 日志</i>\n<b>handmux config</b>                        <i># 打印生效配置,以及每个值从哪来</i>\n<b>handmux update</b>                        <i># 升级到最新版(有新版时 App 会提示你)</i>\n<b>handmux service install</b>               <i># 开机自启</i>\n\n<i># 参数(只对这一次;完整列表 + 环境变量见 handmux help flags):</i> --tunnel none|cloudflare|cloudflare-named|ssh|natapp|cpolar  --port  --token  --config',
+      'cli.body': '<b>handmux start</b> [flags]                 <i># 直接跑,默认直连(局域网或本机公网 IP),零配置</i>\n<b>handmux setup</b>                         <i># 配连接 / 名称 / 通知(存盘;想改再跑一次)</i>\n<b>handmux shortcuts</b>                     <i># 配命令 / 聊天模式的共享常用项</i>\n<b>handmux open</b> &lt;会话名&gt;                <i># 在电脑上接入某个 tmux 会话(没有就新建)</i>\n<b>handmux restore</b> [--dry-run]           <i># 恢复备份工作区,不修改当前会话</i>\n<b>handmux hooks install</b>                 <i># 挂上 Claude Code / Codex → 收件箱亮起 + 手机推送</i>\n<b>handmux stop</b> · <b>restart</b> · <b>status</b>      <i># 起停 + 看版本 / 重复 PID / 当前地址</i>\n<b>handmux logs</b> [--follow]              <i># 看 supervisor 日志</i>\n<b>handmux config</b>                        <i># 打印生效配置,以及每个值从哪来</i>\n<b>handmux update</b>                        <i># 升级到最新版(有新版时 App 会提示你)</i>\n<b>handmux service install</b>               <i># 开机自启</i>\n\n<i># 参数(只对这一次;完整列表 + 环境变量见 handmux help flags):</i> --tunnel none|cloudflare|cloudflare-named|ssh|natapp|cpolar  --port  --token  --config',
       'footer.req': '需要 Node ≥ 18、tmux ≥ 3.0',
       'copy.idle': '复制', 'copy.done': '已复制 ✓', 'copy.fail': '请手动选中再 ⌘C',
     },
@@ -1048,7 +1056,7 @@
         ['<span class="ok">✓</span> <span class="d">reachable — scan the QR to sign in</span>', 460],
       ] },
       { cmd: 'handmux status', out: [
-        ['<span class="ok">●</span> <span class="u">handmux running</span>', 460],
+        ['<span class="ok">●</span> <span class="u">handmux 0.x.y running</span>', 460],
         ['  <span class="d">tunnel</span>  <span class="u">cloudflare</span>  <span class="d">·  pid 21352</span>', 300],
         ['  <span class="k">🌐 open </span> <span class="u">https://elementary-incidents</span><span class="d">.trycloudflare.com</span>', 300],
         ['  <span class="k">💻 local</span>  <span class="d">localhost:19999</span>', 280],
