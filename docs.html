@@ -676,6 +676,9 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <h3 data-i18n="cc.lens-h">Chat view (experimental)</h3>
       <p data-i18n="cc.lens-p">The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app's Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.</p>
 
+      <h3 data-i18n="cc.desktop-h">Desktop physical keyboard</h3>
+      <p data-i18n="cc.desktop-p">Open the same Handmux URL in a desktop browser and type into the current tmux pane immediately — no “Show keyboard” step. Press <code>Shift+Enter</code> or click the draft field to enter draft mode and use shortcuts, upload, history or voice. <code>Enter</code> sends and stays in draft mode, <code>Shift+Enter</code> inserts a newline, and IME Enter only confirms composition; press <code>Esc</code> or click the terminal to return to direct input. Drag to select terminal text, then copy/paste with <code>Cmd+C</code> / <code>Cmd+V</code> on macOS or <code>Ctrl+Shift+C</code> / <code>Ctrl+V</code> (or <code>Ctrl+Shift+V</code>) on Windows/Linux; <code>Ctrl+C</code> remains the terminal interrupt. Settings → Keyboard mode can auto-detect or force Mobile/Desktop for this browser only. Echo still follows periodic terminal snapshots, not a real-time PTY. Browser-reserved shortcuts such as <code>Cmd+W/T/L/R</code> are not captured. The experimental chat view uses the same Enter rules on desktop; while the agent is working, Enter never triggers Stop and Escape remains the interrupt key.</p>
+
       <h3 data-i18n="cc.cmp-h">How handmux compares</h3>
       <p data-i18n="cc.cmp-p">Same job — driving Claude Code from your phone — three very different architectures. And the architecture decides whose cloud your session crosses, and whether your subscription is safe.</p>
       <div class="cmp-wrap">
@@ -921,6 +924,8 @@ const I18N = {
     'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
     'cc.lens-h':'Chat view (experimental)',
     'cc.lens-p':'The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app\'s Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.',
+    'cc.desktop-h':'Desktop physical keyboard',
+    'cc.desktop-p':'Open the same Handmux URL in a desktop browser and type into the current tmux pane immediately — no “Show keyboard” step. Press <code>Shift+Enter</code> or click the draft field to enter draft mode and use shortcuts, upload, history or voice. <code>Enter</code> sends and stays in draft mode, <code>Shift+Enter</code> inserts a newline, and IME Enter only confirms composition; press <code>Esc</code> or click the terminal to return to direct input. Settings → Keyboard mode can auto-detect or force Mobile/Desktop for this browser only. Echo still follows periodic terminal snapshots, not a real-time PTY. Browser-reserved shortcuts such as <code>Cmd+W/T/L/R</code> are not captured. The experimental chat view uses the same Enter rules on desktop; while the agent is working, Enter never triggers Stop and Escape remains the interrupt key.',
     'cc.cmp-h':'How handmux compares',
     'cc.cmp-p':'Same job — driving Claude Code from your phone — three very different architectures. And the architecture decides whose cloud your session crosses, and whether your subscription is safe.',
     'cmp.th.of':'Claude app (official)',
@@ -1084,6 +1089,8 @@ const I18N = {
     'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
     'cc.lens-h':'对话视图（实验性）',
     'cc.lens-p':'对话视图把 Claude 的 pane 以对话形式而非终端呈现：气泡 + Markdown 正文、带彩色 diff 的工具卡、点按即答的问题卡、暖色配色。属于<strong>实验性功能，可能不稳定</strong>——在手机 App 的设置里开启「启用对话视图（实验性功能）」，然后在窗口栏切换 终端 / 对话。终端视图仍是默认，不受影响。',
+    'cc.desktop-h':'电脑物理键盘直输',
+    'cc.desktop-p':'电脑浏览器打开同一个 Handmux URL，无需点「展开键盘」即可直接输入当前 tmux pane。按 <code>Shift+Enter</code> 或点击草稿框进入草稿模式，并使用快捷用语、上传、历史和语音；<code>Enter</code> 发送后仍停留在草稿模式，<code>Shift+Enter</code> 换行，输入法合成中的 Enter 只确认候选词，按 <code>Esc</code> 或点击终端回到直通模式。终端文字可直接用鼠标拖选，macOS 按 <code>Cmd+C</code> / <code>Cmd+V</code>、Windows / Linux 按 <code>Ctrl+Shift+C</code> / <code>Ctrl+V</code>（或 <code>Ctrl+Shift+V</code>）复制粘贴，<code>Ctrl+C</code> 仍是终端中断。设置里的「键盘模式」可为当前浏览器自动识别或手动指定手机 / 电脑。终端回显仍跟随定期快照，并非实时 PTY；<code>Cmd+W/T/L/R</code> 等浏览器保留组合不会被接管。实验性对话视图在电脑上采用同样的 Enter 规则；Agent 工作中 Enter 绝不会触发停止，Escape 仍是中止键。',
     'cc.cmp-h':'和同类比一比',
     'cc.cmp-p':'同样是「在手机上驱动 Claude Code」，三条截然不同的技术路线——路线决定你的会话经过谁的云，也决定你的订阅安不安全。',
     'cmp.th.of':'Claude 官方 App',
