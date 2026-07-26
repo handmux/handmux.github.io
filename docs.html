@@ -439,7 +439,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <p data-i18n="up.p1">Upgrade the global install to the latest published version — a convenience wrapper for <code>npm i -g handmux@latest</code>, run through your own npm so a China mirror / private registry is honoured. It doesn't restart a running instance: after it finishes, run <code>handmux restart</code> to actually run the new version.</p>
       <div class="cb"><pre><b>handmux update</b>      <i data-i18n="up.c1"># npm i -g handmux@latest</i>
 <b>handmux restart</b>     <i data-i18n="up.c2"># then apply it to the running server</i></pre></div>
-      <div class="note tip"><p><b data-i18n="up.note-b">The app nudges you.</b> <span data-i18n="up.note">handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer.</span></p></div>
+      <div class="note tip"><p><b data-i18n="up.note-b">The app nudges you.</b> <span data-i18n="up.note">handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer. After the server update, Settings → Reload app loads the new client without quitting the home-screen app.</span></p></div>
     </section>
 
     <!-- CMD: HOOKS -->
@@ -595,6 +595,15 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <h3><code>--tunnel ssh</code> <span class="badge" data-i18n="tn.ssh.badge">your server</span></h3>
       <p data-i18n="tn.ssh.p1">Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable and fully under your control — the pick when you already run a server. (No server? For mainland China, <code>natapp</code> / <code>cpolar</code> below need only a free account.)</p>
       <p data-i18n="tn.ssh.p2">Requires <strong>passwordless SSH</strong> to the target. If not configured, <code>handmux start</code> offers to set it up interactively, or run <code>tunlite setup-key user@host</code> yourself.</p>
+      <p data-i18n="tn.ssh.p3">If nginx terminates HTTPS in front of the forwarded port, it must also pass WebSocket upgrades or the terminal will stay on snapshot pulling:</p>
+      <div class="cb"><pre>location / {
+  proxy_pass http://127.0.0.1:9000;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+  client_max_body_size 60m;
+  proxy_read_timeout 90s;
+}</pre></div>
       <div class="cb"><pre><b>handmux start --tunnel ssh --ssh-host user@vps.example.com</b>
 
 <i data-i18n="tn.ssh.c2"># with a custom remote port + explicit public URL:</i>
@@ -676,8 +685,8 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <h3 data-i18n="cc.lens-h">Chat view (experimental)</h3>
       <p data-i18n="cc.lens-p">The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app's Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.</p>
 
-      <h3 data-i18n="cc.desktop-h">Desktop physical keyboard</h3>
-      <p data-i18n="cc.desktop-p">Open the same Handmux URL in a desktop browser and type into the current tmux pane immediately — no “Show keyboard” step. Press <code>Shift+Enter</code> or click the draft field to enter draft mode and use shortcuts, upload, history or voice. <code>Enter</code> sends and stays in draft mode, <code>Shift+Enter</code> inserts a newline, and IME Enter only confirms composition; press <code>Esc</code> or click the terminal to return to direct input. Drag to select terminal text, then copy/paste with <code>Cmd+C</code> / <code>Cmd+V</code> on macOS or <code>Ctrl+Shift+C</code> / <code>Ctrl+V</code> (or <code>Ctrl+Shift+V</code>) on Windows/Linux; <code>Ctrl+C</code> remains the terminal interrupt. Settings → Keyboard mode can auto-detect or force Mobile/Desktop for this browser only. Echo still follows periodic terminal snapshots, not a real-time PTY. Browser-reserved shortcuts such as <code>Cmd+W/T/L/R</code> are not captured. The experimental chat view uses the same Enter rules on desktop; while the agent is working, Enter never triggers Stop and Escape remains the interrupt key.</p>
+      <h3 data-i18n="cc.desktop-h">Real-time terminal and desktop keyboard</h3>
+      <p data-i18n="cc.desktop-p">Terminal output streams in real time on phone and desktop. Scroll up immediately to browse recent tmux history and keep going to load older content; returning to the bottom resynchronizes on the same connection. A short source pane uses spare rows for recent history, separated from the live grid by a faint dashed line. Leaving the page pauses delivery; after 10 seconds away, returning starts from a fresh current screen instead of replaying stale output. Live pushing uses WebSocket, automatically falls back to snapshot pulling on a poor connection, and returns after 30 stable seconds. One top-right tag combines the actual mode and current latency; click it to see connection quality, the configured mode, fallback reason and retry countdown. Settings can keep this browser on snapshot pulling at an active interval from 0.8 to 2 seconds. On desktop, open the same URL and type into the current pane immediately — no “Show keyboard” step. Press <code>Shift+Enter</code> or click the draft field for shortcuts, upload, history or voice; <code>Enter</code> sends, <code>Shift+Enter</code> inserts a newline, and <code>Esc</code> or a terminal click returns to direct input. Dialogs and Settings subpages form a real stack: Back or <code>Esc</code> closes only the top layer. Mouse selection and native copy/paste work, while <code>Ctrl+C</code> remains the terminal interrupt.</p>
 
       <h3 data-i18n="cc.cmp-h">How handmux compares</h3>
       <p data-i18n="cc.cmp-p">Same job — driving Claude Code from your phone — three very different architectures. And the architecture decides whose cloud your session crosses, and whether your subscription is safe.</p>
@@ -852,7 +861,7 @@ const I18N = {
     'cf.c1':'# read ~/.handmux/config.json','cf.c2':'# inspect a different file','cf.c3':'# preview with a flag applied',
     'up.p1':'Upgrade the global install to the latest published version — a convenience wrapper for <code>npm i -g handmux@latest</code>, run through your own npm so a China mirror / private registry is honoured. It doesn\'t restart a running instance: after it finishes, run <code>handmux restart</code> to actually run the new version.',
     'up.c1':'# npm i -g handmux@latest','up.c2':'# then apply it to the running server',
-    'up.note-b':'The app nudges you.','up.note':'handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer.',
+    'up.note-b':'The app nudges you.','up.note':'handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer. After the server update, Settings → Reload app loads the new client without quitting the home-screen app.',
     'hk.p1':'Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.',
     'hk.c1':'# wire Claude Code → handmux (inbox · push)','hk.c2':'# remove the hooks',
     'hk.note-b':"You usually don't need this.",'hk.note':'The first time you open the inbox on your phone, it wires these hooks with one tap. Run this only to install them from the computer instead.',
@@ -894,6 +903,7 @@ const I18N = {
     'tn.cfn.p2':'Run <code>handmux setup</code> and pick <em>cloudflare-named</em> — it walks you through creating the tunnel, setting the DNS CNAME, and saving credentials.',
     'tn.ssh.badge':'your server','tn.ssh.p1':'Reverse SSH tunnel to your own VPS via <code>tunlite</code>. Stable and fully under your control — the pick when you already run a server. (No server? For mainland China, <code>natapp</code> / <code>cpolar</code> below need only a free account.)',
     'tn.ssh.p2':'Requires <strong>passwordless SSH</strong> to the target. If not configured, <code>handmux start</code> offers to set it up interactively, or run <code>tunlite setup-key user@host</code> yourself.',
+    'tn.ssh.p3':'If nginx terminates HTTPS in front of the forwarded port, it must also pass WebSocket upgrades or the terminal will stay on snapshot pulling:',
     'tn.ssh.c2':'# with a custom remote port + explicit public URL:','tn.ssh.c3':'# through a bastion / jump host:',
     'fl.natapp-h':'natapp / cpolar flags','fl.natapp-note':'only with --tunnel natapp / cpolar',
     'fl.authtoken':'Provider authtoken from <code>natapp.cn</code> / <code>cpolar.com</code> — required',
@@ -924,8 +934,8 @@ const I18N = {
     'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
     'cc.lens-h':'Chat view (experimental)',
     'cc.lens-p':'The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app\'s Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.',
-    'cc.desktop-h':'Desktop physical keyboard',
-    'cc.desktop-p':'Open the same Handmux URL in a desktop browser and type into the current tmux pane immediately — no “Show keyboard” step. Press <code>Shift+Enter</code> or click the draft field to enter draft mode and use shortcuts, upload, history or voice. <code>Enter</code> sends and stays in draft mode, <code>Shift+Enter</code> inserts a newline, and IME Enter only confirms composition; press <code>Esc</code> or click the terminal to return to direct input. Settings → Keyboard mode can auto-detect or force Mobile/Desktop for this browser only. Echo still follows periodic terminal snapshots, not a real-time PTY. Browser-reserved shortcuts such as <code>Cmd+W/T/L/R</code> are not captured. The experimental chat view uses the same Enter rules on desktop; while the agent is working, Enter never triggers Stop and Escape remains the interrupt key.',
+    'cc.desktop-h':'Real-time terminal and desktop keyboard',
+    'cc.desktop-p':'Terminal output streams in real time on phone and desktop. Scroll up immediately to browse recent tmux history and keep going to load older content; returning to the bottom resynchronizes on the same connection. A short source pane uses spare rows for recent history, separated from the live grid by a faint dashed line. Leaving the page pauses delivery; after 10 seconds away, returning starts from a fresh current screen instead of replaying stale output. Live pushing uses WebSocket, automatically falls back to snapshot pulling on a poor connection, and returns after 30 stable seconds. One top-right tag combines the actual mode and current latency; click it to see connection quality, the configured mode, fallback reason and retry countdown. Settings can keep this browser on snapshot pulling at an active interval from 0.8 to 2 seconds. On desktop, open the same URL and type into the current pane immediately — no “Show keyboard” step. Press <code>Shift+Enter</code> or click the draft field for shortcuts, upload, history or voice; <code>Enter</code> sends, <code>Shift+Enter</code> inserts a newline, and <code>Esc</code> or a terminal click returns to direct input. Dialogs and Settings subpages form a real stack: Back or <code>Esc</code> closes only the top layer. Mouse selection and native copy/paste work, while <code>Ctrl+C</code> remains the terminal interrupt.',
     'cc.cmp-h':'How handmux compares',
     'cc.cmp-p':'Same job — driving Claude Code from your phone — three very different architectures. And the architecture decides whose cloud your session crosses, and whether your subscription is safe.',
     'cmp.th.of':'Claude app (official)',
@@ -1017,7 +1027,7 @@ const I18N = {
     'cf.c1':'# 读取 ~/.handmux/config.json','cf.c2':'# 查看其他文件','cf.c3':'# 预览加上参数后的效果',
     'up.p1':'把全局安装升级到最新发布版——就是 <code>npm i -g handmux@latest</code> 的便捷封装，走你自己的 npm(所以国内镜像 / 私有源都照用)。它不会重启正在运行的实例:装完后再跑 <code>handmux restart</code> 才真正切到新版本。',
     'up.c1':'# npm i -g handmux@latest','up.c2':'# 再重启,让运行中的服务用上新版',
-    'up.note-b':'App 会提醒你。','up.note':'handmux 大约每小时查一次有没有新版;有的话,手机端设置齿轮上会亮个点、设置里显示当前 / 最新版本号——提醒你到电脑上跑这条命令。',
+    'up.note-b':'App 会提醒你。','up.note':'handmux 大约每小时查一次有没有新版;有的话,手机端设置齿轮上会亮个点、设置里显示当前 / 最新版本号——提醒你到电脑上跑这条命令。服务端更新完成后,在设置里点「重新加载应用」即可载入新版客户端,无需退出主屏应用。',
     'hk.p1':'安装或卸载驱动收件箱和推送通知的 Claude Code 生命周期 hooks，写入 <code>~/.claude/settings.json</code>。未检测到 Claude Code 时静默跳过。',
     'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送）','hk.c2':'# 移除 hooks',
     'hk.note-b':'一般你用不到这条。','hk.note':'第一次在手机上打开收件箱时，它会一键把这些 hooks 装好。只有当你想从电脑上装时才需要这条命令。',
@@ -1059,6 +1069,7 @@ const I18N = {
     'tn.cfn.p2':'运行 <code>handmux setup</code> 选 <em>cloudflare-named</em>——向导引导你创建隧道、设置 DNS CNAME 并保存凭证。',
     'tn.ssh.badge':'你的服务器','tn.ssh.p1':'通过 <code>tunlite</code> 向自己的 VPS 建立反向 SSH 隧道。稳定、完全可控——已有服务器时的首选。（没有服务器？中国大陆用下面的 <code>natapp</code> / <code>cpolar</code> 即可，只要一个免费账号。）',
     'tn.ssh.p2':'需要对目标主机配好<strong>免密 SSH</strong>。未配置时 <code>handmux start</code> 会提示交互式设置，或手动执行 <code>tunlite setup-key user@host</code>。',
+    'tn.ssh.p3':'如果转发端口前还有 nginx 负责 HTTPS，必须同时透传 WebSocket 升级头，否则终端会一直停留在快照拉取：',
     'tn.ssh.c2':'# 自定义远端端口并指定公网 URL：','tn.ssh.c3':'# 通过跳板机/堡垒机：',
     'fl.natapp-h':'natapp / cpolar 参数','fl.natapp-note':'仅在 --tunnel natapp / cpolar 时',
     'fl.authtoken':'来自 <code>natapp.cn</code> / <code>cpolar.com</code> 的 authtoken——必填',
@@ -1089,8 +1100,8 @@ const I18N = {
     'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
     'cc.lens-h':'对话视图（实验性）',
     'cc.lens-p':'对话视图把 Claude 的 pane 以对话形式而非终端呈现：气泡 + Markdown 正文、带彩色 diff 的工具卡、点按即答的问题卡、暖色配色。属于<strong>实验性功能，可能不稳定</strong>——在手机 App 的设置里开启「启用对话视图（实验性功能）」，然后在窗口栏切换 终端 / 对话。终端视图仍是默认，不受影响。',
-    'cc.desktop-h':'电脑物理键盘直输',
-    'cc.desktop-p':'电脑浏览器打开同一个 Handmux URL，无需点「展开键盘」即可直接输入当前 tmux pane。按 <code>Shift+Enter</code> 或点击草稿框进入草稿模式，并使用快捷用语、上传、历史和语音；<code>Enter</code> 发送后仍停留在草稿模式，<code>Shift+Enter</code> 换行，输入法合成中的 Enter 只确认候选词，按 <code>Esc</code> 或点击终端回到直通模式。终端文字可直接用鼠标拖选，macOS 按 <code>Cmd+C</code> / <code>Cmd+V</code>、Windows / Linux 按 <code>Ctrl+Shift+C</code> / <code>Ctrl+V</code>（或 <code>Ctrl+Shift+V</code>）复制粘贴，<code>Ctrl+C</code> 仍是终端中断。设置里的「键盘模式」可为当前浏览器自动识别或手动指定手机 / 电脑。终端回显仍跟随定期快照，并非实时 PTY；<code>Cmd+W/T/L/R</code> 等浏览器保留组合不会被接管。实验性对话视图在电脑上采用同样的 Enter 规则；Agent 工作中 Enter 绝不会触发停止，Escape 仍是中止键。',
+    'cc.desktop-h':'实时终端与电脑键盘',
+    'cc.desktop-p':'手机和电脑上的终端输出都会实时出现。首次向上滑动即可查看最近的 tmux 历史，继续向上会加载更早内容，回到底部后在同一连接上重新同步。远端 pane 较矮时，多出的区域展示最近历史，并用浅色破折线标出实时画面的起点。离开页面会立即暂停传输；超过 10 秒后回来会直接抓取最新画面，不补画旧输出。「实时推送」使用 WebSocket，网络较差时自动临时回退到「快照拉取」，持续稳定 30 秒后自动切回；右上角用一个标签合并显示当前模式和延迟，点击后可查看连接状态、设置模式、降级原因和恢复倒计时。设置中也可固定使用「快照拉取」，并选择 0.8–2 秒的活跃刷新频率。电脑浏览器打开同一个 Handmux URL，无需点「展开键盘」即可直接输入当前 pane；按 <code>Shift+Enter</code> 或点击草稿框使用快捷用语、上传、历史和语音，<code>Enter</code> 发送，<code>Shift+Enter</code> 换行，按 <code>Esc</code> 或点击终端回到直通模式；弹窗和设置二级页面按堆栈叠加，返回或 <code>Esc</code> 每次只关闭最上层。鼠标选择和原生复制粘贴照常可用，<code>Ctrl+C</code> 仍是终端中断。',
     'cc.cmp-h':'和同类比一比',
     'cc.cmp-p':'同样是「在手机上驱动 Claude Code」，三条截然不同的技术路线——路线决定你的会话经过谁的云，也决定你的订阅安不安全。',
     'cmp.th.of':'Claude 官方 App',
