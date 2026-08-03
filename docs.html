@@ -703,6 +703,9 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <h3 data-i18n="cc.lens-h">Chat view (experimental)</h3>
       <p data-i18n="cc.lens-p">The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app's Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.</p>
 
+      <h3 data-i18n="cc.layout-h">Window and pane sizing</h3>
+      <p data-i18n="cc.layout-p">Long-press a single-pane Window to adjust that whole window’s columns or restore automatic sizing. For a split window, open its pane map and long-press the target pane to adjust only that pane; Restore returns to the split ratio captured before the first adjustment. Pure top/bottom splits do not show a width control because every pane shares the same window width.</p>
+
       <h3 data-i18n="cc.desktop-h">Real-time terminal and desktop keyboard</h3>
       <p data-i18n="cc.desktop-p">Terminal output streams in real time on phone and desktop. Scroll up immediately to browse recent tmux history and keep going to load older content; returning to the bottom resynchronizes on the same connection. A short source pane uses spare rows for recent history, separated from the live grid by a faint dashed line. Leaving the page pauses delivery; after 10 seconds away, returning starts from a fresh current screen instead of replaying stale output. Live pushing uses WebSocket, automatically falls back to snapshot pulling on a poor connection, and returns after 30 stable seconds. One top-right tag combines the actual mode and current latency; click it to see connection quality, the configured mode, fallback reason and retry countdown. Settings can keep this browser on snapshot pulling at an active interval from 0.8 to 2 seconds. On desktop, open the same URL and type into the current pane immediately — no “Show keyboard” step, and keys remain connected after focus lands on the Window toolbar. Press <code>Shift+Enter</code> or click the draft field for shortcuts, upload, history or voice; <code>Enter</code> sends, <code>Shift+Enter</code> inserts a newline, and <code>Esc</code> or a terminal click returns to direct input. <code>F5</code> and <code>F12</code> stay with the browser. Dialogs and Settings subpages form a real stack: Back or <code>Esc</code> closes only the top layer. Mouse selection and native copy/paste work, while <code>Ctrl+C</code> remains the terminal interrupt.</p>
 
@@ -796,7 +799,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       </table>
 
       <h3 data-i18n="sp.key-h">Device key</h3>
-      <p data-i18n="sp.key-p">The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device.</p>
+      <p data-i18n="sp.key-p">The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device. Turning push off and back on keeps the same key on that app installation.</p>
 
       <h3 data-i18n="sp.rel-h">Reliability</h3>
       <p data-i18n="sp.rel-p">Web Push is best-effort — delivery is not guaranteed in real time. For delivery-critical alerts use a dedicated messaging app (WeChat, Slack, etc.).</p>
@@ -965,6 +968,8 @@ const I18N = {
     'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
     'cc.lens-h':'Chat view (experimental)',
     'cc.lens-p':'The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app\'s Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.',
+    'cc.layout-h':'Window and pane sizing',
+    'cc.layout-p':'Long-press a single-pane Window to adjust that whole window’s columns or restore automatic sizing. For a split window, open its pane map and long-press the target pane to adjust only that pane; Restore returns to the split ratio captured before the first adjustment. Pure top/bottom splits do not show a width control because every pane shares the same window width.',
     'cc.desktop-h':'Real-time terminal and desktop keyboard',
     'cc.desktop-p':'Terminal output streams in real time on phone and desktop. Scroll up immediately to browse recent tmux history and keep going to load older content; returning to the bottom resynchronizes on the same connection. A short source pane uses spare rows for recent history, separated from the live grid by a faint dashed line. Leaving the page pauses delivery; after 10 seconds away, returning starts from a fresh current screen instead of replaying stale output. Live pushing uses WebSocket, automatically falls back to snapshot pulling on a poor connection, and returns after 30 stable seconds. One top-right tag combines the actual mode and current latency; click it to see connection quality, the configured mode, fallback reason and retry countdown. Settings can keep this browser on snapshot pulling at an active interval from 0.8 to 2 seconds. On desktop, open the same URL and type into the current pane immediately — no “Show keyboard” step, and keys remain connected after focus lands on the Window toolbar. Press <code>Shift+Enter</code> or click the draft field for shortcuts, upload, history or voice; <code>Enter</code> sends, <code>Shift+Enter</code> inserts a newline, and <code>Esc</code> or a terminal click returns to direct input. <code>F5</code> and <code>F12</code> stay with the browser. Dialogs and Settings subpages form a real stack: Back or <code>Esc</code> closes only the top layer. Mouse selection and native copy/paste work, while <code>Ctrl+C</code> remains the terminal interrupt.',
     'cc.cmp-h':'How handmux compares',
@@ -988,7 +993,7 @@ const I18N = {
     'sp.fl.tag':'Notification tag — collapses duplicate notifications.',
     'sp.fl.url':'HTTP(S) URL or same-origin relative path to open when the notification is tapped.',
     'sp.key-h':'Device key',
-    'sp.key-p':'The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device.',
+    'sp.key-p':'The device key is shown in the phone app under <strong>Settings → Script push</strong>. It is an addressing identifier, not a secret — the security boundary is the local server token. Use <code>--device &lt;key&gt;</code> to target a single device. Turning push off and back on keeps the same key on that app installation.',
     'sp.rel-h':'Reliability',
     'sp.rel-p':'Web Push is best-effort — delivery is not guaranteed in real time. For delivery-critical alerts use a dedicated messaging app (WeChat, Slack, etc.).',
   },
@@ -1058,7 +1063,7 @@ const I18N = {
     'cf.c1':'# 读取 ~/.handmux/config.json','cf.c2':'# 查看其他文件','cf.c3':'# 预览加上参数后的效果',
     'up.p1':'把全局安装升级到最新发布版——就是 <code>npm i -g handmux@latest</code> 的便捷封装，走你自己的 npm(所以国内镜像 / 私有源都照用)。它不会重启正在运行的实例:装完后再跑 <code>handmux restart</code> 才真正切到新版本。',
     'up.c1':'# npm i -g handmux@latest','up.c2':'# 再重启,让运行中的服务用上新版',
-    'up.note-b':'App 会提醒你。','up.note':'handmux 大约每小时查一次有没有新版;有的话,手机端设置齿轮上会亮个点、设置里显示当前 / 最新版本号——提醒你到电脑上跑这条命令。服务端更新完成后,在设置里点「重新加载应用」即可载入新版客户端,无需退出主屏应用。',
+    'up.note-b':'App 会提醒你。','up.note':'handmux 大约每小时查一次有没有新版;有的话,手机端设置齿轮上会亮个点、设置里显示当前 / 最新版本号——提醒你到电脑上跑这条命令。服务端更新完成后,在设置首层点「重新加载应用」即可载入新版客户端,无需退出主屏应用。',
     'hk.p1':'安装或卸载驱动收件箱和推送通知的 Claude Code 生命周期 hooks，写入 <code>~/.claude/settings.json</code>。未检测到 Claude Code 时静默跳过。',
     'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送）','hk.c2':'# 移除 hooks',
     'hk.note-b':'一般你用不到这条。','hk.note':'第一次在手机上打开收件箱时，它会一键把这些 hooks 装好。只有当你想从电脑上装时才需要这条命令。',
@@ -1144,6 +1149,8 @@ const I18N = {
     'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
     'cc.lens-h':'对话视图（实验性）',
     'cc.lens-p':'对话视图把 Claude 的 pane 以对话形式而非终端呈现：气泡 + Markdown 正文、带彩色 diff 的工具卡、点按即答的问题卡、暖色配色。属于<strong>实验性功能，可能不稳定</strong>——在手机 App 的设置里开启「启用对话视图（实验性功能）」，然后在窗口栏切换 终端 / 对话。终端视图仍是默认，不受影响。',
+    'cc.layout-h':'窗口与窗格尺寸',
+    'cc.layout-p':'长按单窗格 Window，可调整整个窗口的列数或恢复自动尺寸。多窗格 Window 请先打开分屏地图，再长按目标窗格，只调整该窗格；“恢复”会回到首次调整前的分屏比例。纯上下分屏共用同一窗口宽度，因此不会显示无效的宽度控制。',
     'cc.desktop-h':'实时终端与电脑键盘',
     'cc.desktop-p':'手机和电脑上的终端输出都会实时出现。首次向上滑动即可查看最近的 tmux 历史，继续向上会加载更早内容，回到底部后在同一连接上重新同步。远端 pane 较矮时，多出的区域展示最近历史，并用浅色破折线标出实时画面的起点。离开页面会立即暂停传输；超过 10 秒后回来会直接抓取最新画面，不补画旧输出。「实时推送」使用 WebSocket，网络较差时自动临时回退到「快照拉取」，持续稳定 30 秒后自动切回；右上角用一个标签合并显示当前模式和延迟，点击后可查看连接状态、设置模式、降级原因和恢复倒计时。设置中也可固定使用「快照拉取」，并选择 0.8–2 秒的活跃刷新频率。电脑浏览器打开同一个 Handmux URL，无需点「展开键盘」即可直接输入当前 pane；焦点落在 Window 工具栏后，终端页面上的按键仍然有效。按 <code>Shift+Enter</code> 或点击草稿框使用快捷用语、上传、历史和语音，<code>Enter</code> 发送，<code>Shift+Enter</code> 换行，按 <code>Esc</code> 或点击终端回到直通模式；<code>F5</code>、<code>F12</code> 保留给浏览器。弹窗和设置二级页面按堆栈叠加，返回或 <code>Esc</code> 每次只关闭最上层。鼠标选择和原生复制粘贴照常可用，<code>Ctrl+C</code> 仍是终端中断。',
     'cc.cmp-h':'和同类比一比',
@@ -1167,7 +1174,7 @@ const I18N = {
     'sp.fl.tag':'通知标签——合并同类通知。',
     'sp.fl.url':'点通知后打开的 HTTP(S) URL 或站内相对路径。',
     'sp.key-h':'设备 key',
-    'sp.key-p':'设备 key 在手机 App 的<strong>设置 → 脚本推送</strong>中查看。它是寻址标识符，不是密钥——安全边界是本地服务器 token。用 <code>--device &lt;key&gt;</code> 指定单台设备。',
+    'sp.key-p':'设备 key 在手机 App 的<strong>设置 → 脚本推送</strong>中查看。它是寻址标识符，不是密钥——安全边界是本地服务器 token。用 <code>--device &lt;key&gt;</code> 指定单台设备；同一 App 安装中关闭再开启推送会保持原 key。',
     'sp.rel-h':'可靠性',
     'sp.rel-p':'Web Push 属于尽力投递，不保证实时送达。有投递强要求的告警请使用专用 IM（微信、钉钉等）。',
   }
