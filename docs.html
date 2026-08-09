@@ -383,7 +383,7 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       <p data-i18n="su.p1">An interactive <strong>menu hub</strong> — arrow to any setting and edit just that: connection (tunnel), app name, port, the Web Preview proxy domain, push-notification &amp; voice-input credentials, and the CLI language. Choose <strong>Web preview</strong> to configure wildcard routing/TLS for computer proxy mode; leaving it blank keeps Direct mode available. Writes <code>~/.handmux/config.json</code>; re-run any time to change anything.</p>
       <p data-i18n="su.p2">When it's done it also offers to:</p>
       <ul>
-        <li data-i18n="su.li1">Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications</li>
+        <li data-i18n="su.li1">Install inbox hooks for Claude Code states and notifications — Codex uses managed mode instead</li>
         <li data-i18n="su.li2">Set up the <strong>usage capturer</strong> — feeds the phone's Claude 5-hour / weekly quota bars</li>
       </ul>
       <div class="cb"><pre><b>handmux setup</b>                        <i data-i18n="su.c1"># interactive — walks through all options</i>
@@ -445,10 +445,10 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
     <!-- CMD: HOOKS -->
     <section id="cmd-hooks">
       <h2><div class="cmd-sig"><span class="cmd-name">handmux hooks</span><span class="cmd-args">install | uninstall</span></div></h2>
-      <p data-i18n="hk.p1">Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.</p>
-      <div class="cb"><pre><b>handmux hooks install</b>     <i data-i18n="hk.c1"># wire Claude Code → handmux (inbox · push)</i>
+      <p data-i18n="hk.p1">Install or remove the optional Claude Code hooks that power inbox states and notifications. Codex uses Handmux managed mode instead.</p>
+      <div class="cb"><pre><b>handmux hooks install</b>     <i data-i18n="hk.c1"># wire Claude Code → handmux</i>
 <b>handmux hooks uninstall</b>   <i data-i18n="hk.c2"># remove the hooks</i></pre></div>
-      <div class="note tip"><p><b data-i18n="hk.note-b">You usually don't need this.</b> <span data-i18n="hk.note">The first time you open the inbox on your phone, it wires these hooks with one tap. Run this only to install them from the computer instead.</span></p></div>
+      <div class="note tip"><p><b data-i18n="hk.note-b">You usually don't need this.</b> <span data-i18n="hk.note">The first time you open the inbox on your phone, it can install the Claude Code hooks with one tap. Run this only to install them from the computer instead.</span></p></div>
       <p data-i18n="hk.p2">After installing, open a new Claude Code session (or restart one) to activate. See <a href="#claude-code">Claude Code</a> for details.</p>
     </section>
 
@@ -700,8 +700,8 @@ tmux -V   <i data-i18n="qs.n2"># need tmux ≥ 3.0  →  brew install tmux</i></
       </ul>
       <p data-i18n="cc.p4">To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell in the app to subscribe the device.</p>
 
-      <h3 data-i18n="cc.lens-h">Chat view (experimental)</h3>
-      <p data-i18n="cc.lens-p">The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app's Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.</p>
+      <h3 data-i18n="cc.lens-h">Chat view</h3>
+      <p data-i18n="cc.lens-p">Claude Code and Codex CLI chat views have separate switches in Settings; only Claude Code chat is experimental. File paths and HTTP(S) URLs in assistant output use the same confirmation and in-app opening flow as terminal output. Managed Codex uses App Server as the single source for messages, tool calls, questions, approvals, stopping and inbox state. Start a new managed session with <code>handmux codex</code>. For an existing plain <code>codex</code> pane, open chat and confirm Start managed mode: Handmux exits Codex and resumes the exact session from Codex’s own recovery output. If Codex cannot exit from its current screen or waits for a startup confirmation, the page offers a return to the terminal. Replies stream into their Markdown bubble as Codex produces them. A long reply follows until its beginning reaches the top of the conversation, then holds the reading position; View latest answer resumes live following, and scrolling upward pauses it again. The persisted transcript remains the recovery source after a connection interruption. Messages sent during an active turn stay in the server queue; each can be edited, deleted or guided immediately, and editing pauses automatic delivery until saved or cancelled. The composer footer changes the active model, offers Fast when the selected model supports it, and keeps reasoning effort on a draggable step slider. A three-colour ring beside the microphone shows current context usage; tap it for live status, token counts, project, branch, permissions and a copyable session ID. <code>/goal</code> views and manages the active chat’s persistent task goal; <code>/model</code> and <code>/effort</code> use the same model controls, while <code>/compact</code> and <code>/clear</code> run natively in chat. Other slash commands stay in the composer and show a brief bottom hint instead of being sent to the terminal.</p>
 
       <h3 data-i18n="cc.layout-h">Window and pane sizing</h3>
       <p data-i18n="cc.layout-p">Long-press a single-pane Window to adjust that whole window’s columns or restore automatic sizing. For a split window, open its pane map and long-press the target pane to adjust only that pane; Restore returns to the split ratio captured before the first adjustment. Pure top/bottom splits do not show a width control because every pane shares the same window width.</p>
@@ -866,7 +866,7 @@ const I18N = {
     'rs.verify-b':'Verification boundary:','rs.verify':'the restart, boot-identity and tmux-generation scenarios are tested with real tmux inside isolated Docker containers; the current computer was not restarted. Host-specific macOS launchd timing and WSL/full-host reboot timing still need platform verification.',
     'su.p1':'An interactive <strong>menu hub</strong> — arrow to any setting and edit just that: connection (tunnel), app name, port, the Web Preview proxy domain, push-notification &amp; voice-input credentials, and the CLI language. Choose <strong>Web preview</strong> to configure wildcard routing/TLS for computer proxy mode; leaving it blank keeps Direct mode available. Writes <code>~/.handmux/config.json</code>; re-run any time to change anything.',
     'su.p2':"When it's done it also offers to:",
-    'su.li1':'Install the <strong>inbox hooks</strong> for Claude Code / Codex — enables the inbox and push notifications',
+    'su.li1':'Install inbox hooks for Claude Code states and notifications — Codex uses managed mode instead',
     'su.li2':'Set up the <strong>usage capturer</strong> — feeds the phone\'s Claude 5-hour / weekly quota bars',
     'su.c1':'# interactive — walks through all options','su.c2':'# write to a custom config file',
     'sh.p1':'Shared quick items for command and chat modes. Both defaults include Ctrl+C. The phone editor shows the effective quick-bar order, can interleave shared and phone-local items, and can remove a shared item from this device only with immediate undo. Adding a local item confirms success and returns to the list.',
@@ -883,9 +883,9 @@ const I18N = {
     'up.p1':'Upgrade the global install to the latest published version — a convenience wrapper for <code>npm i -g handmux@latest</code>, run through your own npm so a China mirror / private registry is honoured. It doesn\'t restart a running instance: after it finishes, run <code>handmux restart</code> to actually run the new version.',
     'up.c1':'# npm i -g handmux@latest','up.c2':'# then apply it to the running server',
     'up.note-b':'The app nudges you.','up.note':'handmux checks for a newer release about once an hour; when one exists, your phone lights a dot on the settings gear and Settings shows the current / latest version — a reminder to run this on your computer. After the server update, Settings → Reload app loads the new client without quitting the home-screen app.',
-    'hk.p1':'Install or remove the Claude Code lifecycle hooks that drive the inbox and push notifications. Hooks are written to <code>~/.claude/settings.json</code>. Silently skipped if Claude Code is not detected.',
-    'hk.c1':'# wire Claude Code → handmux (inbox · push)','hk.c2':'# remove the hooks',
-    'hk.note-b':"You usually don't need this.",'hk.note':'The first time you open the inbox on your phone, it wires these hooks with one tap. Run this only to install them from the computer instead.',
+    'hk.p1':'Install or remove the optional Claude Code hooks that power inbox states and notifications. Codex uses Handmux managed mode instead.',
+    'hk.c1':'# wire Claude Code → handmux','hk.c2':'# remove the hooks',
+    'hk.note-b':"You usually don't need this.",'hk.note':'The first time you open the inbox on your phone, it can install the Claude Code hooks with one tap. Run this only to install them from the computer instead.',
     'hk.p2':'After installing, open a new Claude Code session (or restart one) to activate. See <a href="#claude-code">Claude Code</a> for details.',
     'sv.p':'Register handmux as a login item so it starts at boot.',
     'sv.mac':'<strong>macOS:</strong> launchd plist in <code>~/Library/LaunchAgents/</code>',
@@ -966,8 +966,8 @@ const I18N = {
     'cc.needs':'needs you','cc.n-p':' — permission prompt or plan approval waiting; push sent to your phone',
     'cc.done':'done','cc.d-p':' — task finished; push sent',
     'cc.p4':'To receive pushes, configure Web Push credentials via <code>handmux setup</code> (generates VAPID keys). On the phone, tap the notification bell to subscribe the device.',
-    'cc.lens-h':'Chat view (experimental)',
-    'cc.lens-p':'The chat view shows a Claude pane as a conversation instead of a terminal: bubbles with Markdown, tool cards with colored diffs, question cards you answer with a tap, and warm colour tones. It is <strong>experimental and may be unstable</strong> — enable it in the phone app\'s Settings under 启用对话视图 / Enable chat view, then switch between 终端 / 对话 from the window bar. The terminal view stays the default and is unaffected.',
+    'cc.lens-h':'Chat view',
+    'cc.lens-p':'Claude Code and Codex CLI chat views have separate switches in Settings; only Claude Code chat is experimental. File paths and HTTP(S) URLs in assistant output use the same confirmation and in-app opening flow as terminal output. Managed Codex uses App Server as the single source for messages, tool calls, questions, approvals, stopping and inbox state. Start a new managed session with <code>handmux codex</code>. For an existing plain <code>codex</code> pane, open chat and confirm Start managed mode: Handmux exits Codex and resumes the exact session from Codex’s own recovery output. If Codex cannot exit from its current screen or waits for a startup confirmation, the page offers a return to the terminal. Replies stream into their Markdown bubble as Codex produces them. A long reply follows until its beginning reaches the top of the conversation, then holds the reading position; View latest answer resumes live following, and scrolling upward pauses it again. The persisted transcript remains the recovery source after a connection interruption. Messages sent during an active turn stay in the server queue; each can be edited, deleted or guided immediately, and editing pauses automatic delivery until saved or cancelled. The composer footer changes the active model, offers Fast when the selected model supports it, and keeps reasoning effort on a draggable step slider. A three-colour ring beside the microphone shows current context usage; tap it for live status, token counts, project, branch, permissions and a copyable session ID. <code>/goal</code> views and manages the active chat’s persistent task goal; <code>/model</code> and <code>/effort</code> use the same model controls, while <code>/compact</code> and <code>/clear</code> run natively in chat. Other slash commands stay in the composer and show a brief bottom hint instead of being sent to the terminal.',
     'cc.layout-h':'Window and pane sizing',
     'cc.layout-p':'Long-press a single-pane Window to adjust that whole window’s columns or restore automatic sizing. For a split window, open its pane map and long-press the target pane to adjust only that pane; Restore returns to the split ratio captured before the first adjustment. Pure top/bottom splits do not show a width control because every pane shares the same window width.',
     'cc.desktop-h':'Real-time terminal and desktop keyboard',
@@ -1047,7 +1047,7 @@ const I18N = {
     'rs.verify-b':'验证边界：','rs.verify':'重启、boot identity 与 tmux generation 场景均在隔离 Docker 容器中用真实 tmux 验证，没有重启当前电脑。macOS launchd 的主机时序、WSL / 整机真实重启时序仍需对应平台验证。',
     'su.p1':'一个交互式<strong>菜单中枢</strong>——方向键选中哪项就只改哪项：连接（隧道）、应用名称、端口、网页预览器代理域名、推送通知与语音输入凭证、命令行语言。选择<strong>网页预览器</strong>即可配置电脑代理所需的通配路由与证书；留空时仍可手机直连。写入 <code>~/.handmux/config.json</code>，随时可重跑修改。',
     'su.p2':'配完后它还会问你要不要：',
-    'su.li1':'为 Claude Code / Codex 安装<strong>收件箱 hooks</strong>——开启收件箱和推送通知',
+    'su.li1':'为 Claude Code 安装收件箱状态与通知 hooks——Codex 改用 Handmux 托管模式',
     'su.li2':'配置<strong>用量采集器</strong>——为手机端的 Claude 5 小时 / 每周额度条供数',
     'su.c1':'# 交互式，一步步引导','su.c2':'# 写到自定义配置文件',
     'sh.p1':'命令 / 聊天模式共享常用项，两种默认配置都含 Ctrl+C。手机编辑器按快捷栏实际顺序统一显示共享与本机项，可自由混排，也可只从本机移除共享项并即时撤销。本机新增成功后会明确提示并直接返回列表。',
@@ -1064,9 +1064,9 @@ const I18N = {
     'up.p1':'把全局安装升级到最新发布版——就是 <code>npm i -g handmux@latest</code> 的便捷封装，走你自己的 npm(所以国内镜像 / 私有源都照用)。它不会重启正在运行的实例:装完后再跑 <code>handmux restart</code> 才真正切到新版本。',
     'up.c1':'# npm i -g handmux@latest','up.c2':'# 再重启,让运行中的服务用上新版',
     'up.note-b':'App 会提醒你。','up.note':'handmux 大约每小时查一次有没有新版;有的话,手机端设置齿轮上会亮个点、设置里显示当前 / 最新版本号——提醒你到电脑上跑这条命令。服务端更新完成后,在设置首层点「重新加载应用」即可载入新版客户端,无需退出主屏应用。',
-    'hk.p1':'安装或卸载驱动收件箱和推送通知的 Claude Code 生命周期 hooks，写入 <code>~/.claude/settings.json</code>。未检测到 Claude Code 时静默跳过。',
-    'hk.c1':'# 把 Claude Code 和 handmux 接通（收件箱·推送）','hk.c2':'# 移除 hooks',
-    'hk.note-b':'一般你用不到这条。','hk.note':'第一次在手机上打开收件箱时，它会一键把这些 hooks 装好。只有当你想从电脑上装时才需要这条命令。',
+    'hk.p1':'按需安装或卸载驱动 Claude Code 收件箱状态与通知的 hooks；Codex 改用 Handmux 托管模式。',
+    'hk.c1':'# 接通 Claude Code','hk.c2':'# 移除 hooks',
+    'hk.note-b':'一般你用不到这条。','hk.note':'第一次在手机上打开收件箱时，可以一键安装 Claude Code hooks。只有当你想从电脑上安装时才需要这条命令。',
     'hk.p2':'安装后新开一个 Claude Code 会话（或重启已有会话）来激活。详情见 <a href="#claude-code">Claude Code</a>。',
     'sv.p':'把 handmux 注册为登录项，开机自动运行。',
     'sv.mac':'<strong>macOS：</strong>在 <code>~/Library/LaunchAgents/</code> 创建 launchd plist',
@@ -1147,8 +1147,8 @@ const I18N = {
     'cc.needs':'需要你','cc.n-p':'——有授权提示或计划待批准，推送已发到手机',
     'cc.done':'已完成','cc.d-p':'——任务结束，推送已发',
     'cc.p4':'要收到推送还需通过 <code>handmux setup</code> 配置 Web Push 凭证（生成 VAPID 密钥）。在手机上点 App 里的通知铃铛来为该设备订阅。',
-    'cc.lens-h':'对话视图（实验性）',
-    'cc.lens-p':'对话视图把 Claude 的 pane 以对话形式而非终端呈现：气泡 + Markdown 正文、带彩色 diff 的工具卡、点按即答的问题卡、暖色配色。属于<strong>实验性功能，可能不稳定</strong>——在手机 App 的设置里开启「启用对话视图（实验性功能）」，然后在窗口栏切换 终端 / 对话。终端视图仍是默认，不受影响。',
+    'cc.lens-h':'对话视图',
+    'cc.lens-p':'Claude Code 与 Codex CLI 对话视图在设置中分别开启；仅 Claude Code 对话仍为实验性功能。Agent 输出中的文件路径和 HTTP(S) 网址与终端输出使用同一套确认和应用内打开流程。托管 Codex 的消息、工具调用、提问、审批、停止和收件箱状态都由 App Server 统一提供。新会话可用 <code>handmux codex</code> 直接启动托管模式。已在运行的普通 <code>codex</code> pane 可在对话页确认后接管：Handmux 退出 Codex，并根据 Codex 自己返回的恢复信息原位恢复准确会话。若 Codex 在当前页面无法正常退出，或启动时等待确认，页面会提示返回终端处理。回复会在同一个 Markdown 气泡中实时流出。长回答先自动跟随，开头到达对话区域顶部后固定阅读位置；点按“查看最新回答”可继续实时跟随，向上滚动则再次暂停。连接中断后仍以持久化对话记录恢复完整内容。当前回合运行时发送的新消息保存在服务端队列中，可逐条编辑、删除或立即引导；编辑期间会暂停自动发送，直到保存或取消。输入区底部可切换模型；当前模型支持时会显示 Fast 开关，思考强度仍通过单行步骤条拖动选择。麦克风旁的三色圆环显示当前上下文用量，点按可查看运行状态、Token、项目、分支、权限并复制会话 ID。<code>/goal</code> 可查看和管理当前会话的持久任务目标；<code>/model</code>、<code>/effort</code> 使用同一套模型设置，<code>/compact</code>、<code>/clear</code> 则直接在对话中执行。其他斜杠命令不会写入终端，而会留在输入框并显示短暂的底部提示。',
     'cc.layout-h':'窗口与窗格尺寸',
     'cc.layout-p':'长按单窗格 Window，可调整整个窗口的列数或恢复自动尺寸。多窗格 Window 请先打开分屏地图，再长按目标窗格，只调整该窗格；“恢复”会回到首次调整前的分屏比例。纯上下分屏共用同一窗口宽度，因此不会显示无效的宽度控制。',
     'cc.desktop-h':'实时终端与电脑键盘',
