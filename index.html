@@ -602,7 +602,8 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.exp">Codex ready · Claude experimental</span></div>
         <h3 data-i18n="sig.lens.h">Chat view — the session as a conversation</h3>
-        <p data-i18n="sig.lens.p"><b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, persistent task goals, approvals and live context usage; open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.</p>
+        <p data-i18n="sig.lens.p"><b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, native Goal lifecycle cards, approvals and context usage; active Goals stay beneath the live turn task list, user changes appear on the right, terminal feedback stays with its originating turn on the left, and the current terminal Goal can be edited before restarting. Editable queued messages survive Handmux restarts. Open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.</p>
+        <p data-i18n="sig.goal.p">Setting or restarting a Goal creates a fresh active Goal and starts Codex immediately; one equal-width iOS-style row keeps editing, pausing and clearing easy to use.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -612,7 +613,7 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s4.h">Real-time terminal, the right keyboard everywhere</h3>
-        <p data-i18n="sig.s4.p"><b>Live terminal everywhere</b>: resilient streaming on mobile, full physical-keyboard input and native copy/paste on desktop.</p>
+        <p data-i18n="sig.s4.p"><b>Live terminal everywhere</b>: resilient streaming and direct Alt/Space keys on mobile, plus full physical-keyboard input and native copy/paste on desktop.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -632,7 +633,7 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s7.h">Docs you can read — or hear — and files both ways</h3>
-        <p data-i18n="sig.s7.p"><b>Open terminal paths as readable documents</b>, with Markdown, zoom and read-aloud highlighting. Upload, download and share files in either direction.</p>
+        <p data-i18n="sig.s7.p"><b>Open any text-file path from the terminal, regardless of extension</b>, with Markdown, zoom and read-aloud highlighting. Binary files stay download-only; upload, download and share files in either direction.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.cfg">needs setup</span></div>
@@ -786,7 +787,8 @@
       'sig.h2': 'signature features',
       'sig.on': 'on by default', 'sig.cfg': 'needs setup',
       'sig.exp': 'Codex ready · Claude experimental',
-      'sig.lens.h': 'Chat view — the session as a conversation', 'sig.lens.p': '<b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, persistent task goals, approvals and live context usage; open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.',
+      'sig.goal.p': 'Setting or restarting a Goal creates a fresh active Goal and starts Codex immediately; one equal-width iOS-style row keeps editing, pausing and clearing easy to use.',
+      'sig.lens.h': 'Chat view — the session as a conversation', 'sig.lens.p': '<b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, native Goal lifecycle cards, approvals and context usage; active Goals stay beneath the live turn task list, user changes appear on the right, terminal feedback stays with its originating turn on the left, and the current terminal Goal can be edited before restarting. Editable queued messages survive Handmux restarts. Open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.',
       'sig.fast': 'up in a minute',
       'sig.quick.h': 'One command — and it\'s running', 'sig.quick.p': '<b>One command</b> to install and start, then scan the QR. If Node and tmux are ready, your phone is in the terminal in about a minute.',
       'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': '<b>No App Store, no client</b>. Add the PWA to your Home Screen for a full-screen, native-like experience on iPhone and Android, including push notifications.',
@@ -795,11 +797,11 @@
       'sig.free': 'free · open-source',
       'sig.sec.h': 'Free, open-source, no relay', 'sig.sec.p': '<b>Free, open-source and self-hosted</b>. No handmux cloud, account or relay sits between your computer and phone — even when you use a supported tunnel.',
       'sig.s3.h': 'Agent usage, always in view', 'sig.s3.p': '<b>Claude and Codex usage at a glance</b>: limits, reset countdowns and burn pace. The latest host-wide state stays shared across every connected device.',
-      'sig.s4.h': 'Real-time terminal, the right keyboard everywhere', 'sig.s4.p': '<b>Live terminal everywhere</b>: resilient streaming on mobile, full physical-keyboard input and native copy/paste on desktop.',
+      'sig.s4.h': 'Real-time terminal, the right keyboard everywhere', 'sig.s4.p': '<b>Live terminal everywhere</b>: resilient streaming and direct Alt/Space keys on mobile, plus full physical-keyboard input and native copy/paste on desktop.',
       'sig.s5.h': 'A git client in your hand', 'sig.s5.p': '<b>VS&nbsp;Code-style Git on your phone</b>: working changes, history, branches and full-screen colored diffs. Multi-repo and read-only, so your tree stays untouched.',
       'sig.pane.h': 'Split, close, and map panes from your phone', 'sig.pane.p': '<b>Control real tmux layouts from your phone</b>: see every pane, split, close and jump between them. Every change appears instantly on desktop.',
       'sig.s6.h': 'One previewer for sites and local folders', 'sig.s6.p': 'Preview URLs by phone or computer proxy, or open an isolated static folder from the same address row—with narrow/wide widths, zoom, and mobile/desktop site requests in computer proxy mode.',
-      'sig.s7.h': 'Docs you can read — or hear — and files both ways', 'sig.s7.p': '<b>Open terminal paths as readable documents</b>, with Markdown, zoom and read-aloud highlighting. Upload, download and share files in either direction.',
+      'sig.s7.h': 'Docs you can read — or hear — and files both ways', 'sig.s7.p': '<b>Open any text-file path from the terminal, regardless of extension</b>, with Markdown, zoom and read-aloud highlighting. Binary files stay download-only; upload, download and share files in either direction.',
       'sig.s8.h': 'Reach it anywhere — direct, zero-config, or self-hosted', 'sig.s8.p': '<b>Connect your way</b>: direct on LAN or public IP, Cloudflare, natapp/cpolar, or your own SSH server. handmux configures the route; the account remains yours.',
       'sig.notes.h': 'good to know',
       'sig.n1': '<b>Voice input</b>: dictate prompts in chat view with optional iFlytek setup.',
@@ -867,7 +869,8 @@
       'sig.h2': '特色功能',
       'sig.on': '默认开启', 'sig.cfg': '需配置',
       'sig.exp': 'Codex 正式支持 · Claude 实验性',
-      'sig.lens.h': '对话视图——把会话当成聊天', 'sig.lens.p': '<b>把 Codex CLI 变成同步对话</b>：Markdown 回复实时流出，长回答会稳定在开头供阅读，也可一键回到最新内容；另有工具卡、持久任务目标、审批和实时上下文占用。输出的文件与网址和终端一样在应用内打开。Claude Code 对话仍是独立开启的实验性功能。',
+      'sig.goal.p': '设置或重新开始 Goal 会创建全新的 active Goal 并立即启动 Codex；编辑、暂停和清除使用 iOS 风格单行等分操作。',
+      'sig.lens.h': '对话视图——把会话当成聊天', 'sig.lens.p': '<b>把 Codex CLI 变成同步对话</b>：Markdown 回复实时流出，长回答会稳定在开头供阅读，也可一键回到最新内容；进行中的 Goal 显示在实时任务列表下方，用户设置与重新开始靠右、Codex 终态反馈留在对应回合并靠左，当前终态 Goal 可修改后重新开始，另有工具卡、审批和实时上下文占用。可编辑的待发消息会跨 Handmux 重启恢复。输出的文件与网址和终端一样在应用内打开。Claude Code 对话仍是独立开启的实验性功能。',
       'sig.fast': '一分钟上手',
       'sig.quick.h': '一条命令,就启动了', 'sig.quick.p': '<b>一条命令</b>安装并启动，扫码即用。已有 Node 和 tmux，大约一分钟，手机就能接管终端。',
       'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '<b>不用 App Store，不装客户端</b>。添加到主屏就是全屏 PWA，iPhone、安卓都有接近原生 App 的体验和推送。',
@@ -876,11 +879,11 @@
       'sig.free': '免费 · 开源',
       'sig.sec.h': '完全免费 · 开源 · 不经过我们', 'sig.sec.p': '<b>免费、开源、自托管</b>。电脑和手机之间没有 handmux 云、账号或中转；即使用隧道，流量也不经过我们。',
       'sig.s3.h': 'Agent 用量,一眼可见', 'sig.s3.p': '<b>Claude、Codex 用量一眼可见</b>：额度、重置倒计时和消耗速度。本机最新状态在所有连接设备间共享。',
-      'sig.s4.h': '实时终端，电脑手机都顺手', 'sig.s4.p': '<b>终端随时在线</b>：手机弱网下稳定续接，电脑端支持完整物理键盘输入和原生复制粘贴。',
+      'sig.s4.h': '实时终端，电脑手机都顺手', 'sig.s4.p': '<b>终端随时在线</b>：手机弱网下稳定续接，命令键盘可直接使用 Alt 与空格；电脑端支持完整物理键盘输入和原生复制粘贴。',
       'sig.s5.h': '一只手掌握的 Git 客户端', 'sig.s5.p': '<b>手机上的 VS&nbsp;Code 风格 Git</b>：改动、历史、分支和全屏彩色 diff。支持多仓库，只读查看，不碰工作区。',
       'sig.pane.h': '分屏、关窗格、看布局——都在手机上', 'sig.pane.p': '<b>手机直接管理真实 tmux 布局</b>：查看、拆分、关闭和切换窗格。所有变化即时同步到电脑。',
       'sig.s6.h': '网址和静态目录，一个预览器', 'sig.s6.p': '用手机直连或电脑代理预览网址，也可从同一地址栏隔离打开静态目录；支持窄屏 / 宽屏、缩放，以及电脑代理请求手机版 / 电脑版。',
-      'sig.s7.h': '文档能读也能听 · 文件随手双向传', 'sig.s7.p': '<b>终端路径一点变成可读文档</b>：Markdown、缩放和逐句朗读。文件上传、下载、分享双向都能走。',
+      'sig.s7.h': '文档能读也能听 · 文件随手双向传', 'sig.s7.p': '<b>终端里明确识别出的文本文件路径不分扩展名均可点开</b>，普通斜杠文字保持纯文本：支持 Markdown、缩放和逐句朗读；二进制文件仍只下载。文件上传、下载、分享双向都能走。',
       'sig.s8.h': '从任何地方连:直连、零配置或自托管', 'sig.s8.p': '<b>连接方式由你选</b>：局域网/公网直连、Cloudflare、natapp/cpolar 或自建 SSH。handmux 帮你接通，账号和线路都属于你。',
       'sig.notes.h': '补充说明',
       'sig.n1': '<b>语音输入</b>：可选配讯飞，在对话视图直接口述 prompt。',
