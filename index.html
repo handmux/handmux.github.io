@@ -484,7 +484,7 @@
 
   <section id="claude">
     <div class="h2" data-i18n="claude.h2">the best companion for Claude Code &amp; Codex</div>
-    <p class="lead" data-i18n="claude.lead">Drive any terminal agent; with <b>Claude Code</b> and <b>Codex</b>, handmux also knows when a pane is working, blocked or done.</p>
+    <p class="lead" data-i18n="claude.lead">Drive any terminal agent; with <b>Claude Code</b> and <b>Codex</b>, handmux also knows when a pane is working, blocked, done or stopped by an error.</p>
     <div class="claude-grid">
       <div class="inbox" aria-hidden="true">
         <div class="inbox-head">
@@ -513,7 +513,7 @@
       </div>
       <div class="claude-points">
         <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p1.h">Pinged when it needs you</h4><p data-i18n="claude.p1.p">Permission, plan and completion alerts reach your phone even when the page is closed.</p></div></div>
-        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p2.h">Who's busy, who's waiting — one glance</h4><p data-i18n="claude.p2.p">One inbox shows every pane as <span style="color:var(--blue)">working</span>, <span style="color:var(--amber)">needs you</span> or <span style="color:var(--green)">done</span>; tap one to jump there.</p></div></div>
+        <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p2.h">Who's busy, who's waiting — one glance</h4><p data-i18n="claude.p2.p">One inbox shows every pane as <span style="color:var(--blue)">working</span>, <span style="color:var(--amber)">needs you</span>, <span style="color:var(--green)">done</span> or <span style="color:var(--red)">error</span>; tap one to jump there. Completed items open at the beginning of their latest answer, and terminal-result reads stay in sync across refreshes and devices.</p></div></div>
         <div class="pt"><span class="n">▸</span><div><h4 data-i18n="claude.p3.h">Approve with your thumb</h4><p data-i18n="claude.p3.p">Approve permissions and plans from your phone, directly in the real terminal session.</p></div></div>      </div>
     </div>
   </section>
@@ -602,13 +602,13 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.exp">Codex ready · Claude experimental</span></div>
         <h3 data-i18n="sig.lens.h">Chat view — the session as a conversation</h3>
-        <p data-i18n="sig.lens.p"><b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, native Goal lifecycle cards, approvals and context usage; active Goals stay beneath the live turn task list, user changes appear on the right, terminal feedback stays with its originating turn on the left, and the current terminal Goal can be edited before restarting. Editable queued messages survive Handmux restarts. Open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.</p>
+        <p data-i18n="sig.lens.p"><b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, native Goal lifecycle cards, approvals and context usage; context-ring details show its absolute worktree root path and branch. Active Goals stay beneath the live turn task list, user changes appear on the right, terminal feedback stays with its originating turn on the left, and the current terminal Goal can be edited before restarting. Every sendable Agent shares one persistent editable queue; Guide now appears only when supported. Open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.</p>
         <p data-i18n="sig.goal.p">Setting or restarting a Goal creates a fresh active Goal and starts Codex immediately; one equal-width iOS-style row keeps editing, pausing and clearing easy to use.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
-        <h3 data-i18n="sig.s3.h">Agent usage, always in view</h3>
-        <p data-i18n="sig.s3.p"><b>Claude and Codex usage at a glance</b>: limits, reset countdowns and burn pace. The latest host-wide state stays shared across every connected device.</p>
+        <h3 data-i18n="sig.s3.h">Subscriptions and API balances, always in view</h3>
+        <p data-i18n="sig.s3.p"><b>Claude and Codex subscription usage at a glance</b>: account and model limits, reset countdowns, burn pace, plus Codex's account, plan, remaining resets, and each provided expiry. Add DeepSeek and Moonshot (Kimi) API accounts to view provider balance data; keys are encrypted at rest within the Handmux computer's local trust boundary, and full keys never return to browsers.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
@@ -633,7 +633,7 @@
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge on" data-i18n="sig.on">on by default</span></div>
         <h3 data-i18n="sig.s7.h">Docs you can read — or hear — and files both ways</h3>
-        <p data-i18n="sig.s7.p"><b>Open any text-file path from the terminal, regardless of extension</b>, with Markdown, zoom and read-aloud highlighting. Binary files stay download-only; upload, download and share files in either direction.</p>
+        <p data-i18n="sig.s7.p"><b>Open any text-file path from the terminal, regardless of extension</b>, with Markdown, zoom and read-aloud highlighting. Binary files stay download-only; upload ZIP archives and other supported files, download and share in either direction.</p>
       </div>
       <div class="sig-item">
         <div class="sig-badges"><span class="sig-badge cfg" data-i18n="sig.cfg">needs setup</span></div>
@@ -729,7 +729,7 @@
   <div class="inner wrap">
     <span class="fwm">hand<span>mux</span></span>
     <span class="sep" style="color:var(--faint)">·</span>
-    <span data-i18n="footer.req">needs Node ≥ 20 &amp; tmux ≥ 3.0</span>
+    <span data-i18n="footer.req">needs Node ≥ 22.16 &amp; tmux ≥ 3.0</span>
     <a class="ml" href="https://github.com/handmux/handmux">github →</a>
     <a href="https://www.npmjs.com/package/handmux">npm →</a>
     <a href="#community" data-i18n="footer.comm">feedback →</a>
@@ -765,12 +765,12 @@
       'comm.wx.p': 'In China, scan to add the author on WeChat, note <b>handmux</b>, and join the user group.',
       'footer.comm': 'feedback →',
       'claude.h2': 'the best companion for Claude Code &amp; Codex',
-      'claude.lead': 'Drive any terminal agent; with <b>Claude Code</b> and <b>Codex</b>, handmux also knows when a pane is working, blocked or done.',
+      'claude.lead': 'Drive any terminal agent; with <b>Claude Code</b> and <b>Codex</b>, handmux also knows when a pane is working, blocked, done or stopped by an error.',
       'claude.ibx.title': 'Inbox',
       'claude.ibx.sw': 'Running', 'claude.ibx.sd': 'Completed', 'claude.ibx.sn': 'Needs you',
       'claude.ibx.m1': 'vite build — compiling…', 'claude.ibx.m2': 'Allow <code>git push origin main</code>?', 'claude.ibx.m3': '12 passed, 0 failed',
       'claude.p1.h': 'Pinged when it needs you', 'claude.p1.p': 'Permission, plan and completion alerts reach your phone even when the page is closed.',
-      'claude.p2.h': 'Who\'s busy, who\'s waiting — one glance', 'claude.p2.p': 'One inbox shows every pane as <span style="color:var(--blue)">working</span>, <span style="color:var(--amber)">needs you</span> or <span style="color:var(--green)">done</span>; tap one to jump there.',
+      'claude.p2.h': 'Who\'s busy, who\'s waiting — one glance', 'claude.p2.p': 'One inbox shows every pane as <span style="color:var(--blue)">working</span>, <span style="color:var(--amber)">needs you</span>, <span style="color:var(--green)">done</span> or <span style="color:var(--red)">error</span>; tap one to jump there. Completed items open at the beginning of their latest answer, and terminal-result reads stay in sync across refreshes and devices.',
       'claude.p3.h': 'Approve with your thumb', 'claude.p3.p': 'Approve permissions and plans from your phone, directly in the real terminal session.',
       'cmp.h2': 'how handmux compares',
       'cmp.lead': 'Three ways to drive coding agents from a phone — with different session, data and account boundaries.',
@@ -788,7 +788,7 @@
       'sig.on': 'on by default', 'sig.cfg': 'needs setup',
       'sig.exp': 'Codex ready · Claude experimental',
       'sig.goal.p': 'Setting or restarting a Goal creates a fresh active Goal and starts Codex immediately; one equal-width iOS-style row keeps editing, pausing and clearing easy to use.',
-      'sig.lens.h': 'Chat view — the session as a conversation', 'sig.lens.p': '<b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, native Goal lifecycle cards, approvals and context usage; active Goals stay beneath the live turn task list, user changes appear on the right, terminal feedback stays with its originating turn on the left, and the current terminal Goal can be edited before restarting. Editable queued messages survive Handmux restarts. Open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.',
+      'sig.lens.h': 'Chat view — the session as a conversation', 'sig.lens.p': '<b>Use Codex CLI as a synchronized chat</b> with streaming Markdown replies that hold at the beginning for reading, tool cards, native Goal lifecycle cards, approvals and context usage; context-ring details show its absolute worktree root path and branch. Active Goals stay beneath the live turn task list, user changes appear on the right, terminal feedback stays with its originating turn on the left, and the current terminal Goal can be edited before restarting. Every sendable Agent shares one persistent editable queue; Guide now appears only when supported. Open output files and URLs with the same in-app flow as the terminal. Claude Code chat remains an independent experimental option.',
       'sig.fast': 'up in a minute',
       'sig.quick.h': 'One command — and it\'s running', 'sig.quick.p': '<b>One command</b> to install and start, then scan the QR. If Node and tmux are ready, your phone is in the terminal in about a minute.',
       'sig.s1.h': 'Zero install — with a native-app feel', 'sig.s1.p': '<b>No App Store, no client</b>. Add the PWA to your Home Screen for a full-screen, native-like experience on iPhone and Android, including push notifications.',
@@ -796,12 +796,12 @@
       'sig.sp.h': 'Script push — notify your phone from a script', 'sig.sp.p': '<b>Push from any script or CI job</b> straight to your phone. Target every device, one tmux session or one device — without a remote handmux service.',
       'sig.free': 'free · open-source',
       'sig.sec.h': 'Free, open-source, no relay', 'sig.sec.p': '<b>Free, open-source and self-hosted</b>. No handmux cloud, account or relay sits between your computer and phone — even when you use a supported tunnel.',
-      'sig.s3.h': 'Agent usage, always in view', 'sig.s3.p': '<b>Claude and Codex usage at a glance</b>: limits, reset countdowns and burn pace. The latest host-wide state stays shared across every connected device.',
+      'sig.s3.h': 'Subscriptions and API balances, always in view', 'sig.s3.p': '<b>Claude and Codex subscription usage at a glance</b>: account and model limits, reset countdowns, burn pace, plus Codex\'s account, plan, remaining resets, and each provided expiry. Add DeepSeek and Moonshot (Kimi) API accounts to view provider balance data; keys are encrypted at rest within the Handmux computer\'s local trust boundary, and full keys never return to browsers.',
       'sig.s4.h': 'Real-time terminal, the right keyboard everywhere', 'sig.s4.p': '<b>Live terminal everywhere</b>: resilient streaming and direct Alt/Space keys on mobile, plus full physical-keyboard input and native copy/paste on desktop.',
       'sig.s5.h': 'A git client in your hand', 'sig.s5.p': '<b>VS&nbsp;Code-style Git on your phone</b>: working changes, history, branches and full-screen colored diffs. Multi-repo and read-only, so your tree stays untouched.',
       'sig.pane.h': 'Split, close, and map panes from your phone', 'sig.pane.p': '<b>Control real tmux layouts from your phone</b>: see every pane, split, close and jump between them. Every change appears instantly on desktop.',
       'sig.s6.h': 'One previewer for sites and local folders', 'sig.s6.p': 'Preview URLs by phone or computer proxy, or open an isolated static folder from the same address row—with narrow/wide widths, zoom, and mobile/desktop site requests in computer proxy mode.',
-      'sig.s7.h': 'Docs you can read — or hear — and files both ways', 'sig.s7.p': '<b>Open any text-file path from the terminal, regardless of extension</b>, with Markdown, zoom and read-aloud highlighting. Binary files stay download-only; upload, download and share files in either direction.',
+      'sig.s7.h': 'Docs you can read — or hear — and files both ways', 'sig.s7.p': '<b>Open any text-file path from the terminal, regardless of extension</b>, with Markdown, zoom and read-aloud highlighting. Binary files stay download-only; upload ZIP archives and other supported files, download and share in either direction.',
       'sig.s8.h': 'Reach it anywhere — direct, zero-config, or self-hosted', 'sig.s8.p': '<b>Connect your way</b>: direct on LAN or public IP, Cloudflare, natapp/cpolar, or your own SSH server. handmux configures the route; the account remains yours.',
       'sig.notes.h': 'good to know',
       'sig.n1': '<b>Voice input</b>: dictate prompts in chat view with optional iFlytek setup.',
@@ -819,7 +819,7 @@
       'how.direct.p': 'Use your LAN, public IP or domain directly — no relay required.',
       'how.tunnel.t': 'need an entrance<span class="badge">pick one</span>',
       'how.tunnel.p': 'No public endpoint? Choose Cloudflare, natapp/cpolar or SSH. Handmux configures the route; the provider account remains yours.',
-      'footer.req': 'needs Node ≥ 20 &amp; tmux ≥ 3.0',
+      'footer.req': 'needs Node ≥ 22.16 &amp; tmux ≥ 3.0',
       'copy.idle': 'copy', 'copy.done': 'copied ✓', 'copy.fail': 'select & ⌘C',
     },
     zh: {
@@ -847,12 +847,12 @@
       'comm.wx.p': '扫码添加作者微信，备注 <b>handmux</b>，加入用户群。',
       'footer.comm': '反馈 →',
       'claude.h2': 'Claude Code 和 Codex 的最佳搭档',
-      'claude.lead': '任意终端 Agent 都能驱动；配合 <b>Claude Code</b> 和 <b>Codex</b>，还能知道每个 pane 正在工作、等待你或已经完成。',
+      'claude.lead': '任意终端 Agent 都能驱动；配合 <b>Claude Code</b> 和 <b>Codex</b>，还能知道每个 pane 正在工作、等待你、已经完成或因错误停止。',
       'claude.ibx.title': '收件箱',
       'claude.ibx.sw': '进行中', 'claude.ibx.sd': '已完成', 'claude.ibx.sn': '需要你',
       'claude.ibx.m1': 'vite 构建中…', 'claude.ibx.m2': '允许执行 <code>git push origin main</code>?', 'claude.ibx.m3': '12 通过,0 失败',
       'claude.p1.h': '需要你,就推给你', 'claude.p1.p': '授权、计划和完成提醒会直接到手机，网页关了也不漏。',
-      'claude.p2.h': '谁在忙、谁等你,一屏看全', 'claude.p2.p': '一个收件箱汇总所有 pane 的<span style="color:var(--blue)">进行中</span>、<span style="color:var(--amber)">需要你</span>和<span style="color:var(--green)">已完成</span>状态；点一下直接跳转。',
+      'claude.p2.h': '谁在忙、谁等你,一屏看全', 'claude.p2.p': '一个收件箱汇总所有 pane 的<span style="color:var(--blue)">进行中</span>、<span style="color:var(--amber)">需要你</span>、<span style="color:var(--green)">已完成</span>和<span style="color:var(--red)">出错</span>状态；点开“已完成”会从最新回复开头展示，刷新或换设备也不会重复显示已读结果。',
       'claude.p3.h': '拇指点一下就批', 'claude.p3.p': '在手机上批准授权和计划，操作的就是电脑里的真实终端会话。',
       'cmp.h2': '和同类比一比',
       'cmp.lead': '三种手机驱动 Coding Agent 的方式，会话、数据路径和账号边界各不相同。',
@@ -870,7 +870,7 @@
       'sig.on': '默认开启', 'sig.cfg': '需配置',
       'sig.exp': 'Codex 正式支持 · Claude 实验性',
       'sig.goal.p': '设置或重新开始 Goal 会创建全新的 active Goal 并立即启动 Codex；编辑、暂停和清除使用 iOS 风格单行等分操作。',
-      'sig.lens.h': '对话视图——把会话当成聊天', 'sig.lens.p': '<b>把 Codex CLI 变成同步对话</b>：Markdown 回复实时流出，长回答会稳定在开头供阅读，也可一键回到最新内容；进行中的 Goal 显示在实时任务列表下方，用户设置与重新开始靠右、Codex 终态反馈留在对应回合并靠左，当前终态 Goal 可修改后重新开始，另有工具卡、审批和实时上下文占用。可编辑的待发消息会跨 Handmux 重启恢复。输出的文件与网址和终端一样在应用内打开。Claude Code 对话仍是独立开启的实验性功能。',
+      'sig.lens.h': '对话视图——把会话当成聊天', 'sig.lens.p': '<b>把 Codex CLI 变成同步对话</b>：Markdown 回复实时流出，长回答会稳定在开头供阅读，也可一键回到最新内容；上下文圆环详情显示所属 worktree 的绝对根路径和分支，进行中的 Goal 显示在实时任务列表下方，用户设置与重新开始靠右、Codex 终态反馈留在对应回合并靠左，当前终态 Goal 可修改后重新开始，另有工具卡和审批。所有可发送 Agent 共用一套可编辑、跨重启恢复的队列；只有支持时才显示“立刻引导”。输出的文件与网址和终端一样在应用内打开。Claude Code 对话仍是独立开启的实验性功能。',
       'sig.fast': '一分钟上手',
       'sig.quick.h': '一条命令,就启动了', 'sig.quick.p': '<b>一条命令</b>安装并启动，扫码即用。已有 Node 和 tmux，大约一分钟，手机就能接管终端。',
       'sig.s1.h': '零安装,却有原生 App 的体验', 'sig.s1.p': '<b>不用 App Store，不装客户端</b>。添加到主屏就是全屏 PWA，iPhone、安卓都有接近原生 App 的体验和推送。',
@@ -878,12 +878,12 @@
       'sig.sp.h': '脚本推送——从脚本推消息到手机', 'sig.sp.p': '<b>脚本或 CI 直接推送到手机</b>。可发给全部设备、某个 tmux 会话或单台设备，不依赖 handmux 远端服务。',
       'sig.free': '免费 · 开源',
       'sig.sec.h': '完全免费 · 开源 · 不经过我们', 'sig.sec.p': '<b>免费、开源、自托管</b>。电脑和手机之间没有 handmux 云、账号或中转；即使用隧道，流量也不经过我们。',
-      'sig.s3.h': 'Agent 用量,一眼可见', 'sig.s3.p': '<b>Claude、Codex 用量一眼可见</b>：额度、重置倒计时和消耗速度。本机最新状态在所有连接设备间共享。',
+      'sig.s3.h': '订阅用量与 API 余额，一眼可见', 'sig.s3.p': '<b>Claude、Codex 订阅用量一眼可见</b>：账号与模型额度、重置倒计时、消耗速度，以及 Codex 当前账号、套餐、剩余重置次数与官方提供的各次到期时间。还可添加 DeepSeek 和 Moonshot (Kimi) API 账户查看厂家余额数据；API Key 在运行 Handmux 的电脑本机信任边界内静态加密，完整 Key 不会返回浏览器。',
       'sig.s4.h': '实时终端，电脑手机都顺手', 'sig.s4.p': '<b>终端随时在线</b>：手机弱网下稳定续接，命令键盘可直接使用 Alt 与空格；电脑端支持完整物理键盘输入和原生复制粘贴。',
       'sig.s5.h': '一只手掌握的 Git 客户端', 'sig.s5.p': '<b>手机上的 VS&nbsp;Code 风格 Git</b>：改动、历史、分支和全屏彩色 diff。支持多仓库，只读查看，不碰工作区。',
       'sig.pane.h': '分屏、关窗格、看布局——都在手机上', 'sig.pane.p': '<b>手机直接管理真实 tmux 布局</b>：查看、拆分、关闭和切换窗格。所有变化即时同步到电脑。',
       'sig.s6.h': '网址和静态目录，一个预览器', 'sig.s6.p': '用手机直连或电脑代理预览网址，也可从同一地址栏隔离打开静态目录；支持窄屏 / 宽屏、缩放，以及电脑代理请求手机版 / 电脑版。',
-      'sig.s7.h': '文档能读也能听 · 文件随手双向传', 'sig.s7.p': '<b>终端里明确识别出的文本文件路径不分扩展名均可点开</b>，普通斜杠文字保持纯文本：支持 Markdown、缩放和逐句朗读；二进制文件仍只下载。文件上传、下载、分享双向都能走。',
+      'sig.s7.h': '文档能读也能听 · 文件随手双向传', 'sig.s7.p': '<b>终端里明确识别出的文本文件路径不分扩展名均可点开</b>，普通斜杠文字保持纯文本：支持 Markdown、缩放和逐句朗读；二进制文件仍只下载。ZIP 压缩包等支持的文件可上传、下载和分享。',
       'sig.s8.h': '从任何地方连:直连、零配置或自托管', 'sig.s8.p': '<b>连接方式由你选</b>：局域网/公网直连、Cloudflare、natapp/cpolar 或自建 SSH。handmux 帮你接通，账号和线路都属于你。',
       'sig.notes.h': '补充说明',
       'sig.n1': '<b>语音输入</b>：可选配讯飞，在对话视图直接口述 prompt。',
@@ -901,7 +901,7 @@
       'how.direct.p': '局域网、公网 IP 或自有域名都可直接连接，无需中转。',
       'how.tunnel.t': '需要入口<span class="badge">挑一个</span>',
       'how.tunnel.p': '没有公网入口，可选 Cloudflare、natapp/cpolar 或 SSH；handmux 负责配置，账号仍属于你。',
-      'footer.req': '需要 Node ≥ 20、tmux ≥ 3.0',
+      'footer.req': '需要 Node ≥ 22.16、tmux ≥ 3.0',
       'copy.idle': '复制', 'copy.done': '已复制 ✓', 'copy.fail': '请手动选中再 ⌘C',
     },
   };
