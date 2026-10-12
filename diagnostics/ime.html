@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>xterm IME 诊断</title>
+  <link rel="stylesheet" href="vendor/xterm-5.5.0.css">
+  <link rel="stylesheet" href="ime.css">
+  <script defer src="vendor/xterm-5.5.0.js"></script>
+  <script defer src="ime.js"></script>
+</head>
+<body>
+  <main>
+    <h1>xterm IME 诊断</h1>
+    <p>在原来出现问题的 Firefox 和输入法中，点击下面终端，测试中文、标点和连续输入，再导出 JSON。同一台机器可用 Chrome 对照；请在分享日志时说明系统、输入法和复现步骤。</p>
+    <p class="warning">只输入测试文字，请勿输入密码、令牌或其他敏感信息。日志包含输入文字，仅保存在本页内存；不自动保存或上传，不连接 tmux 或 Handmux API。</p>
+    <section class="card" aria-label="原版 xterm 测试区域">
+      <div id="ime-terminal"></div>
+      <p class="caption">原版 xterm.js 5.5.0；没有本地回显。实际 onData 最近一条：</p>
+      <pre id="output" aria-label="实际 onData">尚无数据</pre>
+    </section>
+    <label class="probe"><span>记录 early timer 探针</span><input id="probe" type="checkbox" role="switch" checked></label>
+    <p class="caption">此独立页面默认启用版本校验后的私有探针：仅包装 5.5.0 的 _handleAnyTextareaChanges 原定时器，记录 oldValue / newValue、时间和 composition / pending 状态。不改输入、不去重、不补发；探针失败时保持原版可测。做无探针对照时，重新加载后先关闭开关，再输入测试文字。</p>
+    <div class="actions">
+      <button id="export" type="button">导出 JSON</button>
+      <button id="clear" type="button">清空日志</button>
+      <button id="stop" type="button">停止记录</button>
+    </div>
+    <p id="status" class="caption" role="status">正在记录。最多保留最近 2000 条，每个文本字段最多 2048 字符；完整长度另行记录。停止后重新加载可开始新测试。</p>
+    <p class="caption">资源：本地复制的 <a href="vendor/README.md">@xterm/xterm 5.5.0</a>，<a href="vendor/xterm-LICENSE">MIT 许可</a>。该页用于采集线索，真实 IME 结果以原浏览器测试为准。</p>
+    <noscript>此诊断页需要 JavaScript；启用后重新加载。</noscript>
+  </main>
+</body>
+</html>
